@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario - MinerUCAB</title>
+    <link rel="stylesheet" href="perfil_usuario_styles.css">
+    <style>
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .logo img {
+            width: 100px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .logo h1 {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .sidebar nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar nav ul li {
+            margin: 10px 0;
+        }
+
+        .sidebar nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #ddd;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .profile-section {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .profile-section h3 {
+            margin: 0 0 10px 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .profile-section p {
+            margin: 5px 0;
+        }
+
+        .profile-section p span {
+            font-weight: bold;
+        }
+
+        .profile-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 10px;
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        .profile-dropdown.active {
+            display: block;
+        }
+
+        .profile-dropdown p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .profile-dropdown p a {
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <h2>Proyectos</h2>
+            <div class="profile-container">
+                <button class="profile-button" onclick="toggleDropdown()">Perfil</button>
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <p>Administrador</p>
+                    <p>rafaelmarcano2804@gmail.com</p>
+                    <p><a href="#">Cerrar Sesión</a></p>
+                </div>
+            </div>
+        </header>
+        <main class="main-content">
+            <h2>Mi Perfil</h2>
+            <div class="profile-section">
+                <h3>Información Básica</h3>
+                <p><span>Nombre:</span> Rafael Marcano</p>
+                <p><span>Nombre de Usuario:</span> Administrador</p>
+                <p><span>Fecha de Nacimiento:</span> 28-04-2003</p>
+                <p><span>Cédula:</span> 30.005.364</p>
+            </div>
+            <div class="profile-section">
+                <h3>Información de Contacto</h3>
+                <p><span>Correo:</span> rafaelmarcano2804@gmail.com</p>
+                <p><span>Dirección:</span> Caracas-Chacao-Las Mercedes</p>
+                <p><span>Teléfono:</span> 04127773584</p>
+            </div>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profile-dropdown');
+            const button = document.querySelector('.profile-button');
+
+            if (!button.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

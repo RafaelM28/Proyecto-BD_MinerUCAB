@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Recurso - MinerUCAB</title>
+    <link rel="stylesheet" href="crear_recurso_styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <header>
+                <h2>Recurso</h2>
+            </header>
+            <form class="recurso-form" method="POST" action="/create-recurso"> <!-- Adjust action to your backend endpoint -->
+                <div class="form-group">
+                    <label for="nombre">Nombre: *</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="numero-serie">Número de serie: *</label>
+                    <input type="text" id="numero-serie" name="numero-serie" required>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad">Cantidad: *</label>
+                    <input type="number" id="cantidad" name="cantidad" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="tipo-recurso">Tipo Recurso: *</label>
+                    <select id="tipo-recurso" name="tipo-recurso" required>
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="marca">Marca: *</label>
+                    <select id="marca" name="marca" required>
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="modelo">Modelo: *</label>
+                    <select id="modelo" name="modelo" required>
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Agregar</button>
+                </div>
+            </form>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+</body>
+</html>

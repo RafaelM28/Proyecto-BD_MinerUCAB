@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Solicitud - MinerUCAB</title>
+    <link rel="stylesheet" href="crear_solicitud_compra_styles.css">
+    <style>
+        .mineral-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: #f0f0f0;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .mineral-row span {
+            margin-right: 10px;
+        }
+
+        .mineral-row button {
+            background-color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <header>
+                <h2>Solicitud</h2>
+            </header>
+            <form class="solicitud-form" method="POST" action="/create-solicitud"> <!-- Adjust action to your backend endpoint -->
+                <div class="form-group">
+                    <label for="aliado">Aliado: *</label>
+                    <select id="aliado" name="aliado" required>
+                        <option value="CVG VENALUM">CVG VENALUM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="minerales">Minerales: *</label>
+                    <div class="minerales-input-group">
+                        <select id="minerales" name="minerales">
+                            <option value="Carbon">Carbon</option>
+                            <option value="Cobre">Cobre</option>
+                        </select>
+                        <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad" required>
+                        <input type="number" id="precio-unit" name="precio-unit" placeholder="Precio Unit." required>
+                        <button type="button" onclick="addMineral()">Cargar</button>
+                    </div>
+                </div>
+                <div class="selected-minerales" id="selected-minerales">
+                    <!-- Dynamically added minerals will appear here -->
+                </div>
+                <div class="form-group">
+                    <button type="submit">Crear</button>
+                </div>
+            </form>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+
+    <script>
+        function addMineral() {
+            const mineralesSelect = document.getElementById('minerales');
+            const cantidadInput = document.getElementById('cantidad');
+            const precioUnitInput = document.getElementById('precio-unit');
+            
+            const mineral = mineralesSelect.value;
+            const cantidad = cantidadInput.value;
+            const precioUnit = precioUnitInput.value;
+
+            if (mineral && cantidad && precioUnit) {
+                const mineralRow = document.createElement('div');
+                mineralRow.classList.add('mineral-row');
+                mineralRow.innerHTML = `
+                    <span>${mineral}</span>
+                    <span>Cantidad: ${cantidad}</span>
+                    <span>Precio Unit.: ${precioUnit}</span>
+                    <button type="button" onclick="removeMineral(this)">x</button>
+                    <input type="hidden" name="minerales[]" value="${mineral}">
+                    <input type="hidden" name="cantidades[]" value="${cantidad}">
+                    <input type="hidden" name="precios_unit[]" value="${precioUnit}">
+                `;
+
+                document.getElementById('selected-minerales').appendChild(mineralRow);
+
+                // Clear inputs
+                mineralesSelect.value = '';
+                cantidadInput.value = '';
+                precioUnitInput.value = '';
+            }
+        }
+
+        function removeMineral(button) {
+            const mineralRow = button.parentElement;
+            mineralRow.remove();
+        }
+    </script>
+</body>
+</html>

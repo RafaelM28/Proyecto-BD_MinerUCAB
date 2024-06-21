@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Actividad Config - MinerUCAB</title>
+    <link rel="stylesheet" href="crear_actividad_config_styles.css">
+    <style>
+        .cargo-row, .recurso-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: #f0f0f0;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .cargo-row span, .recurso-row span {
+            margin-right: 10px;
+        }
+
+        .cargo-row button, .recurso-row button {
+            background-color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <header>
+                <h2>Actividad</h2>
+            </header>
+            <form class="actividad-form" method="POST" action="/create-actividad"> <!-- Adjust action to your backend endpoint -->
+                <div class="form-group">
+                    <label for="nombre">Nombre: *</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="duracion">Duración Días: *</label>
+                    <input type="number" id="duracion" name="duracion" required>
+                </div>
+                <div class="form-group">
+                    <label for="cargos">Cargos: *</label>
+                    <div class="cargos-input-group">
+                        <select id="cargos" name="cargos">
+                            <option value="Geólogo">Geólogo</option>
+                            <option value="Chofer">Chofer</option>
+                        </select>
+                        <input type="number" id="salario" name="salario" placeholder="Salario" required>
+                        <input type="number" id="viatico" name="viatico" placeholder="Viático" required>
+                        <button type="button" onclick="addCargo()">Cargar</button>
+                    </div>
+                </div>
+                <div class="selected-cargos" id="selected-cargos">
+                    <!-- Dynamically added cargos will appear here -->
+                </div>
+                <div class="form-group">
+                    <label for="tipo-recursos">Tipo Recursos: *</label>
+                    <div class="recursos-input-group">
+                        <select id="tipo-recursos" name="tipo-recursos">
+                            <option value="Camiones">Camiones</option>
+                            <option value="Excavadora minera">Excavadora minera</option>
+                        </select>
+                        <input type="number" id="coste" name="coste" placeholder="Coste" required>
+                        <input type="number" id="coste-mant" name="coste-mant" placeholder="Coste Mant." required>
+                        <button type="button" onclick="addRecurso()">Cargar</button>
+                    </div>
+                </div>
+                <div class="selected-recursos" id="selected-recursos">
+                    <!-- Dynamically added recursos will appear here -->
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Agregar</button>
+                </div>
+            </form>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+
+    <script>
+        function addCargo() {
+            const cargosSelect = document.getElementById('cargos');
+            const salarioInput = document.getElementById('salario');
+            const viaticoInput = document.getElementById('viatico');
+            
+            const cargo = cargosSelect.value;
+            const salario = salarioInput.value;
+            const viatico = viaticoInput.value;
+
+            if (cargo && salario && viatico) {
+                const cargoRow = document.createElement('div');
+                cargoRow.classList.add('cargo-row');
+                cargoRow.innerHTML = `
+                    <span>${cargo}</span>
+                    <span>Salario: ${salario}</span>
+                    <span>Viático: ${viatico}</span>
+                    <button type="button" onclick="removeCargo(this)">x</button>
+                    <input type="hidden" name="cargos[]" value="${cargo}">
+                    <input type="hidden" name="salarios[]" value="${salario}">
+                    <input type="hidden" name="viaticos[]" value="${viatico}">
+                `;
+
+                document.getElementById('selected-cargos').appendChild(cargoRow);
+
+                // Clear inputs
+                cargosSelect.value = '';
+                salarioInput.value = '';
+                viaticoInput.value = '';
+            }
+        }
+
+        function addRecurso() {
+            const recursosSelect = document.getElementById('tipo-recursos');
+            const costeInput = document.getElementById('coste');
+            const costeMantInput = document.getElementById('coste-mant');
+            
+            const recurso = recursosSelect.value;
+            const coste = costeInput.value;
+            const costeMant = costeMantInput.value;
+
+            if (recurso && coste && costeMant) {
+                const recursoRow = document.createElement('div');
+                recursoRow.classList.add('recurso-row');
+                recursoRow.innerHTML = `
+                    <span>${recurso}</span>
+                    <span>Coste: ${coste}</span>
+                    <span>Coste Mant.: ${costeMant}</span>
+                    <button type="button" onclick="removeRecurso(this)">x</button>
+                    <input type="hidden" name="recursos[]" value="${recurso}">
+                    <input type="hidden" name="costes[]" value="${coste}">
+                    <input type="hidden" name="costesMant[]" value="${costeMant}">
+                `;
+
+                document.getElementById('selected-recursos').appendChild(recursoRow);
+
+                // Clear inputs
+                recursosSelect.value = '';
+                costeInput.value = '';
+                costeMantInput.value = '';
+            }
+        }
+
+        function removeCargo(button) {
+            const cargoRow = button.parentElement;
+            cargoRow.remove();
+        }
+
+        function removeRecurso(button) {
+            const recursoRow = button.parentElement;
+            recursoRow.remove();
+        }
+    </script>
+</body>
+</html>

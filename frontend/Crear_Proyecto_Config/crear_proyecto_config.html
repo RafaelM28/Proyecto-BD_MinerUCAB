@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Proyecto Config - MinerUCAB</title>
+    <link rel="stylesheet" href="crear_proyecto_config_styles.css">
+    <style>
+        .etapa-row, .actividad-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: #f0f0f0;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .etapa-row span, .actividad-row span {
+            margin-right: 10px;
+        }
+
+        .etapa-row button, .actividad-row button {
+            background-color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .actividad-row {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <header>
+                <h2>Proyecto</h2>
+            </header>
+            <form class="proyecto-form" method="POST" action="/create-proyecto"> <!-- Adjust action to your backend endpoint -->
+                <div class="form-group">
+                    <label for="nombre">Nombre: *</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="mineral">Mineral: *</label>
+                    <select id="mineral" name="mineral" required>
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="etapas">Etapas: *</label>
+                    <div class="etapas-input-group">
+                        <select id="etapas" name="etapas">
+                            <option value="Inventario de Información">Inventario de Información</option>
+                            <option value="Geología de superficie">Geología de superficie</option>
+                        </select>
+                        <button type="button" onclick="addEtapa()">Agregar Etapa</button>
+                    </div>
+                </div>
+                <div class="selected-etapas" id="selected-etapas">
+                    <!-- Dynamically added etapas and actividades will appear here -->
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Agregar</button>
+                </div>
+            </form>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+
+    <script>
+        function addEtapa() {
+            const etapasSelect = document.getElementById('etapas');
+            const etapa = etapasSelect.value;
+
+            if (etapa) {
+                const etapaRow = document.createElement('div');
+                etapaRow.classList.add('etapa-row');
+                etapaRow.innerHTML = `
+                    <span>${etapa}</span>
+                    <button type="button" onclick="removeEtapa(this)">x</button>
+                    <div class="actividades-input-group">
+                        <select class="actividades" name="actividades">
+                            <option value="Perforación exploratoria 1">Perforación exploratoria 1</option>
+                            <option value="Análisis de Laboratorio">Análisis de Laboratorio</option>
+                        </select>
+                        <button type="button" onclick="addActividad(this)">Agregar Actividad</button>
+                    </div>
+                    <div class="selected-actividades">
+                        <!-- Dynamically added actividades will appear here -->
+                    </div>
+                    <input type="hidden" name="etapas[]" value="${etapa}">
+                `;
+
+                document.getElementById('selected-etapas').appendChild(etapaRow);
+
+                // Clear select
+                etapasSelect.value = '';
+            }
+        }
+
+        function addActividad(button) {
+            const actividadesSelect = button.previousElementSibling;
+            const actividad = actividadesSelect.value;
+
+            if (actividad) {
+                const actividadRow = document.createElement('div');
+                actividadRow.classList.add('actividad-row');
+                actividadRow.innerHTML = `
+                    <span>${actividad}</span>
+                    <button type="button" onclick="removeActividad(this)">x</button>
+                    <input type="hidden" name="actividades[]" value="${actividad}">
+                `;
+
+                button.parentElement.nextElementSibling.appendChild(actividadRow);
+
+                // Clear select
+                actividadesSelect.value = '';
+            }
+        }
+
+        function removeEtapa(button) {
+            const etapaRow = button.parentElement;
+            etapaRow.remove();
+        }
+
+        function removeActividad(button) {
+            const actividadRow = button.parentElement;
+            actividadRow.remove();
+        }
+    </script>
+</body>
+</html>

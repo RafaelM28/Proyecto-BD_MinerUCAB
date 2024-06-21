@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Detalle Recurso - MinerUCAB</title>
+    <link rel="stylesheet" href="ver_detalle_recurso_styles.css">
+    <style>
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .logo img {
+            width: 100px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .logo h1 {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .sidebar nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar nav ul li {
+            margin: 10px 0;
+        }
+
+        .sidebar nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #ddd;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .form-section h3 {
+            margin: 0 0 10px 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .form-section p {
+            margin: 5px 0;
+        }
+
+        .form-section label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .form-section input,
+        .form-section textarea {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        .form-section textarea {
+            resize: vertical;
+        }
+
+        .form-section input[readonly] {
+            background-color: #f4f4f4;
+        }
+
+        .back-button {
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .profile-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 10px;
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        .profile-dropdown.active {
+            display: block;
+        }
+
+        .profile-dropdown p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .profile-dropdown p a {
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button" onclick="toggleDropdown()">Perfil</button>
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <p>Administrador</p>
+                    <p>rafaelmarcano2804@gmail.com</p>
+                    <p><a href="#">Cerrar Sesión</a></p>
+                </div>
+            </div>
+        </header>
+        <main class="main-content">
+            <h2>Recurso</h2>
+            <div class="form-section">
+                <label for="nombre">Nombre: *</label>
+                <input type="text" id="nombre" value="Camión de minería" readonly>
+
+                <label for="numeroSerie">Número de serie: *</label>
+                <input type="text" id="numeroSerie" value="92837649" readonly>
+
+                <label for="cantidad">Cantidad: *</label>
+                <input type="text" id="cantidad" value="2" readonly>
+
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" readonly></textarea>
+
+                <label for="tipoRecurso">Tipo Recurso: *</label>
+                <input type="text" id="tipoRecurso" value="Camiones" readonly>
+
+                <label for="marca">Marca: *</label>
+                <input type="text" id="marca" value="Caterpillar" readonly>
+
+                <label for="modelo">Modelo: *</label>
+                <input type="text" id="modelo" value="MT6300" readonly>
+            </div>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profile-dropdown');
+            const button = document.querySelector('.profile-button');
+
+            if (!button.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Detalle Mineral - MinerUCAB</title>
+    <link rel="stylesheet" href="ver_mineral_styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <header>
+                <h2>Mineral</h2>
+            </header>
+            <form class="mineral-form" method="POST" action="/update-mineral"> <!-- Adjust action to your backend endpoint -->
+                <div class="form-group">
+                    <label for="nombre">Nombre: *</label>
+                    <input type="text" id="nombre" name="nombre" value="Cobre" required>
+                </div>
+                <div class="form-group">
+                    <label for="dureza">Dureza: *</label>
+                    <input type="text" id="dureza" name="dureza" value="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="porcentaje-composicion">Porcentaje composición:</label>
+                    <input type="text" id="porcentaje-composicion" name="porcentaje-composicion">
+                </div>
+                <div class="form-group">
+                    <label for="transparencia">Transparencia:</label>
+                    <select id="transparencia" name="transparencia">
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="rayado">Rayado:</label>
+                    <input type="text" id="rayado" name="rayado">
+                </div>
+                <div class="form-group">
+                    <label for="exfoliacion">Exfoliación:</label>
+                    <select id="exfoliacion" name="exfoliacion">
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fractura">Fractura:</label>
+                    <input type="text" id="fractura" name="fractura">
+                </div>
+                <div class="form-group">
+                    <label for="densidad">Densidad:</label>
+                    <input type="text" id="densidad" name="densidad">
+                </div>
+                <div class="form-group">
+                    <label for="habito-cristalino">Hábito Cristalino:</label>
+                    <select id="habito-cristalino" name="habito-cristalino">
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tipo">Tipo: *</label>
+                    <select id="tipo" name="tipo" required>
+                        <option value="Metalico">Metalico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="brillo">Brillo:</label>
+                    <input type="text" id="brillo" name="brillo">
+                </div>
+                <div class="form-group">
+                    <label for="conductividad">Conductividad:</label>
+                    <input type="text" id="conductividad" name="conductividad">
+                </div>
+                <div class="form-group">
+                    <label for="tenacidad">Tenacidad:</label>
+                    <input type="text" id="tenacidad" name="tenacidad">
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Modificar</button>
+                    <button type="submit" formaction="/delete-mineral">Eliminar</button> <!-- Adjust action to your backend endpoint -->
+                </div>
+            </form>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+</body>
+</html>

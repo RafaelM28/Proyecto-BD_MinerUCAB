@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Usuario - MinerUCAB</title>
+    <link rel="stylesheet" href="crear_usuario_styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+        </aside>
+        <main class="main-content">
+            <button class="back-button">&larr;</button>
+            <h2>Regístrate</h2>
+            <div class="form-container">
+                <h3>¡Bienvenido!</h3>
+                <p>Ingrese sus datos</p>
+                <form>
+                    <div class="form-group">
+                        <label for="razonSocial">Razón Social: *</label>
+                        <input type="text" id="razonSocial" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rif">RIF: *</label>
+                        <input type="text" id="rif" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="denominacionComercial">Denominación Comercial: *</label>
+                        <input type="text" id="denominacionComercial" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="correoElectronico">Correo Electrónico:</label>
+                        <input type="email" id="correoElectronico">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono:</label>
+                        <div class="telefono-group">
+                            <input type="text" id="prefijo" placeholder="Prefijo" style="width: 50px;">
+                            <input type="text" id="numero" placeholder="Número">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="direccionPrincipal">Dirección Principal: *</label>
+                        <div class="direccion-group">
+                            <select id="estado1" required>
+                                <option value="">Estado</option>
+                            </select>
+                            <select id="municipio1" required>
+                                <option value="">Municipio</option>
+                            </select>
+                            <select id="parroquia1" required>
+                                <option value="">Parroquia</option>
+                            </select>
+                            <input type="text" id="detalle1" placeholder="Detalle">
+                            <button type="button">Cargar</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="direccionFiscal">Dirección Fiscal: *</label>
+                        <div class="direccion-group">
+                            <select id="estado2" required>
+                                <option value="">Estado</option>
+                            </select>
+                            <select id="municipio2" required>
+                                <option value="">Municipio</option>
+                            </select>
+                            <select id="parroquia2" required>
+                                <option value="">Parroquia</option>
+                            </select>
+                            <input type="text" id="detalle2" placeholder="Detalle">
+                            <button type="button">Cargar</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombreUsuario">Nombre de Usuario: *</label>
+                        <input type="text" id="nombreUsuario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="clave">Clave: *</label>
+                        <input type="password" id="clave" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmarClave">Confirmar Clave: *</label>
+                        <input type="password" id="confirmarClave" required>
+                    </div>
+                    <button type="submit" class="btn">Registrar</button>
+                </form>
+                <p>¿Tienes una cuenta? <a href="#">Inicia Sesión</a></p>
+            </div>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+</body>
+</html>
