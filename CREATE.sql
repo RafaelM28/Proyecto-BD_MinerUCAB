@@ -66,11 +66,11 @@ CREATE TABLE Aliado (
     -- RIF del aliado
     persona_jur_RIF VARCHAR(20) NOT NULL UNIQUE,
     -- Razón social del aliado
-    persona_jur_razon_social VARCHAR(30) NOT NULL UNIQUE,
+    persona_jur_razon_social VARCHAR(45) NOT NULL UNIQUE,
     -- Denominación comercial del aliado
     persona_jur_denominacion_comercial VARCHAR(30) NOT NULL UNIQUE,
     -- Capital total del aliado
-    persona_jur_capital_total NUMERIC(10,2) NOT NULL,
+    persona_jur_capital_total NUMERIC(15,2) NOT NULL,
     -- Dirección fiscal del aliado
     persona_jur_direccion_fiscal VARCHAR(100) NOT NULL,
     -- Dirección principal del aliado
@@ -106,11 +106,11 @@ CREATE TABLE Cliente (
     -- RIF del cliente
     persona_jur_RIF VARCHAR(20) NOT NULL UNIQUE,
     -- Razón social del cliente
-    persona_jur_razon_social VARCHAR(30) NOT NULL UNIQUE,
+    persona_jur_razon_social VARCHAR(45) NOT NULL UNIQUE,
     -- Denominación comercial del cliente
     persona_jur_denominacion_comercial VARCHAR(30) NOT NULL UNIQUE,
     -- Capital total del cliente
-    persona_jur_capital_total NUMERIC(10,2) NOT NULL,
+    persona_jur_capital_total NUMERIC(15,2) NOT NULL,
     -- Dirección fiscal del cliente
     persona_jur_direccion_fiscal VARCHAR(100) NOT NULL,
     -- Dirección principal del cliente
