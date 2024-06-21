@@ -227,12 +227,12 @@ CREATE TABLE Correo (
     correo_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre de correo
     correo_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Clave foránea del empleado
+    fk_empleado SMALLINT,
     -- Clave foránea del aliado
     fk_aliado SMALLINT,
     -- Clave foránea del cliente
     fk_cliente SMALLINT,
-    -- Clave foránea del empleado
-    fk_empleado SMALLINT,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_correo PRIMARY KEY (correo_codigo),
@@ -256,12 +256,12 @@ CREATE TABLE Telefono
     telefono_numero  VARCHAR(7)  NOT NULL UNIQUE,
     -- Tipo de teléfono
     telefono_tipo    VARCHAR(20) NOT NULL,
-    -- Clave foránea del aliado
-    fk_aliado        SMALLINT,
-    -- Clave foránea del cliente
-    fk_cliente       SMALLINT,
     -- Clave foránea del empleado
-    fk_empleado      SMALLINT,
+    fk_empleado SMALLINT,
+    -- Clave foránea del aliado
+    fk_aliado SMALLINT,
+    -- Clave foránea del cliente
+    fk_cliente SMALLINT,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_telefono PRIMARY KEY (telefono_codigo),
@@ -366,14 +366,14 @@ CREATE TABLE Cargo (
 CREATE TABLE Contrato_Empleado (
     -- Código del contrato
     contrato_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del cargo
+    fk_cargo SMALLINT NOT NULL,
+    -- Clave foránea del empleado
+    fk_empleado SMALLINT NOT NULL,
     -- Fecha de inicio del contrato
     emp_cargo_fecha_ingreso DATE NOT NULL,
     -- Fecha de fin del contrato
     emp_cargo_fecha_salida DATE,
-    -- Clave foránea del empleado
-    fk_empleado SMALLINT NOT NULL,
-    -- Clave foránea del cargo
-    fk_cargo SMALLINT NOT NULL,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_contrato PRIMARY KEY (contrato_codigo, fk_empleado, fk_cargo),
@@ -404,14 +404,14 @@ CREATE TABLE Estatus_Disponibilidad (
 CREATE TABLE Historico_Estatus_Empleado (
     -- Código del historico
     hist_est_empleado_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del estatus
+    fk_estatus_disponibilidad SMALLINT NOT NULL,
+    -- Clave foránea del empleado
+    fk_empleado SMALLINT NOT NULL,
     -- Fecha de inicio de estatus
     hist_est_empl_fecha_inicio TIMESTAMP NOT NULL,
     -- Fecha de fin de estatus
     hist_est_emplo_fecha_fin TIMESTAMP,
-    -- Clave foránea del empleado
-    fk_empleado SMALLINT NOT NULL,
-    -- Clave foránea del estatus
-    fk_estatus_disponibilidad SMALLINT NOT NULL,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_historico_estatus PRIMARY KEY (hist_est_empleado_codigo, fk_empleado, fk_estatus_disponibilidad),
@@ -522,10 +522,11 @@ CREATE TABLE Yacimiento (
 );
 
 CREATE TABLE Inventario_Yacim_Mineral (
-    -- Clave foránea del yacimiento
-    fk_yacimiento SMALLINT NOT NULL,
     -- Clave foránea del mineral
     fk_mineral SMALLINT NOT NULL,
+    -- Clave foránea del yacimiento
+    fk_yacimiento SMALLINT NOT NULL,
+    -- Clave foránea del aliado
     fk_aliado SMALLINT,
 
     -- Restricción de clave primaria compuesta
@@ -586,10 +587,8 @@ CREATE TABLE Pozo (
     CONSTRAINT check_pozo_cantidad_mts CHECK (pozo_cantidad_mts > 0),
     -- Restricción para verificar que la capacidad del pozo sea mayor o igual a 0
     CONSTRAINT check_pozo_capacidad_mineral CHECK (pozo_capacidad_mineral >= 0),
-    -- Restricción de clave foránea que referencia a la tabla MINA para su primera PK
-    CONSTRAINT fk_mina_1_pozo FOREIGN KEY (fk_mina_1) REFERENCES Mina (mina_id),
-    -- Restricción de clave foránea que referencia a la tabla MINA para su segunda PK
-    CONSTRAINT fk_mina_2_pozo FOREIGN KEY (fk_mina_2) REFERENCES Mina (mina_id),
+    -- Restricción de clave foránea que referencia a la tabla MINA para su primera y segunda PK
+    CONSTRAINT fk_mina_pozo FOREIGN KEY (fk_mina_1, fk_mina_2) REFERENCES Mina (mina_id, fk_yacimiento),
     -- Restricción de clave foránea que referencia a la tabla MINERAL
     CONSTRAINT fk_mineral_pozo FOREIGN KEY (fk_mineral) REFERENCES Mineral (mineral_codigo)
 );
@@ -613,27 +612,23 @@ CREATE TABLE Estatus_Pozo (
 CREATE TABLE Historico_Estatus_Pozo (
     -- Código del historico
     hist_est_pozo_codigo SMALLSERIAL NOT NULL UNIQUE,
-    -- Fecha de inicio de estatus
-    hist_est_pozo_fecha_inicio TIMESTAMP NOT NULL,
-    -- Fecha de fin de estatus
-    hist_est_pozo_fecha_fin TIMESTAMP,
+    -- Clave foránea del estatus
+    fk_estatus_pozo SMALLINT NOT NULL,
     -- Clave foránea del pozo
     fk_pozo_1 SMALLINT NOT NULL,
     -- Clave foránea del pozo
     fk_pozo_2 SMALLINT NOT NULL,
     -- Clave foránea del pozo
     fk_pozo_3 SMALLINT NOT NULL,
-    -- Clave foránea del estatus
-    fk_estatus_pozo SMALLINT NOT NULL,
+    -- Fecha de inicio de estatus
+    hist_est_pozo_fecha_inicio TIMESTAMP NOT NULL,
+    -- Fecha de fin de estatus
+    hist_est_pozo_fecha_fin TIMESTAMP,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_historico_estatus_pozo PRIMARY KEY (hist_est_pozo_codigo, fk_pozo_1, fk_pozo_2, fk_pozo_3, fk_estatus_pozo),
-    -- Restricción de clave foránea que referencia a la tabla POZO para su primera PK
-    CONSTRAINT fk_pozo_1_historico_estatus_pozo FOREIGN KEY (fk_pozo_1) REFERENCES Pozo (pozo_id),
-    -- Restricción de clave foránea que referencia a la tabla POZO para su segunda PK
-    CONSTRAINT fk_pozo_2_historico_estatus_pozo FOREIGN KEY (fk_pozo_2) REFERENCES Pozo (pozo_id),
-    -- Restricción de clave foránea que referencia a la tabla POZO para su tercera PK
-    CONSTRAINT fk_pozo_3_historico_estatus_pozo FOREIGN KEY (fk_pozo_3) REFERENCES Pozo (pozo_id),
+    -- Restricción de clave foránea que referencia a la tabla POZO para su primera, segunda y tercera PK
+    CONSTRAINT fk_pozo_historico_estatus_pozo FOREIGN KEY (fk_pozo_1, fk_pozo_2, fk_pozo_3) REFERENCES Pozo (pozo_id, fk_mina_1, fk_mina_2),
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_POZO
     CONSTRAINT fk_estatus_historico_estatus_pozo FOREIGN KEY (fk_estatus_pozo) REFERENCES Estatus_Pozo (estatus_pozo_codigo)
 );
@@ -641,6 +636,8 @@ CREATE TABLE Historico_Estatus_Pozo (
 CREATE TABLE Inventario_Producto (
     -- Código del inventario
     inventario_producto_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del mineral
+    fk_mineral SMALLINT NOT NULL,
     -- Cantidad de producto
     inventario_producto_cantidad_total INTEGER NOT NULL,
     -- Cantidad de producto que ingresó en la operación
@@ -649,8 +646,6 @@ CREATE TABLE Inventario_Producto (
     inventario_producto_tipo_operacion VARCHAR(15) NOT NULL,
     -- Fecha de la operación
     inventario_producto_fecha_movimiento DATE NOT NULL,
-    -- Clave foránea del mineral
-    fk_mineral SMALLINT NOT NULL,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_inventario_producto PRIMARY KEY (inventario_producto_codigo, fk_mineral),
@@ -662,4 +657,1034 @@ CREATE TABLE Inventario_Producto (
     CONSTRAINT check_inventario_producto_tipo_operacion CHECK (inventario_producto_tipo_operacion IN ('Ingreso', 'Egreso')),
     -- Restricción de clave foránea que referencia a la tabla MINERAL
     CONSTRAINT fk_mineral_inventario_producto FOREIGN KEY (fk_mineral) REFERENCES Mineral (mineral_codigo)
+);
+
+CREATE TABLE Marca (
+    -- Código de la marca
+    marca_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre de la marca
+    marca_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Descripción de la marca
+    marca_descripcion VARCHAR(100),
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_marca PRIMARY KEY (marca_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras y espacios
+    CONSTRAINT check_marca_nombre CHECK (marca_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_marca_descripcion CHECK (marca_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$')
+);
+
+CREATE TABLE Modelo (
+    -- Código del modelo
+    modelo_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea de la marca
+    fk_marca SMALLINT NOT NULL,
+    -- Nombre del modelo
+    modelo_nombre VARCHAR(50) NOT NULL UNIQUE,
+    -- Descripción del modelo
+    modelo_descripcion VARCHAR(100),
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_modelo PRIMARY KEY (modelo_codigo, fk_marca),
+    -- Restricción para verificar que el nombre solo contenga letras, espacios y números
+    CONSTRAINT check_modelo_nombre CHECK (modelo_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9 ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_modelo_descripcion CHECK (modelo_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción de clave foránea que referencia a la tabla MARCA
+    CONSTRAINT fk_marca_modelo FOREIGN KEY (fk_marca) REFERENCES Marca (marca_codigo)
+);
+
+CREATE TABLE Tipo_Recurso (
+    -- Código del tipo de recurso
+    tipo_recurso_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre del tipo de recurso
+    tipo_recurso_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Descripción del tipo de recurso
+    tipo_recurso_descripcion VARCHAR(100),
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_tipo_recurso PRIMARY KEY (tipo_recurso_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras y espacios
+    CONSTRAINT check_tipo_recurso_nombre CHECK (tipo_recurso_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_tipo_recurso_descripcion CHECK (tipo_recurso_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$')
+);
+
+CREATE TABLE Recurso (
+    -- Código del recurso
+    recurso_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre del recurso
+    recurso_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Número de serie del recurso
+    recurso_numero_serie VARCHAR(15) NOT NULL UNIQUE,
+    -- Descripción del recurso
+    recurso_descripcion VARCHAR(100),
+    -- Clave foránea del modelo 1
+    fk_modelo_1 SMALLINT NOT NULL,
+    -- Clave foránea del modelo 2
+    fk_modelo_2 SMALLINT NOT NULL,
+    -- Clave foránea del tipo de recurso
+    fk_tipo_recurso SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_recurso PRIMARY KEY (recurso_codigo, fk_tipo_recurso),
+    -- Restricción para verificar que el nombre solo contenga letras y espacios
+    CONSTRAINT check_recurso_nombre CHECK (recurso_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que el número de serie solo contenga letras, números y espacios
+    CONSTRAINT check_recurso_numero_serie CHECK (recurso_numero_serie ~ '^[a-zA-Z0-9 ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_recurso_descripcion CHECK (recurso_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción de clave foránea que referencia a la tabla MODELO para su primera y segunda PK
+    CONSTRAINT fk_modelo_recurso FOREIGN KEY (fk_modelo_1, fk_modelo_2) REFERENCES Modelo (modelo_codigo, fk_marca),
+    -- Restricción de clave foránea que referencia a la tabla TIPO_RECURSO
+    CONSTRAINT fk_tipo_recurso_recurso FOREIGN KEY (fk_tipo_recurso) REFERENCES Tipo_Recurso (tipo_recurso_codigo)
+);
+
+CREATE TABLE Inventario_Recurso (
+    -- Código del inventario
+    inventario_recurso_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del recurso
+    fk_recurso SMALLINT NOT NULL UNIQUE,
+    -- Cantidad de recurso
+    inventario_recurso_cantidad_total INTEGER NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_inventario_recurso PRIMARY KEY (inventario_recurso_codigo, fk_recurso),
+    -- Restricción para verificar que la cantidad total sea mayor o igual a 0
+    CONSTRAINT check_inventario_recurso_cantidad CHECK (inventario_recurso_cantidad_total >= 0),
+    -- Restricción de clave foránea que referencia a la tabla RECURSO
+    CONSTRAINT fk_recurso_inventario_recurso FOREIGN KEY (fk_recurso) REFERENCES Recurso (recurso_codigo)
+);
+
+CREATE TABLE Inventario_Concesion_Recurso (
+    -- Clave foránea del recurso
+    fk_recurso SMALLINT NOT NULL,
+    -- Clave foránea del aliado
+    fk_aliado SMALLINT NOT NULL,
+    -- Recurso del aliado es nuevo o usado
+    inventario_concesion_recurso_usado BOOLEAN,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_inventario_concesion_recurso PRIMARY KEY (fk_recurso, fk_aliado),
+    -- Restricción de clave foránea que referencia a la tabla RECURSO
+    CONSTRAINT fk_recurso_inventario_concesion_recurso FOREIGN KEY (fk_recurso) REFERENCES Recurso (recurso_codigo),
+    -- Restricción de clave foránea que referencia a la tabla ALIADO
+    CONSTRAINT fk_aliado_inventario_concesion_recurso FOREIGN KEY (fk_aliado) REFERENCES Aliado (persona_jur_codigo)
+);
+
+CREATE TABLE Historico_Estatus_Recurso (
+    -- Código del historico
+    hist_est_recurso_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del inventario_recurso 1
+    fk_inventario_recurso_1 SMALLINT NOT NULL,
+    -- Clave foránea del inventario_recurso 2
+    fk_inventario_recurso_2 SMALLINT NOT NULL,
+    -- Clave foránea de estatus_disponibilidad
+    fk_estatus_disponibilidad SMALLINT NOT NULL,
+    -- Fecha de inicio de estatus
+    hist_est_recurso_fecha_inicio TIMESTAMP NOT NULL,
+    -- Fecha de fin de estatus
+    hist_est_recurso_fecha_fin TIMESTAMP,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_historico_estatus_recurso PRIMARY KEY (hist_est_recurso_codigo, fk_inventario_recurso_1, fk_inventario_recurso_2, fk_estatus_disponibilidad),
+    -- Restricción de clave foránea que referencia a la tabla INVENTARIO_RECURSO para su primera y segunda PK
+    CONSTRAINT fk_inventario_recurso_historico_estatus_recurso FOREIGN KEY (fk_inventario_recurso_1, fk_inventario_recurso_2) REFERENCES Inventario_Recurso (inventario_recurso_codigo, fk_recurso),
+    -- Restricción de clave foránea que referencia a la tabla ESTATUS_DISPONIBILIDAD
+    CONSTRAINT fk_estatus_historico_estatus_recurso FOREIGN KEY (fk_estatus_disponibilidad) REFERENCES Estatus_Disponibilidad (estatus_disponibilidad_codigo)
+);
+
+CREATE TABLE Historico_Estatus_Concesion (
+    -- Código del historico
+    hist_est_concesion_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del inventario_concesion_recurso 1
+    fk_inventario_concesion_recurso_1 SMALLINT NOT NULL,
+    -- Clave foránea del inventario_concesion_recurso 2
+    fk_inventario_concesion_recurso_2 SMALLINT NOT NULL,
+    -- Clave foránea de estatus_disponibilidad
+    fk_estatus_disponibilidad SMALLINT NOT NULL,
+    -- Fecha de inicio de estatus
+    hist_est_recurso_fecha_inicio TIMESTAMP NOT NULL,
+    -- Fecha de fin de estatus
+    hist_est_recurso_fecha_fin TIMESTAMP,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_historico_estatus_concesion PRIMARY KEY (hist_est_concesion_codigo, fk_inventario_concesion_recurso_1, fk_inventario_concesion_recurso_2, fk_estatus_disponibilidad),
+    -- Restricción de clave foránea que referencia a la tabla INVENTARIO_CONCESION_RECURSO para su primera y segunda PK
+    CONSTRAINT fk_inventario_concesion_recurso_historico_estatus_recurso FOREIGN KEY (fk_inventario_concesion_recurso_1, fk_inventario_concesion_recurso_2) REFERENCES Inventario_Concesion_Recurso (fk_recurso, fk_aliado),
+    -- Restricción de clave foránea que referencia a la tabla ESTATUS_DISPONIBILIDAD
+    CONSTRAINT fk_estatus_historico_estatus_recurso FOREIGN KEY (fk_estatus_disponibilidad) REFERENCES Estatus_Disponibilidad (estatus_disponibilidad_codigo)
+);
+
+CREATE TABLE Proyecto_Configuracion (
+    -- Código de la configuración
+    proyecto_config_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre de la configuración
+    proyecto_config_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Descripción de la configuración
+    proyecto_config_descripcion VARCHAR(100),
+    -- Clave foránea del mineral
+    fk_mineral SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_proyecto_configuracion PRIMARY KEY (proyecto_config_codigo),
+     -- Restricción para verificar que el nombre solo contenga letras, espacios y números
+    CONSTRAINT check_proyecto_configuracion_nombre CHECK (proyecto_config_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9 ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_proyecto_configuracion_descripcion CHECK (proyecto_config_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción de clave foránea que referencia a la tabla MINERAL
+    CONSTRAINT fk_mineral_proyecto_configuracion FOREIGN KEY (fk_mineral) REFERENCES Mineral (mineral_codigo)
+);
+
+CREATE TABLE Etapa_Configuracion (
+    -- Código de la etapa
+    etapa_config_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre de la etapa
+    etapa_config_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Número de la etapa
+    etapa_config_numero SMALLINT NOT NULL,
+    -- Descripción de la etapa
+    etapa_config_descripcion VARCHAR(100),
+    -- Clave foránea de la configuración
+    fk_proyecto_config SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_etapa_configuracion PRIMARY KEY (etapa_config_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras, espacios y números
+    CONSTRAINT check_etapa_configuracion_nombre CHECK (etapa_config_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9 ]*$'),
+    -- Restricción para verificar que el número de la etapa sea mayor a 0
+    CONSTRAINT check_etapa_configuracion_numero CHECK (etapa_config_numero > 0),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_etapa_configuracion_descripcion CHECK (etapa_config_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción de clave foránea que referencia a la tabla PROYECTO_CONFIGURACION
+    CONSTRAINT fk_proyecto_configuracion_etapa_configuracion FOREIGN KEY (fk_proyecto_config) REFERENCES Proyecto_Configuracion (proyecto_config_codigo)
+);
+
+CREATE TABLE Actividad_Configuracion (
+    -- Código de la actividad
+    actividad_config_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre de la actividad
+    actividad_config_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Descripción de la actividad
+    actividad_config_descripcion VARCHAR(100),
+    -- Duración de la actividad en días
+    actividad_config_duracion_dias SMALLINT NOT NULL,
+    -- Clave foránea de la etapa
+    fk_etapa_config SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_actividad_configuracion PRIMARY KEY (actividad_config_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras, espacios y números
+    CONSTRAINT check_actividad_configuracion_nombre CHECK (actividad_config_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9 ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_actividad_configuracion_descripcion CHECK (actividad_config_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que la duración de la actividad sea mayor a 0
+    CONSTRAINT check_actividad_configuracion_duracion_dias CHECK (actividad_config_duracion_dias > 0),
+    -- Restricción de clave foránea que referencia a la tabla ETAPA_CONFIGURACION
+    CONSTRAINT fk_etapa_configuracion_actividad_configuracion FOREIGN KEY (fk_etapa_config) REFERENCES Etapa_Configuracion (etapa_config_codigo)
+);
+
+CREATE TABLE Cargo_Actividad (
+    -- Código de la actividad
+    fk_actividad_config SMALLINT NOT NULL,
+    -- Código del cargo
+    fk_cargo SMALLINT NOT NULL,
+    -- Cantidad de empleados requeridos
+    config_cargo_cantidad SMALLINT NOT NULL,
+    -- Salario quincenal del cargo
+    config_cargo_salario_quincenal NUMERIC(10,2) NOT NULL,
+    -- Viáticos quincenales del cargo
+    config_cargo_viaticos_quincenal NUMERIC(10,2) NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_cargo_actividad PRIMARY KEY (fk_cargo, fk_actividad_config),
+    -- Restricción para verificar que la cantidad de empleados requeridos sea mayor a 0
+    CONSTRAINT check_cargo_actividad_cantidad_empleados CHECK (config_cargo_cantidad > 0),
+    -- Restricción para verificar que el salario quincenal sea mayor a 0
+    CONSTRAINT check_cargo_actividad_salario_quincenal CHECK (config_cargo_salario_quincenal > 0),
+    -- Restricción para verificar que los viáticos quincenales sean mayores a 0
+    CONSTRAINT check_cargo_actividad_viaticos_quincenal CHECK (config_cargo_viaticos_quincenal > 0),
+    -- Restricción de clave foránea que referencia a la tabla CARGO
+    CONSTRAINT fk_cargo_cargo_actividad FOREIGN KEY (fk_cargo) REFERENCES Cargo (cargo_codigo),
+    -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_CONFIGURACION
+    CONSTRAINT fk_actividad_cargo_actividad FOREIGN KEY (fk_actividad_config) REFERENCES Actividad_Configuracion (actividad_config_codigo)
+);
+
+CREATE TABLE Recurso_Actividad (
+    -- Código de la actividad
+    fk_actividad_config SMALLINT NOT NULL,
+    -- Código del tipo de recurso
+    fk_tipo_recurso SMALLINT NOT NULL,
+    -- Cantidad de recursos requeridos
+    config_recurso_cantidad SMALLINT NOT NULL,
+    -- Costo mensual del recurso
+    config_recurso_costo_mensual NUMERIC(10,2) NOT NULL,
+    -- Costo de mantenimiento del recurso
+    config_recurso_costo_mantenimiento NUMERIC(10,2) NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_recurso_actividad PRIMARY KEY (fk_tipo_recurso, fk_actividad_config),
+    -- Restricción para verificar que la cantidad de recursos requeridos sea mayor a 0
+    CONSTRAINT check_recurso_actividad_cantidad_recursos CHECK (config_recurso_cantidad > 0),
+    -- Restricción para verificar que el costo mensual sea mayor a 0
+    CONSTRAINT check_recurso_actividad_costo_mensual CHECK (config_recurso_costo_mensual > 0),
+    -- Restricción para verificar que el costo de mantenimiento sea mayor a 0
+    CONSTRAINT check_recurso_actividad_costo_mantenimiento CHECK (config_recurso_costo_mantenimiento > 0),
+    -- Restricción de clave foránea que referencia a la tabla RECURSO
+    CONSTRAINT fk_recurso_recurso_actividad FOREIGN KEY (fk_tipo_recurso) REFERENCES Recurso (recurso_codigo),
+    -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_CONFIGURACION
+    CONSTRAINT fk_actividad_recurso_actividad FOREIGN KEY (fk_actividad_config) REFERENCES Actividad_Configuracion (actividad_config_codigo)
+);
+
+CREATE TABLE Proyecto_Ejecucion (
+    -- Código del proyecto
+    proyecto_ejec_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre del proyecto
+    proyecto_ejec_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Descripción del proyecto
+    proyecto_ejec_descripcion VARCHAR(100),
+    -- Fecha de inicio estimada del proyecto
+    proyecto_ejec_fecha_inicio_estimada DATE,
+    -- Fecha de fin estimada del proyecto
+    proyecto_ejec_fecha_fin_estimada  DATE,
+    -- Fecha de inicio real del proyecto
+    proyecto_ejec_fecha_inicio_real DATE,
+    -- Fecha de fin real del proyecto
+    proyecto_ejec_fecha_fin_real DATE,
+    -- Clave foránea del pozo 1
+    fk_pozo_1 SMALLINT NOT NULL,
+    -- Clave foránea del pozo 2
+    fk_pozo_2 SMALLINT NOT NULL,
+    -- Clave foránea del pozo 3
+    fk_pozo_3 SMALLINT NOT NULL,
+    -- Clave foránea de inventario_producto_1
+    fk_inventario_producto_1 SMALLINT,
+    -- Clave foránea de inventario_producto_2
+    fk_inventario_producto_2 SMALLINT,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_proyecto_ejecucion PRIMARY KEY (proyecto_ejec_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras, espacios y números
+    CONSTRAINT check_proyecto_ejecucion_nombre CHECK (proyecto_ejec_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9 ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_proyecto_ejecucion_descripcion CHECK (proyecto_ejec_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que la fecha de inicio estimada sea mayor a la fecha actual
+    CONSTRAINT check_proyecto_ejecucion_fecha_inicio_estimada CHECK (proyecto_ejec_fecha_inicio_estimada > CURRENT_DATE),
+    -- Restricción para verificar que la fecha de fin estimada sea mayor a la fecha de inicio estimada
+    CONSTRAINT check_proyecto_ejecucion_fecha_fin_estimada CHECK (proyecto_ejec_fecha_fin_estimada > proyecto_ejec_fecha_inicio_estimada),
+    -- Restricción de clave foránea que referencia a la tabla POZO para su primera, segunda y tercera PK
+    CONSTRAINT fk_pozo_proyecto_ejecucion FOREIGN KEY (fk_pozo_1, fk_pozo_2, fk_pozo_3) REFERENCES Pozo (pozo_id, fk_mina_1, fk_mina_2),
+    -- Restricción de clave foránea que referencia a la tabla INVENTARIO_PRODUCTO para su primera y segunda PK
+    CONSTRAINT fk_inventario_producto_proyecto_ejecucion FOREIGN KEY (fk_inventario_producto_1, fk_inventario_producto_2) REFERENCES Inventario_Producto (inventario_producto_codigo, fk_mineral)
+);
+
+CREATE TABLE Etapa_Ejecucion (
+    -- Código de la etapa
+    etapa_ejec_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre de la etapa
+    etapa_ejec_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Número de la etapa
+    etapa_ejec_numero SMALLINT NOT NULL,
+    -- Descripción de la etapa
+    etapa_ejec_descripcion VARCHAR(100),
+    -- Fecha de inicio estimada de la etapa
+    etapa_ejec_fecha_inicio_estimada DATE,
+    -- Fecha de fin estimada de la etapa
+    etapa_ejec_fecha_fin_estimada DATE,
+    -- Fecha de inicio real de la etapa
+    etapa_ejec_fecha_inicio_real DATE,
+    -- Fecha de fin real de la etapa
+    etapa_ejec_fecha_fin_real DATE,
+    -- Clave foránea del proyecto
+    fk_proyecto_ejecucion SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_etapa_ejecucion PRIMARY KEY (etapa_ejec_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras, espacios y números
+    CONSTRAINT check_etapa_ejecucion_nombre CHECK (etapa_ejec_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9 ]*$'),
+    -- Restricción para verificar que el número de la etapa sea mayor a 0
+    CONSTRAINT check_etapa_ejecucion_numero CHECK (etapa_ejec_numero > 0),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_etapa_ejecucion_descripcion CHECK (etapa_ejec_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que la fecha de inicio estimada sea mayor a la fecha actual
+    CONSTRAINT check_etapa_ejecucion_fecha_inicio_estimada CHECK (etapa_ejec_fecha_inicio_estimada > CURRENT_DATE),
+    -- Restricción para verificar que la fecha de fin estimada sea mayor a la fecha de inicio estimada
+    CONSTRAINT check_etapa_ejecucion_fecha_fin_estimada CHECK (etapa_ejec_fecha_fin_estimada > etapa_ejec_fecha_inicio_estimada),
+    -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
+    CONSTRAINT fk_proyecto_ejecucion_etapa_ejecucion FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo)
+);
+
+CREATE TABLE Actividad_Ejecucion (
+    -- Código de la actividad
+    actividad_ejec_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre de la actividad
+    actividad_ejec_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Descripción de la actividad
+    actividad_ejec_descripcion VARCHAR(100),
+    -- Duración de la actividad en días
+    actividad_ejec_duracion_dias SMALLINT NOT NULL,
+    -- Fecha de inicio estimada de la actividad
+    actividad_ejec_fecha_inicio_estimada DATE,
+    -- Fecha de fin estimada de la actividad
+    actividad_ejec_fecha_fin_estimada DATE,
+    -- Fecha de inicio real de la actividad
+    actividad_ejec_fecha_inicio_real DATE,
+    -- Fecha de fin real de la actividad
+    actividad_ejec_fecha_fin_real DATE,
+    -- Clave foránea de la etapa
+    fk_etapa_ejecucion SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_actividad_ejecucion PRIMARY KEY (actividad_ejec_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras, espacios y números
+    CONSTRAINT check_actividad_ejecucion_nombre CHECK (actividad_ejec_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9 ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_actividad_ejecucion_descripcion CHECK (actividad_ejec_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que la duración de la actividad sea mayor a 0
+    CONSTRAINT check_actividad_ejecucion_duracion_dias CHECK (actividad_ejec_duracion_dias > 0),
+    -- Restricción para verificar que la fecha de inicio estimada sea mayor a la fecha actual
+    CONSTRAINT check_actividad_ejecucion_fecha_inicio_estimada CHECK (actividad_ejec_fecha_inicio_estimada > CURRENT_DATE),
+    -- Restricción para verificar que la fecha de fin estimada sea mayor a la fecha de inicio estimada
+    CONSTRAINT check_actividad_ejecucion_fecha_fin_estimada CHECK (actividad_ejec_fecha_fin_estimada > actividad_ejec_fecha_inicio_estimada),
+    -- Restricción de clave foranea que referencia a la tabla ETAPA_EJECUCION
+    CONSTRAINT fk_etapa_ejecucion_actividad_ejecucion FOREIGN KEY (fk_etapa_ejecucion) REFERENCES Etapa_Ejecucion (etapa_ejec_codigo)
+);
+
+CREATE TABLE Estatus_Ejecucion (
+    -- Código del estatus
+    estatus_ejecucion_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre del estatus
+    estatus_ejecucion_nombre VARCHAR(15) NOT NULL UNIQUE,
+    -- Descripción del estatus
+    estatus_ejecucion_descripcion VARCHAR(100),
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_estatus_ejecucion PRIMARY KEY (estatus_ejecucion_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras y espacios
+    CONSTRAINT check_estatus_ejecucion_nombre CHECK (estatus_ejecucion_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_estatus_ejecucion_descripcion CHECK (estatus_ejecucion_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$')
+);
+
+CREATE TABLE Historico_Estatus_Proyecto (
+    -- Código del historico
+    hist_est_proyecto_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del proyecto
+    fk_proyecto_ejecucion SMALLINT NOT NULL,
+    -- Clave foránea del estatus
+    fk_estatus_ejecucion SMALLINT NOT NULL,
+    -- Fecha de inicio de estatus
+    hist_est_proyecto_fecha_inicio TIMESTAMP NOT NULL,
+    -- Fecha de fin de estatus
+    hist_est_proyecto_fecha_fin TIMESTAMP,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_historico_estatus_proyecto PRIMARY KEY (hist_est_proyecto_codigo, fk_proyecto_ejecucion, fk_estatus_ejecucion),
+    -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
+    CONSTRAINT fk_proyecto_historico_estatus_proyecto FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo),
+    -- Restricción de clave foránea que referencia a la tabla ESTATUS_EJECUCION
+    CONSTRAINT fk_estatus_historico_estatus_proyecto FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo)
+);
+
+CREATE TABLE Historico_Estatus_Etapa (
+    -- Código del historico
+    hist_est_etapa_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea de la etapa
+    fk_etapa_ejecucion SMALLINT NOT NULL,
+    -- Clave foránea del estatus
+    fk_estatus_ejecucion SMALLINT NOT NULL,
+    -- Fecha de inicio de estatus
+    hist_est_etapa_fecha_inicio TIMESTAMP NOT NULL,
+    -- Fecha de fin de estatus
+    hist_est_etapa_fecha_fin TIMESTAMP,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_historico_estatus_etapa PRIMARY KEY (hist_est_etapa_codigo, fk_etapa_ejecucion, fk_estatus_ejecucion),
+    -- Restricción de clave foránea que referencia a la tabla ETAPA_EJECUCION
+    CONSTRAINT fk_etapa_historico_estatus_etapa FOREIGN KEY (fk_etapa_ejecucion) REFERENCES Etapa_Ejecucion (etapa_ejec_codigo),
+    -- Restricción de clave foránea que referencia a la tabla ESTATUS_EJECUCION
+    CONSTRAINT fk_estatus_historico_estatus_etapa FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo)
+);
+
+CREATE TABLE Historico_Estatus_Actividad (
+    -- Código del historico
+    hist_est_actividad_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea de la actividad
+    fk_actividad_ejecucion SMALLINT NOT NULL,
+    -- Clave foránea del estatus
+    fk_estatus_ejecucion SMALLINT NOT NULL,
+    -- Fecha de inicio de estatus
+    hist_est_actividad_fecha_inicio TIMESTAMP NOT NULL,
+    -- Fecha de fin de estatus
+    hist_est_actividad_fecha_fin TIMESTAMP,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_historico_estatus_actividad PRIMARY KEY (hist_est_actividad_codigo, fk_actividad_ejecucion, fk_estatus_ejecucion),
+    -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_EJECUCION
+    CONSTRAINT fk_actividad_historico_estatus_actividad FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo),
+    -- Restricción de clave foránea que referencia a la tabla ESTATUS_EJECUCION
+    CONSTRAINT fk_estatus_historico_estatus_actividad FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo)
+);
+
+CREATE TABLE Presupuesto (
+    -- Código del presupuesto
+    presupuesto_numero SMALLSERIAL NOT NULL UNIQUE,
+    -- Fecha de emisión del presupuesto
+    presupuesto_fecha_emision DATE NOT NULL,
+    -- Costo subtil del presupuesto
+    presupuesto_costo_subtil NUMERIC(10,2) NOT NULL,
+    -- Costo total del presupuesto
+    presupuesto_costo_total NUMERIC(10,2) NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_presupuesto PRIMARY KEY (presupuesto_numero),
+    -- Restricción para verificar que el costo subtil sea mayor a 0
+    CONSTRAINT check_presupuesto_costo_subtil CHECK (presupuesto_costo_subtil > 0),
+    -- Restricción para verificar que el costo total sea mayor a 0
+    CONSTRAINT check_presupuesto_costo_total CHECK (presupuesto_costo_total > 0)
+);
+
+CREATE TABLE Solicitud_Proyecto_Aliados (
+    -- Código de la solicitud
+    solicitud_aliados_numero SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del aliado
+    fk_aliado SMALLINT NOT NULL,
+    -- Fecha de emisión de la solicitud
+   solicitud_aliados_fecha_emision DATE NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_solicitud_proyecto PRIMARY KEY (solicitud_aliados_numero, fk_aliado),
+    -- Restricción de clave foránea que referencia a la tabla ALIADO
+    CONSTRAINT fk_aliado_solicitud_proyecto FOREIGN KEY (fk_aliado) REFERENCES Aliado (persona_jur_codigo)
+);
+
+CREATE TABLE Estatus_Pedido (
+    -- Código del estatus
+    estatus_pedido_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre del estatus
+    estatus_pedido_nombre VARCHAR(30) NOT NULL UNIQUE,
+    -- Descripción del estatus
+    estatus_pedido_descripcion VARCHAR(100),
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_estatus_pedido PRIMARY KEY (estatus_pedido_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras y espacios
+    CONSTRAINT check_estatus_pedido_nombre CHECK (estatus_pedido_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que la descripción solo contenga letras y espacios
+    CONSTRAINT check_estatus_pedido_descripcion CHECK (estatus_pedido_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$')
+);
+
+CREATE TABLE Historico_Estatus_Solicitud_Aliados (
+    -- Código del historico
+    hist_est_solic_aliados_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del estatus
+    fk_estatus_pedido SMALLINT NOT NULL,
+    -- Clave foránea de la solicitud 1
+    fk_solicitud_aliados_1 SMALLINT NOT NULL,
+    -- Clave foránea de la solicitud 2
+    fk_solicitud_aliados_2 SMALLINT NOT NULL,
+    -- Fecha de inicio de estatus
+    hist_est_solic_aliados_fecha_inicio TIMESTAMP NOT NULL,
+    -- Fecha de fin de estatus
+    hist_est_solic_aliados_fecha_fin TIMESTAMP,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_historico_estatus_solicitud_aliados PRIMARY KEY (hist_est_solic_aliados_codigo, fk_solicitud_aliados_1, fk_solicitud_aliados_2, fk_estatus_pedido),
+    CONSTRAINT fk_estatus_historico_estatus_solicitud_aliados FOREIGN KEY (fk_estatus_pedido) REFERENCES Estatus_Pedido (estatus_pedido_codigo),
+    CONSTRAINT fk_solicitud_historico_estatus_solicitud_aliados FOREIGN KEY (fk_solicitud_aliados_1, fk_solicitud_aliados_2) REFERENCES Solicitud_Proyecto_Aliados (solicitud_aliados_numero, fk_aliado)
+);
+
+CREATE TABLE Ejecucion_Empleado (
+    -- Clave foranea de la actividad
+    fk_actividad_ejecucion SMALLINT NOT NULL,
+    -- Cantidad de empleados
+    ejecucion_empleado_cantidad SMALLINT NOT NULL,
+    -- Salario quincenal del empleado
+    ejecucion_empleado_salario NUMERIC(10,2) NOT NULL,
+    -- Viáticos quincenales del empleado
+    ejecucion_empleado_viaticos NUMERIC(10,2) NOT NULL,
+    -- Clave foranea del presupuesto
+    fk_presupuesto SMALLINT NOT NULL,
+    -- Clave foranea del empleado
+    fk_empleado SMALLINT NOT NULL,
+    -- Clave foranea del aliado 1
+    fk_solicitud_aliado_1 SMALLINT NOT NULL,
+    -- Clave foranea del aliado 2
+    fk_solicitud_aliado_2 SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_ejecucion_empleado PRIMARY KEY (fk_actividad_ejecucion),
+    --  Restricción para verificar que la cantidad de empleados sea mayor a 0
+    CONSTRAINT check_ejecucion_empleado_cantidad CHECK (ejecucion_empleado_cantidad > 0),
+    -- Restricción para verificar que el salario quincenal sea mayor a 0
+    CONSTRAINT check_ejecucion_empleado_salario CHECK (ejecucion_empleado_salario > 0),
+    -- Restricción para verificar que los viáticos quincenales sean mayores a 0
+    CONSTRAINT check_ejecucion_empleado_viaticos CHECK (ejecucion_empleado_viaticos > 0),
+    -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_EJECUCION
+    CONSTRAINT fk_actividad_ejecucion_ejecucion_empleado FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo),
+    -- Restricción de clave foránea que referencia a la tabla PRESUPUESTO
+    CONSTRAINT fk_presupuesto_ejecucion_empleado FOREIGN KEY (fk_presupuesto) REFERENCES Presupuesto (presupuesto_numero),
+    -- Restricción de clave foránea que referencia a la tabla EMPLEADO
+    CONSTRAINT fk_empleado_ejecucion_empleado FOREIGN KEY (fk_empleado) REFERENCES Empleado (empleado_codigo),
+    -- Restricción de clave foránea que referencia a la tabla SOLICITUD_PROYECTO_ALIADOS
+    CONSTRAINT fk_solicitud_aliado_ejecucion_empleado FOREIGN KEY (fk_solicitud_aliado_1, fk_solicitud_aliado_2) REFERENCES Solicitud_Proyecto_Aliados (solicitud_aliados_numero, fk_aliado)
+);
+
+CREATE TABLE Ejecucion_Recurso (
+    -- Clave foranea de la actividad
+    fk_actividad_ejecucion SMALLINT NOT NULL,
+    -- Cantidad de recursos
+    ejecucion_recurso_cantidad SMALLINT NOT NULL,
+    -- Costo mensual del recurso
+    ejecucion_recurso_costo_mensual NUMERIC(10,2) NOT NULL,
+    -- Costo de mantenimiento del recurso
+    ejecucion_recurso_costo_mantenimiento NUMERIC(10,2) NOT NULL,
+    -- Clave foranea del presupuesto
+    fk_presupuesto SMALLINT NOT NULL,
+    -- Clave foranea del aliado 1
+    fk_solicitud_aliado_1 SMALLINT NOT NULL,
+    -- Clave foranea del aliado 2
+    fk_solicitud_aliado_2 SMALLINT NOT NULL,
+    -- Clave foranea del inventario recurso 1
+    fk_inventario_recurso_1 SMALLINT NOT NULL,
+    -- Clave foranea del inventario recurso 2
+    fk_inventario_recurso_2 SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_ejecucion_recurso PRIMARY KEY (fk_actividad_ejecucion),
+    --  Restricción para verificar que la cantidad de recursos sea mayor a 0
+    CONSTRAINT check_ejecucion_recurso_cantidad CHECK (ejecucion_recurso_cantidad > 0),
+    -- Restricción para verificar que el costo mensual sea mayor a 0
+    CONSTRAINT check_ejecucion_recurso_costo_mensual CHECK (ejecucion_recurso_costo_mensual > 0),
+    -- Restricción para verificar que el costo de mantenimiento sea mayor a 0
+    CONSTRAINT check_ejecucion_recurso_costo_mantenimiento CHECK (ejecucion_recurso_costo_mantenimiento > 0),
+    -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_EJECUCION
+    CONSTRAINT fk_actividad_ejecucion_ejecucion_recurso FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo),
+    -- Restricción de clave foránea que referencia a la tabla PRESUPUESTO
+    CONSTRAINT fk_presupuesto_ejecucion_recurso FOREIGN KEY (fk_presupuesto) REFERENCES Presupuesto (presupuesto_numero),
+    -- Restricción de clave foránea que referencia a la tabla SOLICITUD_PROYECTO_ALIADOS
+    CONSTRAINT fk_solicitud_aliado_ejecucion_recurso FOREIGN KEY (fk_solicitud_aliado_1, fk_solicitud_aliado_2) REFERENCES Solicitud_Proyecto_Aliados (solicitud_aliados_numero, fk_aliado),
+    -- Restricción de clave foránea que referencia a la tabla INVENTARIO_RECURSO
+    CONSTRAINT fk_inventario_recurso_ejecucion_recurso FOREIGN KEY (fk_inventario_recurso_1, fk_inventario_recurso_2) REFERENCES Inventario_Recurso (inventario_recurso_codigo, fk_recurso)
+);
+
+CREATE TABLE Detalle_Solicitud_Empleado (
+    -- Código del detalle
+    detalle_solicitud_empleado_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Código del empleado
+    fk_empleado SMALLINT NOT NULL,
+    -- Código de la solicitud
+    fk_solicitud_aliado_1 SMALLINT NOT NULL,
+    -- Código de la solicitud
+    fk_solicitud_aliado_2 SMALLINT NOT NULL,
+    -- Cantidad de empleados
+    detalle_solicitud_empleado_cantidad SMALLINT NOT NULL,
+    -- Salario quincenal del empleado
+    detalle_solicitud_empleado_salario NUMERIC(10,2) NOT NULL,
+    -- Viáticos quincenales del empleado
+    detalle_solicitud_empleado_viaticos NUMERIC(10,2) NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_detalle_solicitud_empleado PRIMARY KEY (detalle_solicitud_empleado_codigo, fk_empleado, fk_solicitud_aliado_1, fk_solicitud_aliado_2),
+    --  Restricción para verificar que la cantidad de empleados sea mayor a 0
+    CONSTRAINT check_detalle_solicitud_empleado_cantidad CHECK (detalle_solicitud_empleado_cantidad > 0),
+    -- Restricción para verificar que el salario quincenal sea mayor a 0
+    CONSTRAINT check_detalle_solicitud_empleado_salario CHECK (detalle_solicitud_empleado_salario > 0),
+    -- Restricción para verificar que los viáticos quincenales sean mayores a 0
+    CONSTRAINT check_detalle_solicitud_empleado_viaticos CHECK (detalle_solicitud_empleado_viaticos > 0),
+    -- Restricción de clave foránea que referencia a la tabla SOLICITUD_PROYECTO_ALIADOS
+    CONSTRAINT fk_solicitud_aliado_detalle_solicitud_empleado FOREIGN KEY (fk_solicitud_aliado_1, fk_solicitud_aliado_2) REFERENCES Solicitud_Proyecto_Aliados (solicitud_aliados_numero, fk_aliado),
+    -- Restricción de clave foránea que referencia a la tabla EMPLEADO
+    CONSTRAINT fk_empleado_detalle_solicitud_empleado FOREIGN KEY (fk_empleado) REFERENCES Empleado (empleado_codigo)
+);
+
+CREATE TABLE Detalle_Solicitud_Recurso (
+    -- Código del detalle
+    detalle_solicitud_recurso_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Código del inventario recurso 1
+    fk_inventario_recurso_1 SMALLINT NOT NULL,
+    -- Código del inventario recurso 2
+    fk_inventario_recurso_2 SMALLINT NOT NULL,
+    -- Código de la solicitud
+    fk_solicitud_aliado_1 SMALLINT NOT NULL,
+    -- Código de la solicitud
+    fk_solicitud_aliado_2 SMALLINT NOT NULL,
+    -- Cantidad de recursos
+    detalle_solicitud_recurso_cantidad SMALLINT NOT NULL,
+    -- Costo mensual del recurso
+    detalle_solicitud_recurso_costo_mensual NUMERIC(10,2) NOT NULL,
+    -- Costo de mantenimiento del recurso
+    detalle_solicitud_recurso_costo_mantenimiento NUMERIC(10,2) NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_detalle_solicitud_recurso PRIMARY KEY (detalle_solicitud_recurso_codigo, fk_inventario_recurso_1, fk_inventario_recurso_2, fk_solicitud_aliado_1, fk_solicitud_aliado_2),
+    --  Restricción para verificar que la cantidad de recursos sea mayor a 0
+    CONSTRAINT check_detalle_solicitud_recurso_cantidad CHECK (detalle_solicitud_recurso_cantidad > 0),
+    -- Restricción para verificar que el costo mensual sea mayor a 0
+    CONSTRAINT check_detalle_solicitud_recurso_costo_mensual CHECK (detalle_solicitud_recurso_costo_mensual > 0),
+    -- Restricción para verificar que el costo de mantenimiento sea mayor a 0
+    CONSTRAINT check_detalle_solicitud_recurso_costo_mantenimiento CHECK (detalle_solicitud_recurso_costo_mantenimiento > 0),
+    -- Restricción de clave foránea que referencia a la tabla SOLICITUD_PROYECTO_ALIADOS
+    CONSTRAINT fk_solicitud_aliado_detalle_solicitud_recurso FOREIGN KEY (fk_solicitud_aliado_1, fk_solicitud_aliado_2) REFERENCES Solicitud_Proyecto_Aliados (solicitud_aliados_numero, fk_aliado),
+    -- Restricción de clave foránea que referencia a la tabla INVENTARIO_RECURSO
+    CONSTRAINT fk_inventario_recurso_detalle_solicitud_recurso FOREIGN KEY (fk_inventario_recurso_1, fk_inventario_recurso_2) REFERENCES Inventario_Recurso (inventario_recurso_codigo, fk_recurso)
+);
+
+CREATE TABLE Pedido_Compra (
+    -- Código del pedido
+    pedido_compra_numero SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del aliado
+    fk_aliado SMALLINT NOT NULL,
+    -- Fecha de emisión del pedido
+    pedido_compra_fecha_emision DATE NOT NULL,
+    -- Monto subtil del pedido
+    pedido_compra_monto_subtil NUMERIC(10,2) NOT NULL,
+    -- Monto total del pedido
+    pedido_compra_monto_total NUMERIC(10,2) NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_pedido_compra PRIMARY KEY (pedido_compra_numero, fk_aliado),
+    -- Restricción para verificar que el monto subtil sea mayor a 0
+    CONSTRAINT check_pedido_compra_monto_subtil CHECK (pedido_compra_monto_subtil > 0),
+    -- Restricción para verificar que el costo total sea mayor a 0
+    CONSTRAINT check_pedido_compra_monto_total CHECK (pedido_compra_monto_total > 0),
+    -- Restricción de clave foránea que referencia a la tabla ALIADO
+    CONSTRAINT fk_aliado_pedido_compra FOREIGN KEY (fk_aliado) REFERENCES Aliado (persona_jur_codigo)
+);
+
+CREATE TABLE Detalle_Pedido_Compra (
+    -- Código del detalle
+    detalle_pedido_compra_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Código del pedido 1
+    fk_pedido_compra_1 SMALLINT NOT NULL,
+    -- Código del pedido 2
+    fk_pedido_compra_2 SMALLINT NOT NULL,
+    -- Código del inventario producto 1
+    fk_inventario_producto_1 SMALLINT NOT NULL,
+    -- Código del inventario producto 2
+    fk_inventario_producto_2 SMALLINT NOT NULL,
+    -- Cantidad de productos
+    detalle_compra_cantidad_mineral SMALLINT NOT NULL,
+    -- Precio unitario del producto
+    detalle_compra_precio_unitario NUMERIC(10,2) NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_detalle_pedido_compra PRIMARY KEY (detalle_pedido_compra_codigo, fk_pedido_compra_1, fk_pedido_compra_2, fk_inventario_producto_1, fk_inventario_producto_2),
+    --  Restricción para verificar que la cantidad de productos sea mayor a 0
+    CONSTRAINT check_detalle_pedido_compra_cantidad CHECK (detalle_compra_cantidad_mineral > 0),
+    -- Restricción para verificar que el precio unitario sea mayor a 0
+    CONSTRAINT check_detalle_pedido_compra_precio_unitario CHECK (detalle_compra_precio_unitario > 0),
+    -- Restricción de clave foránea que referencia a la tabla PEDIDO_COMPRA
+    CONSTRAINT fk_pedido_compra_detalle_pedido_compra FOREIGN KEY (fk_pedido_compra_1, fk_pedido_compra_2) REFERENCES Pedido_Compra (pedido_compra_numero, fk_aliado),
+    -- Restricción de clave foránea que referencia a la tabla INVENTARIO_PRODUCTO
+    CONSTRAINT fk_inventario_producto_detalle_pedido_compra FOREIGN KEY (fk_inventario_producto_1, fk_inventario_producto_2) REFERENCES Inventario_Producto (inventario_producto_codigo, fk_mineral)
+);
+
+CREATE TABLE Historico_Estatus_Pedido_Compra (
+    -- Código del historico
+    hist_est_pedido_compra_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del estatus
+    fk_estatus_pedido SMALLINT NOT NULL,
+    -- Clave foránea del pedido 1
+    fk_pedido_compra_1 SMALLINT NOT NULL,
+    -- Clave foránea del pedido 2
+    fk_pedido_compra_2 SMALLINT NOT NULL,
+    -- Fecha de inicio de estatus
+    hist_est_pedido_compra_fecha_inicio TIMESTAMP NOT NULL,
+    -- Fecha de fin de estatus
+    hist_est_pedido_compra_fecha_fin TIMESTAMP,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_historico_estatus_pedido_compra PRIMARY KEY (hist_est_pedido_compra_codigo, fk_pedido_compra_1, fk_pedido_compra_2, fk_estatus_pedido),
+    -- Restricción de clave foránea que referencia a la tabla ESTATUS_PEDIDO
+    CONSTRAINT fk_estatus_historico_estatus_pedido_compra FOREIGN KEY (fk_estatus_pedido) REFERENCES Estatus_Pedido (estatus_pedido_codigo),
+    -- Restricción de clave foránea que referencia a la tabla PEDIDO_COMPRA
+    CONSTRAINT fk_pedido_historico_estatus_pedido_compra FOREIGN KEY (fk_pedido_compra_1, fk_pedido_compra_2) REFERENCES Pedido_Compra (pedido_compra_numero, fk_aliado)
+);
+
+CREATE TABLE Pedido_Venta (
+    -- Código del pedido
+    pedido_venta_numero SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del cliente
+    fk_cliente SMALLINT NOT NULL,
+    -- Fecha de emisión del pedido
+    pedido_venta_fecha_emision DATE NOT NULL,
+    -- Monto subtil del pedido
+    pedido_venta_monto_subtil NUMERIC(10,2) NOT NULL,
+    -- Monto total del pedido
+    pedido_venta_monto_total NUMERIC(10,2) NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_pedido_venta PRIMARY KEY (pedido_venta_numero, fk_cliente),
+    -- Restricción para verificar que el monto subtil sea mayor a 0
+    CONSTRAINT check_pedido_venta_monto_subtil CHECK (pedido_venta_monto_subtil > 0),
+    -- Restricción para verificar que el costo total sea mayor a 0
+    CONSTRAINT check_pedido_venta_monto_total CHECK (pedido_venta_monto_total > 0),
+    -- Restricción de clave foránea que referencia a la tabla CLIENTE
+    CONSTRAINT fk_cliente_pedido_venta FOREIGN KEY (fk_cliente) REFERENCES Cliente (persona_jur_codigo)
+);
+
+CREATE TABLE Detalle_Pedido_Venta (
+    -- Código del detalle
+    detalle_venta_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Código del pedido 1
+    fk_pedido_venta_1 SMALLINT NOT NULL,
+    -- Código del pedido 2
+    fk_pedido_venta_2 SMALLINT NOT NULL,
+    -- Código del inventario producto 1
+    fk_inventario_producto_1 SMALLINT NOT NULL,
+    -- Código del inventario producto 2
+    fk_inventario_producto_2 SMALLINT NOT NULL,
+    -- Cantidad de productos
+    detalle_venta_cantidad_mineral SMALLINT NOT NULL,
+    -- Precio unitario del producto
+    detalle_venta_precio_unitario NUMERIC(10,2) NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_detalle_pedido_venta PRIMARY KEY (detalle_venta_codigo, fk_pedido_venta_1, fk_pedido_venta_2, fk_inventario_producto_1, fk_inventario_producto_2),
+    --  Restricción para verificar que la cantidad de productos sea mayor a 0
+    CONSTRAINT check_detalle_pedido_venta_cantidad CHECK (detalle_venta_cantidad_mineral > 0),
+    -- Restricción para verificar que el precio unitario sea mayor a 0
+    CONSTRAINT check_detalle_pedido_venta_precio_unitario CHECK (detalle_venta_precio_unitario > 0),
+    -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
+    CONSTRAINT fk_pedido_venta_detalle_pedido_venta FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
+    -- Restricción de clave foránea que referencia a la tabla INVENTARIO_PRODUCTO
+    CONSTRAINT fk_inventario_producto_detalle_pedido_venta FOREIGN KEY (fk_inventario_producto_1, fk_inventario_producto_2) REFERENCES Inventario_Producto (inventario_producto_codigo, fk_mineral)
+);
+
+CREATE TABLE Historico_Estatus_Pedido_Venta (
+    -- Código del historico
+    hist_est_pedido_venta_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del estatus
+    fk_estatus_pedido SMALLINT NOT NULL,
+    -- Clave foránea del pedido 1
+    fk_pedido_venta_1 SMALLINT NOT NULL,
+    -- Clave foránea del pedido 2
+    fk_pedido_venta_2 SMALLINT NOT NULL,
+    -- Fecha de inicio de estatus
+    hist_est_pedido_venta_fecha_inicio TIMESTAMP NOT NULL,
+    -- Fecha de fin de estatus
+    hist_est_pedido_venta_fecha_fin TIMESTAMP,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_historico_estatus_pedido_venta PRIMARY KEY (hist_est_pedido_venta_codigo, fk_pedido_venta_1, fk_pedido_venta_2, fk_estatus_pedido),
+    -- Restricción de clave foránea que referencia a la tabla ESTATUS_PEDIDO
+    CONSTRAINT fk_estatus_historico_estatus_pedido_venta FOREIGN KEY (fk_estatus_pedido) REFERENCES Estatus_Pedido (estatus_pedido_codigo),
+    -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
+    CONSTRAINT fk_pedido_historico_estatus_pedido_venta FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente)
+);
+
+CREATE TABLE Pedido_Compra_Venta (
+    -- Código del pedido venta 1
+    fk_pedido_venta_1 SMALLINT NOT NULL  UNIQUE,
+    -- Código del pedido venta 2
+    fk_pedido_venta_2 SMALLINT NOT NULL UNIQUE,
+    -- Código del pedido compra 1
+    fk_pedido_compra_1 SMALLINT NOT NULL UNIQUE,
+    -- Código del pedido compra 2
+    fk_pedido_compra_2 SMALLINT NOT NULL UNIQUE,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_pedido_compra_venta PRIMARY KEY (fk_pedido_venta_1, fk_pedido_venta_2, fk_pedido_compra_1, fk_pedido_compra_2),
+    -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
+    CONSTRAINT fk_pedido_venta_pedido_compra FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
+    -- Restricción de clave foránea que referencia a la tabla PEDIDO_COMPRA
+    CONSTRAINT fk_pedido_compra_pedido_compra FOREIGN KEY (fk_pedido_compra_1, fk_pedido_compra_2) REFERENCES Pedido_Compra (pedido_compra_numero, fk_aliado)
+);
+
+CREATE TABLE Pedido_Venta_Proyecto (
+    -- Código del proyecto ejecución
+    fk_proyecto_ejecucion SMALLINT NOT NULL UNIQUE,
+    -- Código del pedido venta 1
+    fk_pedido_venta_1 SMALLINT NOT NULL  UNIQUE,
+    -- Código del pedido venta 2
+    fk_pedido_venta_2 SMALLINT NOT NULL UNIQUE,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_pedido_venta_proyecto PRIMARY KEY (fk_proyecto_ejecucion, fk_pedido_venta_1, fk_pedido_venta_2),
+    -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
+    CONSTRAINT fk_pedido_venta_pedido_venta_proyecto FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
+    -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
+    CONSTRAINT fk_proyecto_pedido_venta_proyecto FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo)
+);
+
+CREATE TABLE Banco (
+    -- Código del banco
+    banco_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Nombre del banco
+    banco_nombre VARCHAR(30) NOT NULL UNIQUE,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_banco PRIMARY KEY (banco_codigo),
+    -- Restricción para verificar que el nombre solo contenga letras y espacios
+    CONSTRAINT check_banco_nombre CHECK (banco_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$')
+);
+
+CREATE TABLE Tarjeta_Debito (
+    -- Código de la tarjeta de débito
+    metodo_pago_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Código de la tarjeta
+    tdb_numero VARCHAR(16) NOT NULL UNIQUE,
+    -- Tipo de cuenta de la tarjeta
+    tdb_tipo_cuenta VARCHAR(15) NOT NULL,
+    -- Fecha de expiración de la tarjeta
+    tdb_fecha_expiracion DATE NOT NULL,
+    -- CVV de la tarjeta
+    tdb_cvv VARCHAR(3) NOT NULL,
+    -- Clave foránea del banco
+    fk_banco SMALLINT NOT NULL,
+    -- Clave foránea del cliente
+    fk_cliente SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_tarjeta_debito PRIMARY KEY (metodo_pago_codigo, fk_banco),
+    -- Restricción para verificar que el número de la tarjeta solo contenga números
+    CONSTRAINT check_tarjeta_debito_numero CHECK (tdb_numero ~ '^[0-9]{16}$'),
+    -- Restricción para verificar que el tipo de cuenta sea ahorro o corriente
+    CONSTRAINT check_tarjeta_debito_tipo_cuenta CHECK (tdb_tipo_cuenta IN ('Ahorro', 'Corriente')),
+    -- Restricción para verificar que la fecha de expiración sea mayor a la fecha actual
+    CONSTRAINT check_tarjeta_debito_fecha_expiracion CHECK (tdb_fecha_expiracion > CURRENT_DATE),
+    -- Restricción para verificar que el CVV solo contenga números
+    CONSTRAINT check_tarjeta_debito_cvv CHECK (tdb_cvv ~ '^[0-9]{3}$'),
+    -- Restricción de clave foránea que referencia a la tabla BANCO
+    CONSTRAINT fk_banco_tarjeta_debito FOREIGN KEY (fk_banco) REFERENCES Banco (banco_codigo),
+    -- Restricción de clave foránea que referencia a la tabla CLIENTE
+    CONSTRAINT fk_cliente_tarjeta_debito FOREIGN KEY (fk_cliente) REFERENCES Cliente (persona_jur_codigo)
+);
+
+CREATE TABLE Tarjeta_Credito (
+    -- Código de la tarjeta de crédito
+    metodo_pago_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Código de la tarjeta
+    tdc_numero VARCHAR(16) NOT NULL UNIQUE,
+    -- Tipo de cuenta de la tarjeta
+    tdc_tipo_cuenta VARCHAR(15) NOT NULL,
+    -- Fecha de expiración de la tarjeta
+    tdc_fecha_expiracion DATE NOT NULL,
+    -- CVV de la tarjeta
+    tdc_cvv VARCHAR(3) NOT NULL,
+    -- Clave foránea del banco
+    fk_banco SMALLINT NOT NULL,
+    -- Clave foránea del cliente
+    fk_cliente SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_tarjeta_credito PRIMARY KEY (metodo_pago_codigo, fk_banco),
+    -- Restricción para verificar que el número de la tarjeta solo contenga números
+    CONSTRAINT check_tarjeta_credito_numero CHECK (tdc_numero ~ '^[0-9]{16}$'),
+    -- Restricción para verificar que el tipo de cuenta solo contenga letras y espacios
+    CONSTRAINT check_tarjeta_credito_tipo_cuenta CHECK (tdc_tipo_cuenta ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
+    -- Restricción para verificar que la fecha de expiración sea mayor a la fecha actual
+    CONSTRAINT check_tarjeta_credito_fecha_expiracion CHECK (tdc_fecha_expiracion > CURRENT_DATE),
+    -- Restricción para verificar que el CVV solo contenga números
+    CONSTRAINT check_tarjeta_credito_cvv CHECK (tdc_cvv ~ '^[0-9]{3}$'),
+    -- Restricción de clave foránea que referencia a la tabla BANCO
+    CONSTRAINT fk_banco_tarjeta_credito FOREIGN KEY (fk_banco) REFERENCES Banco (banco_codigo),
+    -- Restricción de clave foránea que referencia a la tabla CLIENTE
+    CONSTRAINT fk_cliente_tarjeta_credito FOREIGN KEY (fk_cliente) REFERENCES Cliente (persona_jur_codigo)
+);
+
+CREATE TABLE Efectivo (
+    -- Código del efectivo
+    metodo_pago_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Denominación del efectivo
+    efectivo_denominacion SMALLINT NOT NULL,
+    -- Clave foránea del cliente
+    fk_cliente SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_efectivo PRIMARY KEY (metodo_pago_codigo),
+    -- Restricción para verificar que el monto del efectivo sea mayor a 0
+    CONSTRAINT check_efectivo_monto CHECK (efectivo_denominacion > 0),
+    -- Restricción de clave foránea que referencia a la tabla CLIENTE
+    CONSTRAINT fk_cliente_efectivo FOREIGN KEY (fk_cliente) REFERENCES Cliente (persona_jur_codigo)
+);
+
+CREATE TABLE Cheque (
+    -- Código del cheque
+    metodo_pago_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Número del cheque
+    cheque_numero VARCHAR(10) NOT NULL UNIQUE,
+    -- Clave foránea del banco
+    fk_banco SMALLINT NOT NULL,
+    -- Clave foránea del cliente
+    fk_cliente SMALLINT NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_cheque PRIMARY KEY (metodo_pago_codigo, fk_banco),
+    -- Restricción para verificar que el número del cheque solo contenga números
+    CONSTRAINT check_cheque_numero CHECK (cheque_numero ~ '^[0-9]{10}$'),
+    -- Restricción de clave foránea que referencia a la tabla CLIENTE
+    CONSTRAINT fk_cliente_cheque FOREIGN KEY (fk_cliente) REFERENCES Cliente (persona_jur_codigo),
+    -- Restricción de clave foránea que referencia a la tabla BANCO
+    CONSTRAINT fk_banco_cheque FOREIGN KEY (fk_banco) REFERENCES Banco (banco_codigo)
+);
+
+CREATE TABLE Pago_Compra (
+    -- Código del pago
+    pago_compra_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del método de pago
+    fk_tarjeta_debito SMALLINT,
+    -- Clave foránea del método de pago
+    fk_tarjeta_credito SMALLINT,
+    -- Clave foránea del método de pago
+    fk_efectivo SMALLINT,
+    -- Clave foránea del método de pago
+    fk_cheque SMALLINT,
+    -- Clave foránea del pedido compra 1
+    fk_pedido_compra_1 SMALLINT NOT NULL UNIQUE,
+    -- Clave foránea del pedido compra 2
+    fk_pedido_compra_2 SMALLINT NOT NULL UNIQUE,
+    -- Monto del pago
+    pago_compra_monto NUMERIC(10,2) NOT NULL,
+    -- Fecha de emisión del pago
+    pago_compra_fecha_emision DATE NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_pago_compra PRIMARY KEY (pago_compra_codigo, fk_pedido_compra_1, fk_pedido_compra_2),
+    -- Restricción de clave foránea que referencia a la tabla TARJETA_DEBITO
+    CONSTRAINT fk_tarjeta_debito_pago_compra FOREIGN KEY (fk_tarjeta_debito) REFERENCES Tarjeta_Debito (metodo_pago_codigo),
+    -- Restricción de clave foránea que referencia a la tabla TARJETA_CREDITO
+    CONSTRAINT fk_tarjeta_credito_pago_compra FOREIGN KEY (fk_tarjeta_credito) REFERENCES Tarjeta_Credito (metodo_pago_codigo),
+    -- Restricción de clave foránea que referencia a la tabla EFECTIVO
+    CONSTRAINT fk_efectivo_pago_compra FOREIGN KEY (fk_efectivo) REFERENCES Efectivo (metodo_pago_codigo),
+    -- Restricción de clave foránea que referencia a la tabla CHEQUE
+    CONSTRAINT fk_cheque_pago_compra FOREIGN KEY (fk_cheque) REFERENCES Cheque (metodo_pago_codigo),
+    -- Restricción de clave foránea que referencia a la tabla PAGO_COMPRA
+    CONSTRAINT check_pago_compra_monto CHECK (pago_compra_monto > 0)
+);
+
+CREATE TABLE Pago_Venta (
+    -- Código del pago
+    pago_venta_codigo SMALLSERIAL NOT NULL UNIQUE,
+    -- Clave foránea del método de pago
+    fk_tarjeta_debito SMALLINT,
+    -- Clave foránea del método de pago
+    fk_tarjeta_credito SMALLINT,
+    -- Clave foránea del método de pago
+    fk_efectivo SMALLINT,
+    -- Clave foránea del método de pago
+    fk_cheque SMALLINT,
+    -- Clave foránea del pedido venta 1
+    fk_pedido_venta_1 SMALLINT NOT NULL UNIQUE,
+    -- Clave foránea del pedido venta 2
+    fk_pedido_venta_2 SMALLINT NOT NULL UNIQUE,
+    -- Monto del pago
+    pago_venta_monto NUMERIC(10,2) NOT NULL,
+    -- Fecha de emisión del pago
+    pago_venta_fecha_emision DATE NOT NULL,
+
+    -- Restricción de clave primaria
+    CONSTRAINT pk_pago_venta PRIMARY KEY (pago_venta_codigo, fk_pedido_venta_1, fk_pedido_venta_2),
+    -- Restricción de clave foránea que referencia a la tabla TARJETA_DEBITO
+    CONSTRAINT fk_tarjeta_debito_pago_venta FOREIGN KEY (fk_tarjeta_debito) REFERENCES Tarjeta_Debito (metodo_pago_codigo),
+    -- Restricción de clave foránea que referencia a la tabla TARJETA_CREDITO
+    CONSTRAINT fk_tarjeta_credito_pago_venta FOREIGN KEY (fk_tarjeta_credito) REFERENCES Tarjeta_Credito (metodo_pago_codigo),
+    -- Restricción de clave foránea que referencia a la tabla EFECTIVO
+    CONSTRAINT fk_efectivo_pago_venta FOREIGN KEY (fk_efectivo) REFERENCES Efectivo (metodo_pago_codigo),
+    -- Restricción de clave foránea que referencia a la tabla CHEQUE
+    CONSTRAINT fk_cheque_pago_venta FOREIGN KEY (fk_cheque) REFERENCES Cheque (metodo_pago_codigo),
+    -- Restricción de clave foránea que referencia a la tabla PAGO_VENTA
+    CONSTRAINT check_pago_venta_monto CHECK (pago_venta_monto > 0)
 );
