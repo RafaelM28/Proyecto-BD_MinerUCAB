@@ -1,4 +1,4 @@
-INSERT INTO Mineral (mineral_codigo, mineral_nombre, mineral_dureza, mineral_porcentaje_composicion, mineral_transparencia, mineral_rayado, mineral_exfoliacion, mineral_fractura, mineral_densidad, mineral_habito_cristalino, mineral_tipo, metalicos_brillo, metalicos_conductividad, no_metalicos_tenacidad) 
+INSERT INTO Mineral (mineral_codigo, mineral_nombre, mineral_dureza, mineral_porcentaje_composicion, mineral_transparencia, mineral_rayado, mineral_exfoliacion, mineral_fractura, mineral_densidad, mineral_habito_cristalino, mineral_tipo, metalicos_brillo, metalicos_conductividad, no_metalicos_tenacidad)
 VALUES 
 (1, 'Cobre', 2.5, 99.9, 'Opaco', 'Rojo', 'Excelente', 'Concoidea', 8.96, 'Aislado', 'Metálico', 8, 'Alta', NULL),
 (2, 'Níquel', 4, 99.9, 'Opaco', 'Blanco', 'Buena', 'Concoidea', 8.9, 'Aislado', 'Metálico', 7, 'Alta', NULL),
@@ -2018,7 +2018,8 @@ VALUES
 (93, 'J000092001', 'Minerales del Orinoco SA', 'MINORINOCOS',12500000000, 'Avenida Principal  Edificio MINORINOCO  Piso 5 ', 'Avenida Principal  Edificio MINORINOCO  Piso 5 ',1471,1471),
 (94, 'J000093110', 'Exploraciones Mineras del Delta ', 'EXMINDELTA',10200000000, 'Calle Independencia  Edificio EXMINDELTA  Piso 3 ', 'Calle Independencia  Edificio EXMINDELTA  Piso 3 ',1482,1482),
 (95, 'J000094229', 'Minera Delta Amacuro ', 'MINDeltaA',9000000000, 'Avenida Bolívar  Edificio MINDeltaA  Piso 2 ', 'Avenida Bolívar  Edificio MINDeltaA  Piso 2 ',1474,1474),
-(96, 'J000095338', 'Servicios Mineros del Caño ', 'SEMINSOCANO',8200000000, 'Calle Libertad  Edificio SEMINSOCANO  Piso 4 ', 'Calle Libertad  Edificio SEMINSOCANO  Piso 4 ',1481,1481);
+(96, 'J000095338', 'Servicios Mineros del Caño ', 'SEMINSOCANO',8200000000, 'Calle Libertad  Edificio SEMINSOCANO  Piso 4 ', 'Calle Libertad  Edificio SEMINSOCANO  Piso 4 ',1481,1481),
+(97, 'J000000009', 'Corporación Nacional de Desarrollo Mineral', 'MinerUCAB',13000000000, 'Avenida Principal  Edificio MINGUAJIRA  Piso 5 ', 'Avenida Principal  Edificio MINGUAJIRA  Piso 5 ',1479,1479);
 
 INSERT INTO Aliado (persona_jur_codigo, persona_jur_RIF, persona_jur_razon_social, persona_jur_denominacion_comercial, persona_jur_capital_total, persona_jur_direccion_fiscal, persona_jur_direccion_principal, fk_lugar_1, fk_lugar_2)
 VALUES

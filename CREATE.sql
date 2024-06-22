@@ -82,8 +82,8 @@ CREATE TABLE Aliado (
 
     -- Restricción de clave primaria
     CONSTRAINT pk_aliado PRIMARY KEY (persona_jur_codigo),
-    -- Restricción para verificar que el RIF comienza con una letra (J, V, E, P o G) y luego le siguen 9 a 10 dígitos
-    CONSTRAINT check_persona_jur_RIF CHECK (persona_jur_RIF ~ '^[VEJPG]{1}[0-9]{9,10}$'),
+    -- Restricción para verificar que el RIF comienza con una letra (J, V, E, P o G) y luego le siguen 8 a 10 dígitos
+    CONSTRAINT check_persona_jur_RIF CHECK (persona_jur_RIF ~ '^[VEJPG]{1}[0-9]{8,10}$'),
     -- Restricción para verificar que la razón social solo contenga letras y espacios
     CONSTRAINT check_aliado_razon_social CHECK (persona_jur_razon_social ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
     -- Restricción para verificar que la denominación comercial solo contenga letras y espacios
@@ -106,7 +106,7 @@ CREATE TABLE Cliente (
     -- RIF del cliente
     persona_jur_RIF VARCHAR(20) NOT NULL UNIQUE,
     -- Razón social del cliente
-    persona_jur_razon_social VARCHAR(45) NOT NULL UNIQUE,
+    persona_jur_razon_social VARCHAR(100) NOT NULL UNIQUE,
     -- Denominación comercial del cliente
     persona_jur_denominacion_comercial VARCHAR(30) NOT NULL UNIQUE,
     -- Capital total del cliente
@@ -122,8 +122,8 @@ CREATE TABLE Cliente (
 
     -- Restricción de clave primaria
     CONSTRAINT pk_cliente PRIMARY KEY (persona_jur_codigo),
-    -- Restricción para verificar que el RIF comienza con una letra (J, V, E, P o G) y luego le siguen 9 a 10 dígitos
-    CONSTRAINT check_persona_jur_RIF CHECK (persona_jur_RIF ~ '^[VEJPG]{1}[0-9]{9,10}$'),
+    -- Restricción para verificar que el RIF comienza con una letra (J, V, E, P o G) y luego le siguen 8 a 10 dígitos
+    CONSTRAINT check_persona_jur_RIF CHECK (persona_jur_RIF ~ '^[VEJPG]{1}[0-9]{8,10}$'),
     -- Restricción para verificar que la razón social solo contenga letras y espacios
     CONSTRAINT check_cliente_razon_social CHECK (persona_jur_razon_social ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
     -- Restricción para verificar que la denominación comercial solo contenga letras y espacios
@@ -172,8 +172,8 @@ CREATE TABLE Empleado (
     CONSTRAINT pk_empleado PRIMARY KEY (empleado_codigo),
     -- Restricción para verificar que la cédula tenga de 6 a 8 dígitos y solo permita números
     CONSTRAINT check_empleado_cedula CHECK (empleado_cedula ~ '^[0-9]{6,8}$'),
-    -- Restricción para verificar que el RIF comienza con una letra (J, V, E, P o G) y luego le siguen 9 a 10 dígitos
-    CONSTRAINT check_empleado_RIF CHECK (empleado_RIF ~ '^[VEJPG]{1}[0-9]{9,10}$'),
+    -- Restricción para verificar que el RIF comienza con una letra (J, V, E, P o G) y luego le siguen 8 a 10 dígitos
+    CONSTRAINT check_empleado_RIF CHECK (empleado_RIF ~ '^[VEJPG]{1}-[0-9]{8,10}$'),
     -- Restricción para verificar que el primer nombre solo contenga letras y espacios
     CONSTRAINT check_empleado_primer_nombre CHECK (empleado_primer_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
     -- Restricción para verificar que el segundo nombre solo contenga letras y espacios
@@ -1481,11 +1481,11 @@ CREATE TABLE Pedido_Compra_Venta (
     -- Código del pedido venta 1
     fk_pedido_venta_1 SMALLINT NOT NULL  UNIQUE,
     -- Código del pedido venta 2
-    fk_pedido_venta_2 SMALLINT NOT NULL UNIQUE,
+    fk_pedido_venta_2 SMALLINT NOT NULL,
     -- Código del pedido compra 1
     fk_pedido_compra_1 SMALLINT NOT NULL UNIQUE,
     -- Código del pedido compra 2
-    fk_pedido_compra_2 SMALLINT NOT NULL UNIQUE,
+    fk_pedido_compra_2 SMALLINT NOT NULL,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_pedido_compra_venta PRIMARY KEY (fk_pedido_venta_1, fk_pedido_venta_2, fk_pedido_compra_1, fk_pedido_compra_2),
@@ -1637,7 +1637,7 @@ CREATE TABLE Pago_Compra (
     -- Clave foránea del pedido compra 1
     fk_pedido_compra_1 SMALLINT NOT NULL UNIQUE,
     -- Clave foránea del pedido compra 2
-    fk_pedido_compra_2 SMALLINT NOT NULL UNIQUE,
+    fk_pedido_compra_2 SMALLINT NOT NULL,
     -- Monto del pago
     pago_compra_monto NUMERIC(10,2) NOT NULL,
     -- Fecha de emisión del pago
