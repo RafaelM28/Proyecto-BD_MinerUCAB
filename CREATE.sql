@@ -730,7 +730,7 @@ CREATE TABLE Recurso (
     fk_tipo_recurso SMALLINT NOT NULL,
 
     -- Restricción de clave primaria
-    CONSTRAINT pk_recurso PRIMARY KEY (recurso_codigo, fk_tipo_recurso),
+    CONSTRAINT pk_recurso PRIMARY KEY (recurso_codigo),
     -- Restricción para verificar que el nombre solo contenga letras y espacios
     CONSTRAINT check_recurso_nombre CHECK (recurso_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
     -- Restricción para verificar que el número de serie solo contenga letras, números y espacios
