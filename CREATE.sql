@@ -717,7 +717,7 @@ CREATE TABLE Recurso (
     -- Código del recurso
     recurso_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre del recurso
-    recurso_nombre VARCHAR(35) NOT NULL UNIQUE,
+    recurso_nombre VARCHAR(50) NOT NULL UNIQUE,
     -- Número de serie del recurso
     recurso_numero_serie VARCHAR(20) NOT NULL UNIQUE,
     -- Descripción del recurso
