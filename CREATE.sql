@@ -172,6 +172,8 @@ CREATE TABLE Empleado (
     CONSTRAINT pk_empleado PRIMARY KEY (empleado_codigo),
     -- Restricción para verificar que la cédula tenga de 6 a 8 dígitos y solo permita números
     CONSTRAINT check_empleado_cedula CHECK (empleado_cedula ~ '^[0-9]{6,8}$'),
+    -- Restricción para verificar que el RIF comienza con una letra (J, V, E, P o G) y luego le siguen 9 a 10 dígitos
+    CONSTRAINT check_empleado_RIF CHECK (empleado_RIF ~ '^[VEJPG]{1}[0-9]{9,10}$'),
     -- Restricción para verificar que el primer nombre solo contenga letras y espacios
     CONSTRAINT check_empleado_primer_nombre CHECK (empleado_primer_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
     -- Restricción para verificar que el segundo nombre solo contenga letras y espacios
