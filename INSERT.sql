@@ -16459,8 +16459,6 @@ INSERT INTO Historico_Estatus_Concesion (hist_est_concesion_codigo,fk_inventario
 (2879,59,48,1,'	2024-03-16	'),
 (2880,60,48,1,'	2024-03-16	');
 
-
-
 INSERT INTO Pedido_Venta_Proyecto (fk_proyecto_ejecucion,fk_pedido_venta_1,fk_pedido_venta_2) VALUES
 (1,1,1),
 (1,2,2),
@@ -16472,3 +16470,27 @@ INSERT INTO Pedido_Venta_Proyecto (fk_proyecto_ejecucion,fk_pedido_venta_1,fk_pe
 (3,8,8),
 (3,9,9),
 (3,10,10);
+
+INSERT INTO Estatus_Pozo (estatus_pozo_codigo,estatus_pozo_nombre) VALUES
+(1,'Lleno'),
+(2,'Vacio'),
+(3,'Ocupado'),
+(4,'En exploracion'),
+(5,'No disponible'),
+(6,'Sin Mineral'),
+(7,'Presenta Derrumbe'),
+(8,'Clausurado'),
+(9,'Recien Excavado'),
+(10,'Con mineral');
+
+INSERT INTO Historico_Estatus_Pozo (hist_est_pozo_codigo,fk_estatus_pozo,fk_pozo_1,fk_pozo_2,fk_pozo_3,hist_est_pozo_fecha_inicio) VALUES
+(1,2,1,1,1,'	2023-01-21	'),
+(2,2,2,2,2,'	2023-08-19	'),
+(3,2,3,3,3,'	2024-03-16	'),
+(4,1,4,4,4,'	2018-04-21	'),
+(5,1,5,5,5,'	2018-05-21	'),
+(6,1,6,6,6,'	2018-06-20	'),
+(7,1,7,7,7,'	2018-07-20	'),
+(8,1,8,8,8,'	2018-08-19	'),
+(9,1,9,9,9,'	2018-09-18	'),
+(10,1,10,10,10,'	2018-10-18	');
