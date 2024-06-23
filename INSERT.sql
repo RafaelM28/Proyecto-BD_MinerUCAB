@@ -1,4 +1,5 @@
-INSERT INTO Mineral (mineral_codigo, mineral_nombre, mineral_dureza, mineral_porcentaje_composicion, mineral_transparencia, mineral_rayado, mineral_exfoliacion, mineral_fractura, mineral_densidad, mineral_habito_cristalino, mineral_tipo, metalicos_brillo, metalicos_conductividad, no_metalicos_tenacidad) 
+-- Insertando datos en la tabla Mineral
+INSERT INTO Mineral (mineral_codigo, mineral_nombre, mineral_dureza, mineral_porcentaje_composicion, mineral_transparencia, mineral_rayado, mineral_exfoliacion, mineral_fractura, mineral_densidad, mineral_habito_cristalino, mineral_tipo, metalicos_brillo, metalicos_conductividad, no_metalicos_tenacidad)
 VALUES 
 (1, 'Cobre', 2.5, 99.9, 'Opaco', 'Rojo', 'Excelente', 'Concoidea', 8.96, 'Aislado', 'Metálico', 8, 'Alta', NULL),
 (2, 'Níquel', 4, 99.9, 'Opaco', 'Blanco', 'Buena', 'Concoidea', 8.9, 'Aislado', 'Metálico', 7, 'Alta', NULL),
@@ -52,6 +53,7 @@ VALUES
 (50, 'Basaltos', 6, 99.9, 'Translúcido', 'Variable', 'Buena', 'Concoidea', 2.9, 'Masa', 'No Metálico', NULL, NULL, 'Frágil'),
 (51, 'Carbón antracita', 2, 99.9, 'Opaco', 'Negro', 'Pobre', 'Concoidea', 1.8, 'Agregado', 'No Metálico', NULL, NULL, 'Frágil');
 
+-- Insertando datos en la tabla Lugar (Estados)
 INSERT INTO Lugar (lugar_codigo, lugar_nombre, lugar_tipo) VALUES 
 (1, 'Distrito Capital', 'Estado'), 
 (2, 'Anzoátegui', 'Estado'), 
@@ -77,6 +79,8 @@ INSERT INTO Lugar (lugar_codigo, lugar_nombre, lugar_tipo) VALUES
 (22, 'Amazonas', 'Estado'), 
 (23, 'Delta Amacuro', 'Estado'), 
 (24, 'Vargas', 'Estado');
+
+-- Insertando datos en la tabla Lugar (Municipios)
 INSERT INTO Lugar (lugar_codigo, lugar_nombre, lugar_tipo, fk_lugar) VALUES 
 (25,'Libertador','Municipio',1),
 (26,'Anaco','Municipio',2),
@@ -413,6 +417,8 @@ INSERT INTO Lugar (lugar_codigo, lugar_nombre, lugar_tipo, fk_lugar) VALUES
 (357,'Antonio Díaz','Municipio',23),
 (358,'Casacoima','Municipio',23),
 (359,'Vargas','Municipio',24);
+
+-- Insertando datos en la tabla Lugar (Parroquias)
 INSERT INTO Lugar (lugar_codigo, lugar_nombre, lugar_tipo, fk_lugar) VALUES
 (360, 'Altagracia', 'Parroquia',25),
 (361, 'Candelaria', 'Parroquia',25),
@@ -1552,8 +1558,7 @@ INSERT INTO Lugar (lugar_codigo, lugar_nombre, lugar_tipo, fk_lugar) VALUES
 (1495, 'Carlos Soublette', 'Parroquia',359),
 (1496, 'El Junko', 'Parroquia',359);
 
-
-
+-- Insertando datos en la tabla Empleado
 INSERT INTO Empleado (empleado_codigo, empleado_cedula, empleado_RIF, empleado_primer_nombre, empleado_segundo_nombre, empleado_primer_apellido, empleado_segundo_apellido, empleado_fecha_nacimiento, empleado_detalle_direccion, fk_lugar)
 VALUES
   (1, '1234567', 'J-12345671', 'Juan', 'Pablo', 'Gonzalez', 'Rodriguez', '1990-02-15', 'Calle 1', 361),
@@ -1596,6 +1601,8 @@ VALUES
   (38, '7899654', 'J-78996547', 'Sofia', 'Elena', 'Perez', 'Gonzalez', '1995-01-25', 'Avenida 38', 421),
   (39, '2345898', 'J-23458984', 'Luis', 'Fernando', 'Gomez', 'Hernandez', '1980-08-22', 'Calle 39', 401),
   (40, '4569233', 'J-45692332', 'Julia', 'Marcela', 'Hernandez', 'Garcia', '1992-04-10', 'Avenida 40', 431);
+
+-- Insertando datos en la tabla Horario
 INSERT INTO Horario (horario_codigo, horario_dia, horario_hora_entrada, horario_hora_salida)
 VALUES
   (1, 'Lunes', '07:15:00', '19:45:00'),
@@ -1879,6 +1886,7 @@ VALUES
 (279, 'Sábado', '07:35:00', '19:25:00'),
 (280, 'Domingo', '08:40:00', '20:30:00');
 
+-- Insertando datos en la tabla Empleado_Horario
 INSERT INTO Empleado_Horario (fk_empleado, fk_horario) VALUES
   (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7),
   (2, 8), (2, 9), (2, 10), (2, 11), (2, 12), (2, 13), (2, 14),
@@ -1920,7 +1928,8 @@ INSERT INTO Empleado_Horario (fk_empleado, fk_horario) VALUES
   (38, 260), (38, 261), (38, 262), (38, 263), (38, 264), (38, 265), (38, 266),
   (39, 267), (39, 268), (39, 269),(39, 270), (39, 271), (39, 272), (39, 273), 
   (40, 274), (40, 275), (40, 276),(40, 277), (40, 278), (40, 279), (40, 280);
-  
+
+-- Insertando datos en la tabla Cliente
 INSERT INTO Cliente (persona_jur_codigo, persona_jur_RIF, persona_jur_razon_social, persona_jur_denominacion_comercial, persona_jur_capital_total, persona_jur_direccion_fiscal, persona_jur_direccion_principal, fk_lugar_1, fk_lugar_2)
 VALUES
 (1, 'J000005674', 'Corporación Venezolana de Minería', 'CVM',8000000000, 'Avenida Universidad  Edificio CVM  Piso 12 ', 'Avenida Universidad  Edificio CVM  Piso 12 ',360,360),
@@ -2018,8 +2027,10 @@ VALUES
 (93, 'J000092001', 'Minerales del Orinoco SA', 'MINORINOCOS',12500000000, 'Avenida Principal  Edificio MINORINOCO  Piso 5 ', 'Avenida Principal  Edificio MINORINOCO  Piso 5 ',1471,1471),
 (94, 'J000093110', 'Exploraciones Mineras del Delta ', 'EXMINDELTA',10200000000, 'Calle Independencia  Edificio EXMINDELTA  Piso 3 ', 'Calle Independencia  Edificio EXMINDELTA  Piso 3 ',1482,1482),
 (95, 'J000094229', 'Minera Delta Amacuro ', 'MINDeltaA',9000000000, 'Avenida Bolívar  Edificio MINDeltaA  Piso 2 ', 'Avenida Bolívar  Edificio MINDeltaA  Piso 2 ',1474,1474),
-(96, 'J000095338', 'Servicios Mineros del Caño ', 'SEMINSOCANO',8200000000, 'Calle Libertad  Edificio SEMINSOCANO  Piso 4 ', 'Calle Libertad  Edificio SEMINSOCANO  Piso 4 ',1481,1481);
+(96, 'J000095338', 'Servicios Mineros del Caño ', 'SEMINSOCANO',8200000000, 'Calle Libertad  Edificio SEMINSOCANO  Piso 4 ', 'Calle Libertad  Edificio SEMINSOCANO  Piso 4 ',1481,1481),
+(97, 'J000000009', 'Corporación Nacional de Desarollo Mineral', 'MinerUCAB', 9000000000, 'Avenida Bolívar  Edificio MINDeltaA  Piso 2 ', 'Avenida Bolívar  Edificio MINDeltaA  Piso 2 ',1474,1474);
 
+-- Insertando datos en la tabla Aliado
 INSERT INTO Aliado (persona_jur_codigo, persona_jur_RIF, persona_jur_razon_social, persona_jur_denominacion_comercial, persona_jur_capital_total, persona_jur_direccion_fiscal, persona_jur_direccion_principal, fk_lugar_1, fk_lugar_2)
 VALUES
 (1, 'J000005674', 'Corporación Venezolana de Minería', 'CVM',8000000000, 'Avenida Universidad  Edificio CVM  Piso 12 ', 'Avenida Universidad  Edificio CVM  Piso 12 ',360,360),
@@ -2071,6 +2082,7 @@ VALUES
 (47, 'J000092001', 'Minerales del Orinoco ', 'MINORINOCO',12500000000, 'Avenida Principal  Edificio MINORINOCO  Piso 5 ', 'Avenida Principal  Edificio MINORINOCO  Piso 5 ',1471,1471),
 (48, 'J000093110', 'Exploraciones Mineras del Delta ', 'EXMINDELTA',10200000000, 'Calle Independencia  Edificio EXMINDELTA  Piso 3 ', 'Calle Independencia  Edificio EXMINDELTA  Piso 3 ',1482,1482);
 
+-- Insertando datos en la tabla Tipo_Recurso
 INSERT INTO Tipo_Recurso (tipo_recurso_codigo,tipo_recurso_nombre) VALUES
 (1, 'Plataforma '),
 (2, 'Trituradora '),
@@ -2097,6 +2109,8 @@ INSERT INTO Tipo_Recurso (tipo_recurso_codigo,tipo_recurso_nombre) VALUES
 (23, 'Compresor '),
 (25, 'Motocicleta '),
 (26, 'Furgoneta ');
+
+-- Insertando datos en la tabla Marca
 INSERT INTO Marca (marca_codigo, marca_nombre) VALUES
 (1, 'Schlumberger '),
 (2, 'Metso '),
@@ -2111,6 +2125,8 @@ INSERT INTO Marca (marca_codigo, marca_nombre) VALUES
 (11, 'Mercedes Benz '),
 (12, 'Ford '),
 (13, 'Yamaha ');
+
+-- Insertando datos en la tabla Modelo
 INSERT INTO Modelo (modelo_codigo, fk_marca, modelo_nombre) VALUES
 (1,1, 'Land Rig 1500 '),
 (2,2, 'C80 '),
@@ -2172,6 +2188,8 @@ INSERT INTO Modelo (modelo_codigo, fk_marca, modelo_nombre) VALUES
 (58,11, 'Arocs 2432'),
 (59,11, 'Sprinter 211CDI'),
 (60,11, 'Antos 2530');
+
+-- Insertando datos en la tabla Recurso
 INSERT INTO Recurso (recurso_codigo, recurso_nombre, recurso_numero_serie, fk_modelo_1, fk_modelo_2, fk_tipo_recurso) VALUES
 (1, 'Plataforma de perforacion ', '1500 001 ',1,1,1),
 (2, 'Trituradora de Mandíbula ', 'C80 001 ',2,2,2),
@@ -2234,6 +2252,7 @@ INSERT INTO Recurso (recurso_codigo, recurso_nombre, recurso_numero_serie, fk_mo
 (59, 'Minibus ', '906 611 ',59,11,11),
 (60, 'Camion de alta carga ', '906 151 ',60,11,12);
 
+-- Insertando datos en la tabla Inventario_Concesion_Recurso
 INSERT INTO Inventario_Concesion_Recurso (fk_recurso, fk_aliado, inventario_concesion_recurso_usado)
 VALUES
 (1,1,False),
@@ -5117,6 +5136,7 @@ VALUES
 (59,48,False),
 (60,48,True);
 
+-- Insertando datos en la tabla Inventario_Recurso
 INSERT INTO Inventario_Recurso (inventario_recurso_codigo, fk_recurso, inventario_recurso_cantidad_total)
 VALUES
 (1,1,5),
@@ -5160,6 +5180,7 @@ VALUES
 (39,13,5),
 (40,14,5);
 
+-- Insertando datos en la tabla Proyecto_Configuracion
 INSERT INTO Proyecto_Configuracion (proyecto_config_codigo, proyecto_config_nombre, fk_mineral)
 VALUES
 (1,'Proyecto Cobre',1),
@@ -5213,6 +5234,8 @@ VALUES
 (49,'Proyecto  Filitas ',49),
 (50,'Proyecto  Basaltos ',50),
 (51,'Proyecto  Carbón antracita ',51);
+
+-- Insertando datos en la tabla Etapa_Configuracion
 INSERT INTO Etapa_Configuracion (etapa_config_codigo, etapa_config_nombre, etapa_config_numero, fk_proyecto_config)
 VALUES
 (1,'Exploración',1,1),
@@ -5471,6 +5494,7 @@ VALUES
 (254,'Producción y venta',4,51),
 (255,'Cierre y rehabilitación',5,51);
 
+-- Insertando datos en la tabla Actividad_Configuracion
 INSERT INTO Actividad_Configuracion (actividad_config_codigo, actividad_config_nombre, actividad_config_duracion_dias, fk_etapa_config)
 VALUES
 (1,'Reconocimiento geológico',15,1),
@@ -6749,6 +6773,7 @@ VALUES
 (1274,'Seguimiento del sitio',40,255),
 (1275,'Informes y documentación',60,255);
 
+-- Insertando datos en la tabla Recurso_Actividad
 INSERT INTO Recurso_Actividad (fk_actividad_config, fk_tipo_recurso, config_recurso_cantidad, config_recurso_costo_mensual, config_recurso_costo_mantenimiento)
 VALUES
 (1,1,4,20151,5158),
@@ -8027,6 +8052,7 @@ VALUES
 (1274,1,6,24585,9636),
 (1275,2,2,23322,6721);
 
+-- Insertando datos en la tabla Cargo
 INSERT INTO Cargo (cargo_codigo, cargo_nombre)
 VALUES
 (1,'Geologo'),
@@ -8040,6 +8066,7 @@ VALUES
 (9,'Inspector'),
 (10,'Mecanico');
 
+-- Insertando datos en la tabla Cargo_Actividad
 INSERT INTO Cargo_Actividad (fk_actividad_config, fk_cargo, config_cargo_cantidad, config_cargo_salario_quincenal, config_cargo_viaticos_quincenal)
 VALUES
 (1,1,4,2707,359),
@@ -11867,3 +11894,589 @@ VALUES
 (1275,3,5,4435,405),
 (1275,4,5,2118,514),
 (1275,5,1,1384,991);
+
+-- Insertando datos en la tabla 'banco'
+INSERT INTO banco (banco_codigo, banco_nombre)
+VALUES
+(1, 'Banco de Venezuela'),
+(2, 'Venezolano de Crédito'),
+(3, 'Banco Mercantil'),
+(4, 'Banco Provincial'),
+(5, 'Bancaribe'),
+(6, 'Banco Exterior'),
+(7, 'Banco Caroní'),
+(8, 'Bancrecer'),
+(9, 'BFC Banco Fondo Común'),
+(10, 'Banco Bicentenario');
+
+-- Insertando datos en la tabla 'tarjeta_credito'
+INSERT INTO tarjeta_credito (metodo_pago_codigo, tdc_numero, tdc_tipo_cuenta, tdc_fecha_expiracion, tdc_cvv, fk_banco, fk_cliente)
+VALUES
+(1, '5111111111111111', 'VISA', '2025-12-01', '123', 1, 46),
+(2, '5222222222222222', 'MasterCard', '2026-11-01', '456', 2, 12),
+(3, '5333333333333333', 'VISA', '2027-10-01', '789', 3, 34),
+(4, '5444444444444444', 'MasterCard', '2028-09-01', '321', 4, 1),
+(5, '5555555555555555', 'VISA', '2029-08-01', '654', 5, 12),
+(6, '5666666666666666', 'MasterCard', '2030-07-01', '987', 6, 95),
+(7, '5777777777777777', 'VISA', '2031-06-01', '111', 7, 54),
+(8, '5888888888888888', 'MasterCard', '2032-05-01', '222', 8, 89),
+(9, '5999999999999999', 'VISA', '2033-04-01', '333', 9, 56),
+(10, '5000000000000000', 'MasterCard', '2034-03-01', '444', 10, 97);
+
+-- Insertando datos en la tabla 'tarjeta_debito'
+INSERT INTO tarjeta_debito (metodo_pago_codigo, tdb_numero, tdb_tipo_cuenta, tdb_fecha_expiracion, tdb_cvv, fk_banco, fk_cliente)
+VALUES
+(1, '4111111111111111', 'Ahorro', '2025-12-01', '123', 1, 26),
+(2, '4222222222222222', 'Corriente', '2026-11-01', '456', 2, 57),
+(3, '4333333333333333', 'Ahorro', '2027-10-01', '789', 3, 33),
+(4, '4444444444444444', 'Corriente', '2028-09-01', '321', 4, 23),
+(5, '4555555555555555', 'Ahorro', '2029-08-01', '654', 5, 21),
+(6, '4666666666666666', 'Corriente', '2030-07-01', '987', 6, 10),
+(7, '4777777777777777', 'Ahorro', '2031-06-01', '111', 7, 17),
+(8, '4888888888888888', 'Corriente', '2032-05-01', '222', 8, 5),
+(9, '4999999999999999', 'Ahorro', '2033-04-01', '333', 9, 19),
+(10, '4000000000000000', 'Corriente', '2034-03-01', '444', 10, 2);
+
+-- Insertando datos en la tabla 'efectivo'
+INSERT INTO efectivo (metodo_pago_codigo, efectivo_denominacion, fk_cliente)
+VALUES
+(1, 1000, 97),
+(2, 500, 97),
+(3, 100, 97),
+(4, 500, 2),
+(5, 200, 2),
+(6, 50, 3),
+(7, 1500, 3),
+(8, 20, 1),
+(9, 10, 1),
+(10, 5, 1);
+
+-- Insertando datos en la tabla 'cheque'
+INSERT INTO cheque (metodo_pago_codigo, cheque_numero, fk_banco, fk_cliente)
+VALUES
+(1, '0000016594', 1, 10),
+(2, '0000918342', 2, 10),
+(3, '0004033285', 3, 15),
+(4, '0000485345', 4, 15),
+(5, '0009241795', 5, 20),
+(6, '0000000415', 6, 20),
+(7, '0000483355', 7, 25),
+(8, '0000002875', 8, 25),
+(9, '0000021900', 9, 30),
+(10, '0000949214', 10, 30);
+
+-- Insertando datos en la tabla 'pedido_compra'
+INSERT INTO pedido_compra (pedido_compra_numero, fk_aliado, pedido_compra_fecha_emision, pedido_compra_monto_subtil, pedido_compra_monto_total)
+VALUES
+(1, 1, '2010-01-15', 1200.00, 1392.00),
+(2, 1, '2011-02-20', 950.00, 1102.00),
+(3, 1, '2012-03-25', 450.00, 522.00),
+(4, 1, '2013-04-30', 1300.00, 1508.00),
+(5, 1, '2014-05-05', 750.00, 870.00),
+(6, 1, '2015-06-10', 1450.00, 1682.00),
+(7, 1, '2016-07-15', 600.00, 696.00),
+(8, 1, '2017-08-20', 800.00, 928.00),
+(9, 1, '2018-09-25', 300.00, 348.00),
+(10, 1, '2019-10-30', 1000.00, 1160.00),
+(11, 10, '2020-11-05', 1200.00, 1392.00),
+(12, 10, '2021-12-10', 1300.00, 1508.00),
+(13, 10, '2022-01-15', 1400.00, 1624.00),
+(14, 10, '2023-02-20', 1500.00, 1740.00),
+(15, 10, '2023-03-25', 1100.00, 1276.00),
+(16, 10, '2023-04-30', 900.00, 1044.00),
+(17, 10, '2023-05-05', 800.00, 928.00),
+(18, 10, '2023-06-10', 500.00, 580.00),
+(19, 10, '2023-07-15', 450.00, 522.00),
+(20, 20, '2023-08-20', 350.00, 406.00),
+(21, 20, '2023-09-25', 1400.00, 1624.00),
+(22, 20, '2023-10-30', 1250.00, 1450.00),
+(23, 20, '2023-11-05', 1350.00, 1566.00),
+(24, 20, '2023-12-10', 1450.00, 1682.00),
+(25, 20, '2024-01-15', 1500.00, 1740.00),
+(26, 20, '2010-01-15', 1150.00, 1334.00),
+(27, 20, '2011-02-20', 300.00, 348.00),
+(28, 20, '2012-03-25', 500.00, 580.00),
+(29, 20, '2013-04-30', 700.00, 812.00),
+(30, 30, '2014-05-05', 900.00, 1044.00),
+(31, 30, '2015-06-10', 1100.00, 1276.00),
+(32, 30, '2016-07-15', 1300.00, 1508.00),
+(33, 30, '2017-08-20', 1500.00, 1740.00),
+(34, 30, '2018-09-25', 450.00, 522.00),
+(35, 30, '2019-10-30', 600.00, 696.00),
+(36, 30, '2020-11-05', 950.00, 1102.00),
+(37, 30, '2021-12-10', 1150.00, 1334.00),
+(38, 30, '2022-01-15', 1250.00, 1450.00),
+(39, 30, '2023-02-20', 1350.00, 1566.00),
+(40, 40, '2023-03-25', 1450.00, 1682.00),
+(41, 40, '2023-04-30', 1550.00, 1798.00),
+(42, 40, '2023-05-05', 450.00, 522.00),
+(43, 40, '2023-06-10', 600.00, 696.00),
+(44, 40, '2023-07-15', 900.00, 1044.00),
+(45, 40, '2023-08-20', 1000.00, 1160.00),
+(46, 40, '2023-09-25', 1100.00, 1276.00),
+(47, 40, '2023-10-30', 1200.00, 1392.00),
+(48, 40, '2023-11-05', 1300.00, 1508.00),
+(49, 40, '2023-12-10', 1400.00, 1624.00),
+(50, 40, '2024-01-15', 1500.00, 1740.00);
+
+-- Insertando datos en la tabla 'pago_compra'
+INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
+VALUES
+(1, NULL, 10, NULL, NULL, 1, 1, 1392.00, '2010-01-15'),
+(2, NULL, 10, NULL, NULL, 2, 1, 1102.00, '2011-02-20'),
+(3, NULL, 10, NULL, NULL, 3, 1, 522.00, '2012-03-25'),
+(4, NULL, 10, NULL, NULL, 4, 1, 1508.00, '2013-04-30'),
+(5, NULL, 10, NULL, NULL, 5, 1, 870.00, '2014-05-05'),
+(6, NULL, 10, NULL, NULL, 6, 1, 1682.00, '2015-06-10'),
+(7, NULL, 10, NULL, NULL, 7, 1, 696.00, '2016-07-15'),
+(8, NULL, 10, NULL, NULL, 8, 1, 928.00, '2017-08-20'),
+(9, NULL, 10, NULL, NULL, 9, 1, 348.00, '2018-09-25'),
+(10, NULL, 10, NULL, NULL, 10, 1, 1160.00, '2019-10-30'),
+(11, NULL, 10, NULL, NULL, 11, 10, 1392.00, '2020-11-05'),
+(12, NULL, 10, NULL, NULL, 12, 10, 1508.00, '2021-12-10'),
+(13, NULL, 10, NULL, NULL, 13, 10, 1624.00, '2022-01-15'),
+(14, NULL, 10, NULL, NULL, 14, 10, 1740.00, '2023-02-20'),
+(15, NULL, 10, NULL, NULL, 15, 10, 1276.00, '2023-03-25'),
+(16, NULL, 10, NULL, NULL, 16, 10, 1044.00, '2023-04-30'),
+(17, NULL, 10, NULL, NULL, 17, 10, 928.00, '2023-05-05'),
+(18, NULL, 10, NULL, NULL, 18, 10, 580.00, '2023-06-10'),
+(19, NULL, 10, NULL, NULL, 19, 10, 522.00, '2023-07-15'),
+(20, NULL, 10, NULL, NULL, 20, 20, 406.00, '2023-08-20'),
+(21, NULL, 10, NULL, NULL, 21, 20, 1624.00, '2023-09-25'),
+(22, NULL, 10, NULL, NULL, 22, 20, 1450.00, '2023-10-30'),
+(23, NULL, 10, NULL, NULL, 23, 20, 1566.00, '2023-11-05'),
+(24, NULL, 10, NULL, NULL, 24, 20, 1682.00, '2023-12-10'),
+(25, NULL, 10, NULL, NULL, 26, 20, 1334.00, '2010-01-15'),
+(26, NULL, 10, NULL, NULL, 27, 20, 348.00, '2011-02-20'),
+(27, NULL, 10, NULL, NULL, 28, 20, 580.00, '2012-03-25'),
+(28, NULL, 10, NULL, NULL, 29, 20, 812.00, '2013-04-30'),
+(29, NULL, 10, NULL, NULL, 30, 20, 1044.00, '2014-05-05'),
+(30, NULL, 10, NULL, NULL, 31, 30, 1276.00, '2015-06-10'),
+(31, NULL, 10, NULL, NULL, 32, 30, 1508.00, '2016-07-15'),
+(32, NULL, 10, NULL, NULL, 33, 30, 1740.00, '2017-08-20'),
+(33, NULL, 10, NULL, NULL, 34, 30, 522.00, '2018-09-25'),
+(34, NULL, 10, NULL, NULL, 35, 30, 696.00, '2019-10-30'),
+(35, NULL, 10, NULL, NULL, 36, 30, 1102.00, '2020-11-05'),
+(36, NULL, 10, NULL, NULL, 37, 30, 1334.00, '2021-12-10'),
+(37, NULL, 10, NULL, NULL, 38, 30, 1450.00, '2022-01-15'),
+(38, NULL, 10, NULL, NULL, 39, 30, 1566.00, '2023-02-20'),
+(39, NULL, 10, NULL, NULL, 40, 30, 1682.00, '2023-03-25'),
+(40, NULL, 10, NULL, NULL, 41, 40, 1798.00, '2023-04-30'),
+(41, NULL, 10, NULL, NULL, 42, 40, 522.00, '2023-05-05'),
+(42, NULL, 10, NULL, NULL, 43, 40, 696.00, '2023-06-10'),
+(43, NULL, 10, NULL, NULL, 44, 40, 1044.00, '2023-07-15'),
+(44, NULL, 10, NULL, NULL, 45, 40, 1160.00, '2023-08-20'),
+(45, NULL, 10, NULL, NULL, 46, 40, 1276.00, '2023-09-25'),
+(46, NULL, 10, NULL, NULL, 47, 40, 1392.00, '2023-10-30'),
+(47, NULL, 10, NULL, NULL, 48, 40, 1508.00, '2023-11-05'),
+(48, NULL, 10, NULL, NULL, 49, 40, 1624.00, '2023-12-10'),
+(49, NULL, 10, NULL, NULL, 50, 40, 1740.00, '2024-01-15');
+
+-- Insertando datos en la tabla 'pedido_venta'
+INSERT INTO pedido_venta (pedido_venta_numero, fk_cliente, pedido_venta_fecha_emision, pedido_venta_monto_subtil, pedido_venta_monto_total)
+VALUES
+(1, 1, '2010-01-15', 1200.00, 1392.00),
+(2, 2, '2011-02-20', 950.00, 1102.00),
+(3, 3, '2012-03-25', 450.00, 522.00),
+(4, 4, '2013-04-30', 1300.00, 1508.00),
+(5, 5, '2014-05-05', 750.00, 870.00),
+(6, 6, '2015-06-10', 1450.00, 1682.00),
+(7, 7, '2016-07-15', 600.00, 696.00),
+(8, 8, '2017-08-20', 800.00, 928.00),
+(9, 9, '2018-09-25', 300.00, 348.00),
+(10,10, '2019-10-30', 1000.00, 1160.00);
+
+-- Insertando datos en la tabla 'pedido_compra_venta'
+INSERT INTO pedido_compra_venta (fk_pedido_venta_1, fk_pedido_venta_2, fk_pedido_compra_1, fk_pedido_compra_2)
+VALUES
+(1,1,1,1),
+(2,2,2,1),
+(3,3,3,1),
+(4,4,4,1),
+(5,5,5,1),
+(6,6,6,1),
+(7,7,7,1),
+(8,8,8,1),
+(9,9,9,1),
+(10,10,10,1);
+
+-- Insertando datos en la tabla 'pago_venta'
+INSERT INTO pago_venta (pago_venta_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_venta_1, fk_pedido_venta_2, pago_venta_monto, pago_venta_fecha_emision)
+VALUES
+(1, NULL, 9, NULL, NULL, 1, 1, 1392.00, '2010-01-15'),
+(2, NULL, 9, NULL, NULL, 2, 2, 1102.00, '2011-02-20'),
+(3, NULL, 9, NULL, NULL, 3, 3, 522.00, '2012-03-25'),
+(4, NULL, 9, NULL, NULL, 4, 4, 1508.00, '2013-04-30'),
+(5, NULL, 9, NULL, NULL, 5, 5, 870.00, '2014-05-05'),
+(6, NULL, 9, NULL, NULL, 6, 6, 1682.00, '2015-06-10'),
+(7, NULL, 9, NULL, NULL, 7, 7, 696.00, '2016-07-15'),
+(8, NULL, 9, NULL, NULL, 8, 8, 928.00, '2017-08-20'),
+(9, NULL, 9, NULL, NULL, 9, 9, 348.00, '2018-09-25'),
+(10, NULL, 9, NULL, NULL, 10, 10, 1160.00, '2019-10-30');
+
+-- Insertando datos en la tabla 'estatus_pedido'
+INSERT INTO estatus_pedido (estatus_pedido_codigo, estatus_pedido_nombre, estatus_pedido_descripcion)
+VALUES
+(1, 'En proceso', NULL),
+(2, 'Aprobado', NULL),
+(3, 'Rechazado', NULL),
+(4, 'Por pagar', NULL),
+(5, 'Pagado', NULL),
+(6, 'Cancelado', NULL),
+(7, 'En espera', NULL),
+(8, 'Completado', NULL),
+(9, 'En revisión', NULL),
+(10, 'Confirmado ', NULL);
+
+-- Insertando datos en la tabla 'historico_estatus_pedido_compra'
+INSERT INTO historico_estatus_pedido_compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio, hist_est_pedido_compra_fecha_fin)
+VALUES
+(1, 5, 1, 1, '2010-01-15', '2010-01-15'),
+(2, 5, 2, 1, '2011-02-20', '2011-02-20'),
+(3, 5, 3, 1, '2012-03-25', '2012-03-25'),
+(4, 5, 4, 1, '2013-04-30', '2013-04-30'),
+(5, 5, 5, 1, '2014-05-05', '2014-05-05'),
+(6, 5, 6, 1, '2015-06-10', '2015-06-10'),
+(7, 5, 7, 1, '2016-07-15', '2016-07-15'),
+(8, 5, 8, 1, '2017-08-20', '2017-08-20'),
+(9, 5, 9, 1, '2018-09-25', '2018-09-25'),
+(10, 5, 10, 1, '2019-10-30', '2019-10-30'),
+(11, 5, 11, 10, '2020-11-05', '2020-11-05'),
+(12, 5, 12, 10, '2021-12-10', '2021-12-10'),
+(13, 5, 13, 10, '2022-01-15', '2022-01-15'),
+(14, 5, 14, 10, '2023-02-20', '2023-02-20'),
+(15, 5, 15, 10, '2023-03-25', '2023-03-25'),
+(16, 5, 16, 10, '2023-04-30', '2023-04-30'),
+(17, 5, 17, 10, '2023-05-05', '2023-05-05'),
+(18, 5, 18, 10, '2023-06-10', '2023-06-10'),
+(19, 5, 19, 10, '2023-07-15', '2023-07-15'),
+(20, 5, 20, 20, '2023-08-20', '2023-08-20'),
+(21, 5, 21, 20, '2023-09-25', '2023-09-25'),
+(22, 5, 22, 20, '2023-10-30', '2023-10-30'),
+(23, 5, 23, 20, '2023-11-05', '2023-11-05'),
+(24, 5, 24, 20, '2023-12-10', '2023-12-10'),
+(25, 7, 25, 20, '2024-01-15', NULL),
+(26, 5, 26, 20, '2010-01-15', '2010-01-15'),
+(27, 5, 27, 20, '2011-02-20', '2011-02-20'),
+(28, 5, 28, 20, '2012-03-25', '2012-03-25'),
+(29, 5, 29, 20, '2013-04-30', '2013-04-30'),
+(30, 5, 30, 30, '2014-05-05', '2014-05-05'),
+(31, 5, 31, 30, '2015-06-10', '2015-06-10'),
+(32, 5, 32, 30, '2016-07-15', '2016-07-15'),
+(33, 5, 33, 30, '2017-08-20', '2017-08-20'),
+(34, 5, 34, 30, '2018-09-25', '2018-09-25'),
+(35, 5, 35, 30, '2019-10-30', '2019-10-30'),
+(36, 5, 36, 30, '2020-11-05', '2020-11-05'),
+(37, 5, 37, 30, '2021-12-10', '2021-12-10'),
+(38, 5, 38, 30, '2022-01-15', '2022-01-15'),
+(39, 5, 39, 30, '2023-02-20', '2023-02-20'),
+(40, 5, 40, 40, '2023-03-25', '2023-03-25'),
+(41, 5, 41, 40, '2023-04-30', '2023-04-30'),
+(42, 5, 42, 40, '2023-05-05', '2023-05-05'),
+(43, 5, 43, 40, '2023-06-10', '2023-06-10'),
+(44, 5, 44, 40, '2023-07-15', '2023-07-15'),
+(45, 5, 45, 40, '2023-08-20', '2023-08-20'),
+(46, 5, 46, 40, '2023-09-25', '2023-09-25'),
+(47, 5, 47, 40, '2023-10-30', '2023-10-30'),
+(48, 5, 48, 40, '2023-11-05', '2023-11-05'),
+(49, 5, 49, 40, '2023-12-10', '2023-12-10'),
+(50, 7, 50, 40, '2024-01-15', NULL);
+
+-- Insertando datos en la tabla 'historico_estatus_pedido_venta'
+INSERT INTO historico_estatus_pedido_venta (hist_est_pedido_venta_codigo, fk_estatus_pedido, fk_pedido_venta_1, fk_pedido_venta_2, hist_est_pedido_venta_fecha_inicio, hist_est_pedido_venta_fecha_fin)
+VALUES
+(1, 5, 1, 1, '2010-01-15', '2010-01-15'),
+(2, 5, 2, 2, '2011-02-20', '2011-02-20'),
+(3, 5, 3, 3, '2012-03-25', '2012-03-25'),
+(4, 5, 4, 4, '2013-04-30', '2013-04-30'),
+(5, 5, 5, 5, '2014-05-05', '2014-05-05'),
+(6, 5, 6, 6, '2015-06-10', '2015-06-10'),
+(7, 5, 7, 7, '2016-07-15', '2016-07-15'),
+(8, 5, 8, 8, '2017-08-20', '2017-08-20'),
+(9, 5, 9, 9, '2018-09-25', '2018-09-25'),
+(10, 5, 10, 10, '2019-10-30', '2019-10-30');
+
+INSERT INTO inventario_producto (inventario_producto_codigo, fk_mineral, inventario_producto_cantidad_total, inventario_producto_operacion, inventario_producto_tipo_operacion, inventario_producto_fecha_movimiento)
+VALUES
+(1, 1, 10, 10, 'Ingreso', '2010-01-15'),
+(2, 2, 10, 10, 'Ingreso', '2011-02-20'),
+(3, 3, 10, 10, 'Ingreso', '2012-03-25'),
+(4, 4, 10, 10, 'Ingreso', '2013-04-30'),
+(5, 5, 10, 10, 'Ingreso', '2014-05-05'),
+(6, 6, 10, 10, 'Ingreso', '2015-06-10'),
+(7, 7, 10, 10, 'Ingreso', '2016-07-15'),
+(8, 8, 10, 10, 'Ingreso', '2017-08-20'),
+(9, 9, 10, 10, 'Ingreso', '2018-09-25'),
+(10, 10, 10, 10, 'Ingreso', '2019-10-30'),
+(11, 11, 10, 10, 'Ingreso', '2020-11-05'),
+(12, 12, 10, 10, 'Ingreso', '2021-12-10'),
+(13, 13, 10, 10, 'Ingreso', '2022-01-15'),
+(14, 14, 10, 10, 'Ingreso', '2023-02-20'),
+(15, 15, 10, 10, 'Ingreso', '2023-03-25'),
+(16, 16, 10, 10, 'Ingreso', '2023-04-30'),
+(17, 17, 10, 10, 'Ingreso', '2023-05-05'),
+(18, 18, 10, 10, 'Ingreso', '2023-06-10'),
+(19, 19, 10, 10, 'Ingreso', '2023-07-15'),
+(20, 20, 10, 10, 'Ingreso', '2023-08-20'),
+(21, 21, 10, 10, 'Ingreso', '2023-09-25'),
+(22, 22, 10, 10, 'Ingreso', '2023-10-30'),
+(23, 23, 10, 10, 'Ingreso', '2023-11-05'),
+(24, 24, 10, 10, 'Ingreso', '2023-12-10'),
+(25, 25, 10, 10, 'Ingreso', '2024-01-15'),
+(26, 26, 10, 10, 'Ingreso', '2010-01-15'),
+(27, 27, 10, 10, 'Ingreso', '2011-02-20'),
+(28, 28, 10, 10, 'Ingreso', '2012-03-25'),
+(29, 29, 10, 10, 'Ingreso', '2013-04-30'),
+(30, 30, 10, 10, 'Ingreso', '2014-05-05'),
+(31, 31, 10, 10, 'Ingreso', '2015-06-10'),
+(32, 32, 10, 10, 'Ingreso', '2016-07-15'),
+(33, 33, 10, 10, 'Ingreso', '2017-08-20'),
+(34, 34, 10, 10, 'Ingreso', '2018-09-25'),
+(35, 35, 10, 10, 'Ingreso', '2019-10-30'),
+(36, 36, 10, 10, 'Ingreso', '2020-11-05'),
+(37, 37, 10, 10, 'Ingreso', '2021-12-10'),
+(38, 38, 10, 10, 'Ingreso', '2022-01-15'),
+(39, 39, 10, 10, 'Ingreso', '2023-02-20'),
+(40, 40, 10, 10, 'Ingreso', '2023-03-25'),
+(41, 41, 10, 10, 'Ingreso', '2023-04-30'),
+(42, 42, 10, 10, 'Ingreso', '2023-05-05'),
+(43, 43, 10, 10, 'Ingreso', '2023-06-10'),
+(44, 44, 10, 10, 'Ingreso', '2023-07-15'),
+(45, 45, 10, 10, 'Ingreso', '2023-08-20'),
+(46, 46, 10, 10, 'Ingreso', '2023-09-25'),
+(47, 47, 10, 10, 'Ingreso', '2023-10-30'),
+(48, 48, 10, 10, 'Ingreso', '2023-11-05'),
+(49, 49, 10, 10, 'Ingreso', '2023-12-10'),
+(50, 50, 10, 10, 'Ingreso', '2024-01-15'),
+(51, 1, 0, 10, 'Egreso', '2010-01-15'),
+(52, 2, 0, 10, 'Egreso', '2011-02-20'),
+(53, 3, 0, 10, 'Egreso', '2012-03-25'),
+(54, 4, 0, 10, 'Egreso', '2013-04-30'),
+(55, 5, 0, 10, 'Egreso', '2014-05-05'),
+(56, 6, 0, 10, 'Egreso', '2015-06-10'),
+(57, 7, 0, 10, 'Egreso', '2016-07-15'),
+(58, 8, 0, 10, 'Egreso', '2017-08-20'),
+(59, 9, 0, 10, 'Egreso', '2018-09-25'),
+(60, 10, 0, 10, 'Egreso', '2019-10-30');
+
+-- Insertando datos en la tabla 'detalle_pedido_compra'
+INSERT INTO detalle_pedido_compra (detalle_pedido_compra_codigo, fk_pedido_compra_1, fk_pedido_compra_2, fk_inventario_producto_1, fk_inventario_producto_2, detalle_compra_cantidad_mineral, detalle_compra_precio_unitario)
+VALUES
+(1, 1, 1, 1, 1, 10, 120.00),
+(2, 2, 1, 2, 2, 10, 95.00),
+(3, 3, 1, 3, 3, 10, 45.00),
+(4, 4, 1, 4, 4, 10, 130.00),
+(5, 5, 1, 5, 5, 10, 75.00),
+(6, 6, 1, 6, 6, 10, 145.00),
+(7, 7, 1, 7, 7, 10, 60.00),
+(8, 8, 1, 8, 8, 10, 80.00),
+(9, 9, 1, 9, 9, 10, 30.00),
+(10, 10, 1, 10, 10, 10, 100.00),
+(11, 11, 10, 11, 11, 10, 120.00),
+(12, 12, 10, 12, 12, 10, 95.00),
+(13, 13, 10, 13, 13, 10, 45.00),
+(14, 14, 10, 14, 14, 10, 130.00),
+(15, 15, 10, 15, 15, 10, 75.00),
+(16, 16, 10, 16, 16, 10, 145.00),
+(17, 17, 10, 17, 17, 10, 60.00),
+(18, 18, 10, 18, 18, 10, 80.00),
+(19, 19, 10, 19, 19, 10, 30.00),
+(20, 20, 20, 20, 20, 10, 100.00),
+(21, 21, 20, 21, 21, 10, 120.00),
+(22, 22, 20, 22, 22, 10, 95.00),
+(23, 23, 20, 23, 23, 10, 45.00),
+(24, 24, 20, 24, 24, 10, 130.00),
+(25, 25, 20, 25, 25, 10, 75.00),
+(26, 26, 20, 26, 26, 10, 145.00),
+(27, 27, 20, 27, 27, 10, 60.00),
+(28, 28, 20, 28, 28, 10, 80.00),
+(29, 29, 20, 29, 29, 10, 30.00),
+(30, 30, 30, 30, 30, 10, 100.00),
+(31, 31, 30, 31, 31, 10, 120.00),
+(32, 32, 30, 32, 32, 10, 95.00),
+(33, 33, 30, 33, 33, 10, 45.00),
+(34, 34, 30, 34, 34, 10, 130.00),
+(35, 35, 30, 35, 35, 10, 75.00),
+(36, 36, 30, 36, 36, 10, 145.00),
+(37, 37, 30, 37, 37, 10, 60.00),
+(38, 38, 30, 38, 38, 10, 80.00),
+(39, 39, 30, 39, 39, 10, 30.00),
+(40, 40, 40, 40, 40, 10, 100.00),
+(41, 41, 40, 41, 41, 10, 120.00),
+(42, 42, 40, 42, 42, 10, 95.00),
+(43, 43, 40, 43, 43, 10, 45.00),
+(44, 44, 40, 44, 44, 10, 130.00),
+(45, 45, 40, 45, 45, 10, 75.00),
+(46, 46, 40, 46, 46, 10, 145.00),
+(47, 47, 40, 47, 47, 10, 60.00),
+(48, 48, 40, 48, 48, 10, 80.00),
+(49, 49, 40, 49, 49, 10, 30.00),
+(50, 50, 40, 50, 50, 10, 100.00);
+
+-- Insertando datos en la tabla 'detalle_pedido_venta'
+INSERT INTO detalle_pedido_venta (detalle_venta_codigo, fk_pedido_venta_1, fk_pedido_venta_2, fk_inventario_producto_1, fk_inventario_producto_2, detalle_venta_cantidad_mineral, detalle_venta_precio_unitario)
+VALUES
+(1, 1, 1, 51, 1, 10, 120.00),
+(2, 2, 2, 52, 2, 10, 95.00),
+(3, 3, 3, 53, 3, 10, 45.00),
+(4, 4, 4, 54, 4, 10, 130.00),
+(5, 5, 5, 55, 5, 10, 75.00),
+(6, 6, 6, 56, 6, 10, 145.00),
+(7, 7, 7, 57, 7, 10, 60.00),
+(8, 8, 8, 58, 8, 10, 80.00),
+(9, 9, 9, 59, 9, 10, 30.00),
+(10, 10, 10, 60, 10, 10, 100.00);
+
+-- Insertando datos en la tabla 'yacimiento'
+INSERT INTO yacimiento (yacimiento_codigo, yacimiento_nombre, yacimiento_descripcion, yacimiento_periodo_origen, yacim_autoc_origen, yacim_aloc_transporte, yacimiento_tipo, fk_lugar)
+VALUES
+(1, 'Yacimiento La Candelaria', NULL, 'Cretácico', 'Formación La Luna', NULL, 'Autóctono', 101),
+(2, 'Yacimiento El Furrial', NULL, 'Paleoceno', NULL, 'Transporte aéreo', 'Alóctono', 102),
+(3, 'Yacimiento Mara Norte', NULL, 'Jurásico', 'Formación Rio Negro', NULL, 'Autóctono', 103),
+(4, 'Yacimiento Carabobo', NULL, 'Triásico', NULL, 'Transporte terrestre', 'Alóctono', 104),
+(5, 'Yacimiento Zuata', NULL, 'Permiano', 'Formación Freites', NULL, 'Autóctono', 105),
+(6, 'Yacimiento Bachaquero', NULL, 'Devónico', NULL, 'Transporte ferroviario', 'Alóctono', 106),
+(7, 'Yacimiento Lagunillas', NULL, 'Silúrico', 'Formación Naricual', NULL, 'Autóctono', 107),
+(8, 'Yacimiento Tía Juana', NULL, 'Ordovícico', NULL, 'Transporte aéreo', 'Alóctono', 108),
+(9, 'Yacimiento Barinas', NULL, 'Carbonífero', 'Formación Merecure', NULL, 'Autóctono', 109),
+(10, 'Yacimiento Morichal', NULL, 'Cámbrico', NULL, 'Transporte terrestre', 'Alóctono', 110);
+
+-- Insertando datos en la tabla 'inventario_yacim_minera;'
+INSERT INTO inventario_yacim_mineral (fk_mineral, fk_yacimiento, fk_aliado)
+VALUES
+(1,1,1),
+(2,2,2),
+(3,3,3),
+(4,4,4),
+(5,5,5),
+(6,6,6),
+(7,7,7),
+(8,8,8),
+(9,9,9),
+(10,10,10),
+(11,1,11),
+(12,2,12),
+(13,3,13),
+(14,4,14),
+(15,5,15),
+(16,6,16),
+(17,7,17),
+(18,8,18),
+(19,9,19),
+(20,10,20),
+(21,1,21),
+(22,2,22),
+(23,3,23),
+(24,4,24),
+(25,5,25),
+(26,6,26),
+(27,7,27),
+(28,8,28),
+(29,9,29),
+(30,10,30),
+(31,1,31),
+(32,2,32),
+(33,3,33),
+(34,4,34),
+(35,5,35),
+(36,6,36),
+(37,7,37),
+(38,8,38),
+(39,9,39),
+(40,10,40),
+(41,1,41),
+(42,2,42),
+(43,3,43),
+(44,4,44),
+(45,5,45),
+(46,6,46),
+(47,7,47),
+(48,8,48);
+
+-- Insertando datos en la tabla 'mina'
+INSERT INTO mina (mina_id, mina_nombre, mina_descripcion, fk_yacimiento)
+VALUES
+(1, 'Mina La Candelaria', NULL, 1),
+(2, 'Mina El Furrial', NULL, 2),
+(3, 'Mina Mara Norte', NULL, 3),
+(4, 'Mina Carabobo', NULL, 4),
+(5, 'Mina Zuata', NULL, 5),
+(6, 'Mina Bachaquero', NULL, 6),
+(7, 'Mina Lagunillas', NULL, 7),
+(8, 'Mina Tía Juana', NULL, 8),
+(9, 'Mina Barinas', NULL, 9),
+(10, 'Mina Morichal', NULL, 10);
+
+-- Insertando datos en la tabla 'pozo'
+INSERT INTO pozo (pozo_id, pozo_nombre, pozo_descripcion, pozo_cantidad_mts, pozo_capacidad_mineral, fk_mina_1, fk_mina_2, fk_mineral)
+VALUES
+(1, 'Pozo La Candelaria', NULL, 1000, 1000, 1, 1, 1),
+(2, 'Pozo El Furrial', NULL, 1000, 1000, 2, 2, 2),
+(3, 'Pozo Mara Norte', NULL, 1000, 1000, 3, 3, 3),
+(4, 'Pozo Carabobo', NULL, 1000, 1000, 4, 4, 4),
+(5, 'Pozo Zuata', NULL, 1000, 1000, 5, 5, 5),
+(6, 'Pozo Bachaquero', NULL, 1000, 1000, 6, 6, 6),
+(7, 'Pozo Lagunillas', NULL, 1000, 1000, 7, 7, 7),
+(8, 'Pozo Tía Juana', NULL, 1000, 1000, 8, 8, 8),
+(9, 'Pozo Barinas', NULL, 1000, 1000, 9, 9, 9),
+(10, 'Pozo Morichal', NULL, 1000, 1000, 10, 10, 10);
+
+INSERT INTO privilegio (privilegio_codigo, privilegio_nombre)
+VALUES
+(1, 'Consultar sección de inicio'),
+(2, 'Iniciar sesión'),
+(3, 'Registrarse'),
+(4, 'Registrar aliado'),
+(5, 'Consultar lista de aliados'),
+(6, 'Consultar detalle de un aliado'),
+(7, 'Modificar datos de un aliado'),
+(8, 'Eliminar aliado'),
+(9, 'Registrar empleado'),
+(10, 'Consultar lista de empleados'),
+(11, 'Consultar detalle de un empleado'),
+(12, 'Modificar datos de un empleado'),
+(13, 'Eliminar empleado'),
+(14, 'Registrar cliente'),
+(15, 'Consultar lista de clientes'),
+(16, 'Consultar detalle de un cliente'),
+(17, 'Eliminar cliente'),
+(18, 'Consultar lista de privilegios'),
+(19, 'Consultar lista de roles'),
+(20, 'Registrar rol'),
+(21, 'Consultar detalle de un rol'),
+(22, 'Modificar datos de un rol'),
+(23, 'Eliminar rol'),
+(24, 'Consultar lista de usuarios'),
+(25, 'Registrar usuario'),
+(26, 'Consultar perfil de un usuario'),
+(27, 'Modificar datos de un usuario'),
+(28, 'Eliminar usuario'),
+(29, 'Registrar mineral'),
+(30, 'Consultar lista de minerales'),
+(31, 'Consultar detalle de un mineral'),
+(32, 'Modificar datos de un mineral'),
+(33, 'Eliminar mineral'),
+(34, 'Consultar lista de recursos'),
+(35, 'Registrar recurso'),
+(36, 'Consultar detalle de un recurso'),
+(37, 'Consultar operaciones del inventario'),
+(38, 'Consultar lista de solicitudes de compra'),
+(39, 'Consultar detalle de una solicitud de compra'),
+(40, 'Registrar solicitud de compra'),
+(41, 'Modificar datos de una solicitud de compra'),
+(42, 'Consultar lista de proyectos configuración'),
+(43, 'Consultar detalle de un proyecto configuración'),
+(44, 'Registrar proyecto configuración'),
+(45, 'Modificar datos de un proyecto configuración'),
+(46, 'Eliminar proyecto configuración'),
+(47, 'Consultar linea de tiempo de proyecto configuración'),
+(48, 'Consultar lista de etapas configuración'),
+(49, 'Registrar etapa configuración'),
+(50, 'Consultar detalle de una etapa configuración'),
+(51, 'Modificar datos de una etapa configuración'),
+(52, 'Eliminar etapa configuración'),
+(53, 'Consultar lista de actividades configuración'),
+(54, 'Registrar actividad configuración'),
+(55, 'Consultar detalle de una actividad configuración'),
+(56, 'Modificar datos de una actividad configuración'),
+(57, 'Eliminar actividad configuración');

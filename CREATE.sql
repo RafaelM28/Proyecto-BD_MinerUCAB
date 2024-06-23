@@ -2,7 +2,7 @@ CREATE TABLE Privilegio (
     -- Código del privilegio
     privilegio_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre del privilegio
-    privilegio_nombre VARCHAR(30) NOT NULL  UNIQUE,
+    privilegio_nombre VARCHAR(100) NOT NULL  UNIQUE,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_privilegio PRIMARY KEY (privilegio_codigo),
