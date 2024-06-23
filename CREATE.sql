@@ -14,9 +14,9 @@ CREATE TABLE Rol (
     -- Código del rol
     rol_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre del rol
-    rol_nombre VARCHAR(30) NOT NULL UNIQUE,
+    rol_nombre VARCHAR(50) NOT NULL UNIQUE,
     -- Descripción del rol
-    rol_descripcion VARCHAR(100) NOT NULL,
+    rol_descripcion VARCHAR(100),
 
     -- Restricción de clave primaria
     CONSTRAINT pk_rol PRIMARY KEY (rol_codigo),
@@ -166,7 +166,7 @@ CREATE TABLE Empleado (
     -- Clave foranea de aliado 1 como representante del aliado
     fk_aliado_1 SMALLINT,
     -- Clave foranea de aliado 2 como perteneciente al aliado
-    fk_aliado_2 SMALLINT,
+    fk_aliado_2 SMALLINT NOT NULL,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_empleado PRIMARY KEY (empleado_codigo),
@@ -200,7 +200,7 @@ CREATE TABLE Usuario (
     -- Código del usuario
     usuario_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre de usuario
-    usuario_nombre VARCHAR(15) NOT NULL UNIQUE,
+    usuario_nombre VARCHAR(30) NOT NULL UNIQUE,
     -- Contraseña del usuario
     usuario_clave VARCHAR(8) NOT NULL,
     -- Clave foránea del empleado
@@ -228,7 +228,7 @@ CREATE TABLE Correo (
     -- Código del correo
     correo_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre de correo
-    correo_nombre VARCHAR(30) NOT NULL UNIQUE,
+    correo_nombre VARCHAR(50) NOT NULL UNIQUE,
     -- Clave foránea del empleado
     fk_empleado SMALLINT,
     -- Clave foránea del aliado
@@ -353,7 +353,7 @@ CREATE TABLE Cargo (
     -- Código del cargo
     cargo_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre del cargo
-    cargo_nombre VARCHAR(15) NOT NULL UNIQUE,
+    cargo_nombre VARCHAR(30) NOT NULL UNIQUE,
     -- Descripción del cargo
     cargo_descripcion VARCHAR(100),
 
@@ -971,8 +971,6 @@ CREATE TABLE Proyecto_Ejecucion (
     CONSTRAINT check_proyecto_ejecucion_nombre CHECK (proyecto_ejec_nombre ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9 ]*$'),
     -- Restricción para verificar que la descripción solo contenga letras y espacios
     CONSTRAINT check_proyecto_ejecucion_descripcion CHECK (proyecto_ejec_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
-    -- Restricción para verificar que la fecha de inicio estimada sea mayor a la fecha actual
-    CONSTRAINT check_proyecto_ejecucion_fecha_inicio_estimada CHECK (proyecto_ejec_fecha_inicio_estimada > CURRENT_DATE),
     -- Restricción para verificar que la fecha de fin estimada sea mayor a la fecha de inicio estimada
     CONSTRAINT check_proyecto_ejecucion_fecha_fin_estimada CHECK (proyecto_ejec_fecha_fin_estimada > proyecto_ejec_fecha_inicio_estimada),
     -- Restricción de clave foránea que referencia a la tabla POZO para su primera, segunda y tercera PK
@@ -985,7 +983,7 @@ CREATE TABLE Etapa_Ejecucion (
     -- Código de la etapa
     etapa_ejec_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre de la etapa
-    etapa_ejec_nombre VARCHAR(30) NOT NULL UNIQUE,
+    etapa_ejec_nombre VARCHAR(30) NOT NULL,
     -- Número de la etapa
     etapa_ejec_numero SMALLINT NOT NULL,
     -- Descripción de la etapa
@@ -1009,8 +1007,6 @@ CREATE TABLE Etapa_Ejecucion (
     CONSTRAINT check_etapa_ejecucion_numero CHECK (etapa_ejec_numero > 0),
     -- Restricción para verificar que la descripción solo contenga letras y espacios
     CONSTRAINT check_etapa_ejecucion_descripcion CHECK (etapa_ejec_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
-    -- Restricción para verificar que la fecha de inicio estimada sea mayor a la fecha actual
-    CONSTRAINT check_etapa_ejecucion_fecha_inicio_estimada CHECK (etapa_ejec_fecha_inicio_estimada > CURRENT_DATE),
     -- Restricción para verificar que la fecha de fin estimada sea mayor a la fecha de inicio estimada
     CONSTRAINT check_etapa_ejecucion_fecha_fin_estimada CHECK (etapa_ejec_fecha_fin_estimada > etapa_ejec_fecha_inicio_estimada),
     -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
@@ -1021,7 +1017,7 @@ CREATE TABLE Actividad_Ejecucion (
     -- Código de la actividad
     actividad_ejec_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre de la actividad
-    actividad_ejec_nombre VARCHAR(30) NOT NULL UNIQUE,
+    actividad_ejec_nombre VARCHAR(70) NOT NULL,
     -- Descripción de la actividad
     actividad_ejec_descripcion VARCHAR(100),
     -- Duración de la actividad en días
@@ -1045,8 +1041,6 @@ CREATE TABLE Actividad_Ejecucion (
     CONSTRAINT check_actividad_ejecucion_descripcion CHECK (actividad_ejec_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
     -- Restricción para verificar que la duración de la actividad sea mayor a 0
     CONSTRAINT check_actividad_ejecucion_duracion_dias CHECK (actividad_ejec_duracion_dias > 0),
-    -- Restricción para verificar que la fecha de inicio estimada sea mayor a la fecha actual
-    CONSTRAINT check_actividad_ejecucion_fecha_inicio_estimada CHECK (actividad_ejec_fecha_inicio_estimada > CURRENT_DATE),
     -- Restricción para verificar que la fecha de fin estimada sea mayor a la fecha de inicio estimada
     CONSTRAINT check_actividad_ejecucion_fecha_fin_estimada CHECK (actividad_ejec_fecha_fin_estimada > actividad_ejec_fecha_inicio_estimada),
     -- Restricción de clave foranea que referencia a la tabla ETAPA_EJECUCION
@@ -1057,7 +1051,7 @@ CREATE TABLE Estatus_Ejecucion (
     -- Código del estatus
     estatus_ejecucion_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre del estatus
-    estatus_ejecucion_nombre VARCHAR(15) NOT NULL UNIQUE,
+    estatus_ejecucion_nombre VARCHAR(30) NOT NULL UNIQUE,
     -- Descripción del estatus
     estatus_ejecucion_descripcion VARCHAR(100),
 
@@ -1198,10 +1192,10 @@ CREATE TABLE Historico_Estatus_Solicitud_Aliados (
 );
 
 CREATE TABLE Ejecucion_Empleado (
+    -- Código de la ejecución
+    ejecucion_empleado_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Clave foranea de la actividad
     fk_actividad_ejecucion SMALLINT NOT NULL,
-    -- Cantidad de empleados
-    ejecucion_empleado_cantidad SMALLINT NOT NULL,
     -- Salario quincenal del empleado
     ejecucion_empleado_salario NUMERIC(10,2) NOT NULL,
     -- Viáticos quincenales del empleado
@@ -1209,16 +1203,14 @@ CREATE TABLE Ejecucion_Empleado (
     -- Clave foranea del presupuesto
     fk_presupuesto SMALLINT NOT NULL,
     -- Clave foranea del empleado
-    fk_empleado SMALLINT NOT NULL,
+    fk_empleado SMALLINT,
     -- Clave foranea del aliado 1
-    fk_solicitud_aliado_1 SMALLINT NOT NULL,
+    fk_solicitud_aliado_1 SMALLINT,
     -- Clave foranea del aliado 2
-    fk_solicitud_aliado_2 SMALLINT NOT NULL,
+    fk_solicitud_aliado_2 SMALLINT,
 
     -- Restricción de clave primaria
-    CONSTRAINT pk_ejecucion_empleado PRIMARY KEY (fk_actividad_ejecucion),
-    --  Restricción para verificar que la cantidad de empleados sea mayor a 0
-    CONSTRAINT check_ejecucion_empleado_cantidad CHECK (ejecucion_empleado_cantidad > 0),
+    CONSTRAINT pk_ejecucion_empleado PRIMARY KEY (fk_actividad_ejecucion, ejecucion_empleado_codigo),
     -- Restricción para verificar que el salario quincenal sea mayor a 0
     CONSTRAINT check_ejecucion_empleado_salario CHECK (ejecucion_empleado_salario > 0),
     -- Restricción para verificar que los viáticos quincenales sean mayores a 0
@@ -1234,6 +1226,8 @@ CREATE TABLE Ejecucion_Empleado (
 );
 
 CREATE TABLE Ejecucion_Recurso (
+    -- Código de la ejecución
+    ejecucion_recurso_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Clave foranea de la actividad
     fk_actividad_ejecucion SMALLINT NOT NULL,
     -- Cantidad de recursos
@@ -1245,16 +1239,16 @@ CREATE TABLE Ejecucion_Recurso (
     -- Clave foranea del presupuesto
     fk_presupuesto SMALLINT NOT NULL,
     -- Clave foranea del aliado 1
-    fk_solicitud_aliado_1 SMALLINT NOT NULL,
+    fk_solicitud_aliado_1 SMALLINT,
     -- Clave foranea del aliado 2
-    fk_solicitud_aliado_2 SMALLINT NOT NULL,
+    fk_solicitud_aliado_2 SMALLINT,
     -- Clave foranea del inventario recurso 1
-    fk_inventario_recurso_1 SMALLINT NOT NULL,
+    fk_inventario_recurso_1 SMALLINT,
     -- Clave foranea del inventario recurso 2
-    fk_inventario_recurso_2 SMALLINT NOT NULL,
+    fk_inventario_recurso_2 SMALLINT,
 
     -- Restricción de clave primaria
-    CONSTRAINT pk_ejecucion_recurso PRIMARY KEY (fk_actividad_ejecucion),
+    CONSTRAINT pk_ejecucion_recurso PRIMARY KEY (fk_actividad_ejecucion, ejecucion_recurso_codigo),
     --  Restricción para verificar que la cantidad de recursos sea mayor a 0
     CONSTRAINT check_ejecucion_recurso_cantidad CHECK (ejecucion_recurso_cantidad > 0),
     -- Restricción para verificar que el costo mensual sea mayor a 0
@@ -1280,8 +1274,6 @@ CREATE TABLE Detalle_Solicitud_Empleado (
     fk_solicitud_aliado_1 SMALLINT NOT NULL,
     -- Código de la solicitud
     fk_solicitud_aliado_2 SMALLINT NOT NULL,
-    -- Cantidad de empleados
-    detalle_solicitud_empleado_cantidad SMALLINT NOT NULL,
     -- Salario quincenal del empleado
     detalle_solicitud_empleado_salario NUMERIC(10,2) NOT NULL,
     -- Viáticos quincenales del empleado
@@ -1289,8 +1281,6 @@ CREATE TABLE Detalle_Solicitud_Empleado (
 
     -- Restricción de clave primaria
     CONSTRAINT pk_detalle_solicitud_empleado PRIMARY KEY (detalle_solicitud_empleado_codigo, fk_empleado, fk_solicitud_aliado_1, fk_solicitud_aliado_2),
-    --  Restricción para verificar que la cantidad de empleados sea mayor a 0
-    CONSTRAINT check_detalle_solicitud_empleado_cantidad CHECK (detalle_solicitud_empleado_cantidad > 0),
     -- Restricción para verificar que el salario quincenal sea mayor a 0
     CONSTRAINT check_detalle_solicitud_empleado_salario CHECK (detalle_solicitud_empleado_salario > 0),
     -- Restricción para verificar que los viáticos quincenales sean mayores a 0
