@@ -355,7 +355,7 @@ CREATE TABLE Cargo (
     -- Nombre del cargo
     cargo_nombre VARCHAR(15) NOT NULL UNIQUE,
     -- Descripción del cargo
-    cargo_descripcion VARCHAR(100) NOT NULL,
+    cargo_descripcion VARCHAR(100),
 
     -- Restricción de clave primaria
     CONSTRAINT pk_cargo PRIMARY KEY (cargo_codigo),
@@ -843,7 +843,7 @@ CREATE TABLE Etapa_Configuracion (
     -- Código de la etapa
     etapa_config_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre de la etapa
-    etapa_config_nombre VARCHAR(30) NOT NULL UNIQUE,
+    etapa_config_nombre VARCHAR(30) NOT NULL,
     -- Número de la etapa
     etapa_config_numero SMALLINT NOT NULL,
     -- Descripción de la etapa
@@ -867,7 +867,7 @@ CREATE TABLE Actividad_Configuracion (
     -- Código de la actividad
     actividad_config_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre de la actividad
-    actividad_config_nombre VARCHAR(30) NOT NULL UNIQUE,
+    actividad_config_nombre VARCHAR(45) NOT NULL,
     -- Descripción de la actividad
     actividad_config_descripcion VARCHAR(100),
     -- Duración de la actividad en días
@@ -934,7 +934,7 @@ CREATE TABLE Recurso_Actividad (
     -- Restricción para verificar que el costo de mantenimiento sea mayor a 0
     CONSTRAINT check_recurso_actividad_costo_mantenimiento CHECK (config_recurso_costo_mantenimiento > 0),
     -- Restricción de clave foránea que referencia a la tabla RECURSO
-    CONSTRAINT fk_recurso_recurso_actividad FOREIGN KEY (fk_tipo_recurso) REFERENCES Recurso (recurso_codigo),
+    CONSTRAINT fk_recurso_recurso_actividad FOREIGN KEY (fk_tipo_recurso) REFERENCES Tipo_Recurso (tipo_recurso_codigo),
     -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_CONFIGURACION
     CONSTRAINT fk_actividad_recurso_actividad FOREIGN KEY (fk_actividad_config) REFERENCES Actividad_Configuracion (actividad_config_codigo)
 );
