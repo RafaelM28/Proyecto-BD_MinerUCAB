@@ -599,7 +599,7 @@ CREATE TABLE Estatus_Pozo (
     -- Código del estatus
     estatus_pozo_codigo SMALLSERIAL NOT NULL UNIQUE,
     -- Nombre del estatus
-    estatus_pozo_nombre VARCHAR(15) NOT NULL UNIQUE,
+    estatus_pozo_nombre VARCHAR(20) NOT NULL UNIQUE,
     -- Descripción del estatus
     estatus_pozo_descripcion VARCHAR(100),
 
