@@ -1487,7 +1487,7 @@ CREATE TABLE Pedido_Compra_Venta (
 
 CREATE TABLE Pedido_Venta_Proyecto (
     -- Código del proyecto ejecución
-    fk_proyecto_ejecucion SMALLINT NOT NULL UNIQUE,
+    fk_proyecto_ejecucion SMALLINT NOT NULL,
     -- Código del pedido venta 1
     fk_pedido_venta_1 SMALLINT NOT NULL  UNIQUE,
     -- Código del pedido venta 2
