@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Etapa Config - MinerUCAB</title>
+    <link rel="stylesheet" href="crear_etapa_config_styles.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">MINERUCAB</div>
+        <div class="nav-buttons">
+            <img class="img-proyectos" src="../catalogo/imagenes/image 4.svg" />
+            <div class="botones">
+                <button class="botones1">Proyectos</button>
+            </div>
+            <button class="botones2">Perfil</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <ul>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="24px" class="icon" src="../catalogo/imagenes/image 2.svg" alt="" />
+                        <span class="text1">Crear perfil</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="45px" class="icon1" src="../catalogo/imagenes/image 5.svg" alt="" />
+                        <span class="text">Inicio</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="35px" class="icon" src="../catalogo/imagenes/image 7.svg" alt="" />
+                        <span class="text">Personal</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Empleados</li>
+                        <li class="li2" href="#">Recursos</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="32px" class="icon" src="../catalogo/imagenes/image 16.svg" alt="" />
+                        <span class="text2">Alianza</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Aliados</li>
+                        <li class="li2" href="#">Solicitudes</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="35px" class="icon" src="../catalogo/imagenes/image 15.svg" alt="" />
+                        <span class="text">Compras</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="30px" class="icon" src="../catalogo/imagenes/image 14.svg" alt="" />
+                        <span class="text">Almacen</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Minerales</li>
+                        <li class="li2" href="#">Inventario</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="30px" class="icon" src="../catalogo/imagenes/image 18.svg" alt="" />
+                        <span class="text">Clientes</span>
+                    </div>
+                </a>
+            </ul>
+        </div>
+
+        <div class="login-container">
+            <div class="container2">
+                <form>
+                    <div class="text4">
+                        <h2 class="text5">Etapa</h2>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label1">Nombre: *</label>
+                        <input class="input1" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label2">Número: *</label>
+                        <input class="input1" id="numero" name="numero" required>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label3">Actividades: *</label>
+                        <div class="cargos-input-group">
+                            <select id="actividades" name="actividades" class="input2">
+                                <option value="Perforación exploratoria">Perforación exploratoria</option>
+                                <option value="Revisión de mapas mineros">Revisión de mapas mineros</option>
+                            </select>
+                            <button type="button" onclick="addActividad()" class="input3">Agregar</button>
+                        </div>
+                    </div>
+                    <div class="selected-cargos" id="selected-cargos">
+                    </div>
+                    <div class="form-group2">
+                        <div>
+                            <label>Descripción:</label>
+                        </div>
+                        <textarea for="descripcion" id="descripcion" name="descripcion" rows="4" class="textarea1"></textarea>
+                    </div>
+                    <div class="form-group3">
+                        <button class="submit" type="submit">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addActividad() {
+            const actividadesSelect = document.getElementById('actividades');
+            const actividad = actividadesSelect.value;
+
+            if (actividad) {
+                const actividadRow = document.createElement('div');
+                actividadRow.classList.add('actividad-row');
+                actividadRow.innerHTML = `
+                    <span>${actividad}</span>
+                    <button type="button" onclick="removeActividad(this)">x</button>
+                    <input type="hidden" name="actividades[]" value="${actividad}">
+                `;
+                document.getElementById('selected-cargos').appendChild(actividadRow);
+                actividadesSelect.value = '';
+            }
+        }
+
+        function removeActividad(button) {
+            const actividadRow = button.parentElement;
+            actividadRow.remove();
+        }
+    </script>
+</body>
+
+</html>

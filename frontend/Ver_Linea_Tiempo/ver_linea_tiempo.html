@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Línea de Tiempo Proyecto Config - MinerUCAB</title>
+    <link rel="stylesheet" href="ver_linea_tiempo_styles.css">
+    <style>
+        .etapa {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .actividad {
+            padding-left: 20px;
+        }
+
+        .timeline-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .timeline-table th, .timeline-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .timeline-table th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+
+        .timeline-table td {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <header>
+                <h2>Proyecto</h2>
+                <nav>
+                    <a href="#">Línea de Tiempo</a>
+                    <a href="#" class="active">Configuración</a>
+                </nav>
+            </header>
+            <table class="timeline-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Etapas y Actividades</th>
+                        <th>Enero '24</th>
+                        <th>Febrero '24</th>
+                        <th>Marzo '24</th>
+                        <th>Abril '24</th>
+                        <th>Mayo '24</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ETP1</td>
+                        <td class="etapa">Etapa I: Inventario de Información</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="actividad">ACT1 Recopilación y Análisis de Información</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="actividad">ACT2 Reconocimiento Geológico Preliminar</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td>ETP2</td>
+                        <td class="etapa">Etapa II: Geología de Superficie</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="actividad">ACT3 Restitución Topográfica</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="actividad">ACT4 Fotointerpretación</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="actividad">ACT5 Cartografía Geológica</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="actividad">ACT6 Ejecución Trincheras y Tuneles</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="actividad">ACT7 Perforación Exploratoria Preliminar</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="actividad">ACT8 Análisis de Muestras</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="actividad">ACT9 Elaboración de Informe</td>
+                        <td colspan="5"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+
+    <script>
+        // Add any JavaScript functionality if needed (e.g., expand/collapse stages)
+    </script>
+</body>
+</html>

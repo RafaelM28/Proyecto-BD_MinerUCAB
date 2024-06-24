@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Empleado - MinerUCAB</title>
+    <link rel="stylesheet" href="registrar_empleado_styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <header>
+                <h2>Empleado</h2>
+            </header>
+            <form class="empleado-form">
+                <div class="form-group">
+                    <label for="cedula">Cédula: *</label>
+                    <input type="text" id="cedula" name="cedula" required>
+                </div>
+                <div class="form-group">
+                    <label for="rif">RIF: *</label>
+                    <input type="text" id="rif" name="rif" required>
+                </div>
+                <div class="form-group">
+                    <label for="primer-nombre">Primer Nombre: *</label>
+                    <input type="text" id="primer-nombre" name="primer-nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="segundo-nombre">Segundo Nombre:</label>
+                    <input type="text" id="segundo-nombre" name="segundo-nombre">
+                </div>
+                <div class="form-group">
+                    <label for="primer-apellido">Primer Apellido: *</label>
+                    <input type="text" id="primer-apellido" name="primer-apellido" required>
+                </div>
+                <div class="form-group">
+                    <label for="segundo-apellido">Segundo Apellido:</label>
+                    <input type="text" id="segundo-apellido" name="segundo-apellido">
+                </div>
+                <div class="form-group">
+                    <label for="fecha-nacimiento">Fecha Nacimiento: *</label>
+                    <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required>
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección: *</label>
+                    <div class="address-group">
+                        <select id="direccion-estado" name="direccion-estado" required>
+                            <option value="">Estado</option>
+                        </select>
+                        <select id="direccion-municipio" name="direccion-municipio" required>
+                            <option value="">Municipio</option>
+                        </select>
+                        <select id="direccion-parroquia" name="direccion-parroquia" required>
+                            <option value="">Parroquia</option>
+                        </select>
+                        <input type="text" id="direccion-detalle" name="direccion-detalle" placeholder="Detalle">
+                        <button type="button">Cargar</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="correo">Correo:</label>
+                    <input type="email" id="correo" name="correo">
+                </div>
+                <div class="form-group">
+                    <label for="telefono-prefijo">Teléfono:</label>
+                    <input type="text" id="telefono-prefijo" name="telefono-prefijo" placeholder="Prefijo" style="width: 60px;">
+                    <input type="text" id="telefono-cuerpo" name="telefono-cuerpo" placeholder="Cuerpo" style="width: calc(100% - 130px);">
+                    <select id="telefono-tipo" name="telefono-tipo" style="width: 70px;">
+                        <option value="">Tipo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha-ingreso">Fecha Ingreso: *</label>
+                    <input type="date" id="fecha-ingreso" name="fecha-ingreso" required>
+                </div>
+                <div class="form-group">
+                    <label for="cargo">Cargo: *</label>
+                    <input type="text" id="cargo" name="cargo" required>
+                </div>
+                <div class="form-group">
+                    <label for="empresa">Empresa:</label>
+                    <input type="text" id="empresa" name="empresa">
+                </div>
+                <div class="form-group">
+                    <label for="representante">Representante:</label>
+                    <input type="text" id="representante" name="representante">
+                </div>
+                <div class="form-group">
+                    <label for="horarios">Horarios:</label>
+                    <input type="text" id="horarios" name="horarios" placeholder="Lunes 8:00 a.m. - 4:00 p.m.">
+                    <input type="text" id="horarios" name="horarios" placeholder="Miércoles 8:00 a.m. - 4:00 p.m.">
+                </div>
+                <div class="form-group">
+                    <label for="beneficios">Beneficios:</label>
+                    <div class="benefits-group">
+                        <input type="text" id="beneficio-tipo" name="beneficio-tipo" placeholder="Tipo" style="width: 30%;">
+                        <input type="text" id="beneficio-monto" name="beneficio-monto" placeholder="Monto" style="width: 30%;">
+                        <input type="text" id="beneficio-detalle" name="beneficio-detalle" placeholder="Detalle" style="width: calc(40% - 80px);">
+                        <button type="button">Cargar</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Agregar</button>
+                </div>
+            </form>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+</body>
+</html>

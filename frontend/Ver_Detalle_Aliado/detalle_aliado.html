@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Detalle Aliado - MinerUCAB</title>
+    <link rel="stylesheet" href="detalle_aliado_styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <header>
+                <h2>Aliado</h2>
+            </header>
+            <form class="aliado-form">
+                <div class="form-group">
+                    <label for="rif">RIF:</label>
+                    <input type="text" id="rif" name="rif" value="943267875" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="razon-social">Razón Social:</label>
+                    <input type="text" id="razon-social" name="razon-social" value="CVG Industria Venezolana de Aluminio C.A." readonly>
+                </div>
+                <div class="form-group">
+                    <label for="denominacion-comercial">Denominacion Comercial:</label>
+                    <input type="text" id="denominacion-comercial" name="denominacion-comercial" value="CVG VENALUM" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="correo-electronico">Correo Electrónico:</label>
+                    <input type="email" id="correo-electronico" name="correo-electronico" value="cvgvenalum@gmail.com" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="telefono-prefijo">Teléfono:</label>
+                    <input type="text" id="telefono-prefijo" name="telefono-prefijo" value="0412" readonly style="width: 60px;">
+                    <input type="text" id="telefono-cuerpo" name="telefono-cuerpo" value="7462948" readonly style="width: calc(100% - 130px);">
+                    <select id="telefono-tipo" name="telefono-tipo" disabled style="width: 70px;">
+                        <option value="tipo">Tipo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="direccion-principal">Dirección Principal:</label>
+                    <div class="address-group">
+                        <select id="direccion-principal-estado" name="direccion-principal-estado" disabled>
+                            <option value="estado">Estado</option>
+                        </select>
+                        <select id="direccion-principal-municipio" name="direccion-principal-municipio" disabled>
+                            <option value="municipio">Municipio</option>
+                        </select>
+                        <select id="direccion-principal-parroquia" name="direccion-principal-parroquia" disabled>
+                            <option value="parroquia">Parroquia</option>
+                        </select>
+                        <input type="text" id="direccion-principal-detalle" name="direccion-principal-detalle" value="Sabana Grande 3" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="direccion-fiscal">Dirección Fiscal:</label>
+                    <div class="address-group">
+                        <select id="direccion-fiscal-estado" name="direccion-fiscal-estado" disabled>
+                            <option value="estado">Estado</option>
+                        </select>
+                        <select id="direccion-fiscal-municipio" name="direccion-fiscal-municipio" disabled>
+                            <option value="municipio">Municipio</option>
+                        </select>
+                        <select id="direccion-fiscal-parroquia" name="direccion-fiscal-parroquia" disabled>
+                            <option value="parroquia">Parroquia</option>
+                        </select>
+                        <input type="text" id="direccion-fiscal-detalle" name="direccion-fiscal-detalle" value="Sabana Grande 3" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="minerales">Minerales:</label>
+                    <div class="selected-minerales">
+                        <input type="text" class="mineral" value="Cobre" readonly>
+                        <input type="text" class="mineral" value="Carbón" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="recursos">Recursos:</label>
+                    <div class="selected-recursos">
+                        <input type="text" class="recurso" value="Excavadora" readonly>
+                        <input type="text" class="recurso" value="Vehículo" readonly>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+</body>
+</html>

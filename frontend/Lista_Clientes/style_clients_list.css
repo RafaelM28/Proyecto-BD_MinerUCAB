@@ -1,0 +1,162 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 60px 1fr;
+    grid-template-areas:
+        "sidebar header"
+        "sidebar main";
+    width: 100%;
+    height: 100%;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background-color: #e0e0e0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+nav li {
+    margin-bottom: 10px;
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+nav a::before {
+    content: '•';
+    margin-right: 8px;
+    color: black;
+    font-weight: bold;
+}
+
+.header {
+    grid-area: header;
+    background-color: #666666;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    color: white;
+}
+
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.projects-button, .profile-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+.projects-button:hover, .profile-button:hover {
+    text-decoration: underline;
+}
+
+.main-content {
+    grid-area: main;
+    padding: 20px;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-container input {
+    padding: 5px;
+    font-size: 16px;
+    flex: 1;
+    margin-right: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+
+.search-button {
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+}
+
+.client-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.client-table th, .client-table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.client-table th {
+    background-color: #f2f2f2;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.page-button {
+    padding: 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border: 1px solid #cccccc;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.page-button:hover {
+    background-color: #e0e0e0;
+}

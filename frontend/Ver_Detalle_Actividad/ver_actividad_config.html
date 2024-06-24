@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Actividad Config - MinerUCAB</title>
+    <link rel="stylesheet" href="ver_actividad_config_styles.css">
+
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">MINERUCAB</div>
+        <div class="nav-buttons">
+            <img class="img-proyectos" src="../catalogo/imagenes/image 4.svg" />
+            <div class="botones">
+                <button class="botones1">Proyectos</button>
+            </div>
+            <button class="botones2">Perfil</button>
+
+        </div>
+    </header>
+
+
+    <div class="main-container">
+        <div class="sidebar">
+            <ul>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="24px" class="icon" src="../catalogo/imagenes/image 2.svg" alt="" />
+                        <span class="text1">Crear perfil</span>
+                    </div>
+                </a>
+
+
+                <a href="#">
+                    <div class="list-item">
+                        <img width="45px" class="icon1" src="../catalogo/imagenes/image 5.svg" alt="" />
+                        <span class="text">Inicio</span>
+                    </div>
+                </a>
+
+                <a href="#">
+                    <div class="list-item">
+                        <img width="35px" class="icon" src="../catalogo/imagenes/image 7.svg" alt="" />
+                        <span class="text">Personal</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Empleados</li>
+                        <li class="li2" href="#">Recursos</li>
+                    </ul>
+                </a>
+
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="32px" class="icon" src="../catalogo/imagenes/image 16.svg" alt="" />
+                        <span class="text2">Alianza</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Aliados</li>
+                        <li class="li2" href="#">Solicitudes</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="35px" class="icon" src="../catalogo/imagenes/image 15.svg" alt="" />
+                        <span class="text">Compras</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="30px" class="icon" src="../catalogo/imagenes/image 14.svg" alt="" />
+                        <span class="text">Almacen</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Minerales</li>
+                        <li class="li2" href="#">Inventario</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="30px" class="icon" src="../catalogo/imagenes/image 18.svg" alt="" />
+                        <span class="text">Clientes</span>
+                    </div>
+                </a>
+            </ul>
+        </div>
+
+        <div class="login-container">
+            <div class="container2">
+
+                <form>
+
+                    <div class="text4">
+                        <h2 class="text5">Actividad</h2>
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label1">Nombre: *</label>
+                        <input class="input1" id="nombre" name="nombre" required>
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label2">Días: *</label>
+                        <input class="input" id="duracion" name="duracion" required>
+                    </div>
+
+                    <div class="form-group1">
+                        <div class="cargos-input-group">
+                            <label for="cargos">Cargos: *</label>
+                            <select
+                                style="height: 35px; width: 271px; border-radius:10px; border: 1px solid; margin-left: 82px;"
+                                id="cargos" name="cargos">
+                                <option value="Geólogo">Geólogo</option>
+                                <option value="Chofer">Chofer</option>
+                            </select>
+                            <input style="height: 35px; width: 120px; border-radius:10px; border: 1px solid "
+                                type="number" id="salario" name="salario" placeholder="Salario" required>
+                            <input style="height: 35px; width: 120px; border-radius:10px; border: 1px solid"
+                                type="number" id="viatico" name="viatico" placeholder="Viático" required>
+                            <button style="height: 35px; width: 72px; border-radius:10px; border: 1px solid"
+                                type="button" onclick="addCargo()">Cargar</button>
+                        </div>
+
+                    </div>
+                    <div class="selected-cargos" id="selected-cargos">
+                    </div>
+
+                    <div class="form-group1">
+
+                        <div class="recursos-input-group">
+                            <label for="tipo-recursos">Tipo Recursos: *</label>
+                            <select
+                                style="height: 35px; width: 271px; border-radius:10px; border: 1px solid; margin-left: 22px;"
+                                id="tipo-recursos" name="tipo-recursos">
+                                <option value="Camiones">Camiones</option>
+                                <option value="Excavadora minera">Excavadora minera</option>
+                            </select>
+                            <input style="height: 35px; width: 120px; border-radius:10px; border: 1px solid "
+                                type="number" id="coste" name="coste" placeholder="Coste" required>
+                            <input style="height: 35px; width: 120px; border-radius:10px; border: 1px solid "
+                                type="number" id="coste-mant" name="coste-mant" placeholder="Coste Mant." required>
+                            <button style="height: 35px; width: 72px; border-radius:10px; border: 1px solid"
+                                type="button" onclick="addRecurso()">Cargar</button>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group2">
+                        <div>
+                            <label>Descripción:</label>
+                        </div>
+                        <textarea style="width: 535px; height: 72px; margin-left: 62px;" for="descripcion" id="descripcion"
+                            name="descripcion" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group3">
+                        <button class="submit" type="submit">Modificar</button>
+                        <button class="submit" type="submit">Eliminar</button>
+                    </div>
+                </form>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- <form class="actividad-form" method="POST" action="/create-actividad">
+
+                    <div>
+                        <h2>Actividad</h2>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre: *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duracion">Duración Días: *</label>
+                        <input type="number" id="duracion" name="duracion" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cargos">Cargos: *</label>
+                        <div class="cargos-input-group">
+                            <select id="cargos" name="cargos">
+                                <option value="Geólogo">Geólogo</option>
+                                <option value="Chofer">Chofer</option>
+                            </select>
+                            <input type="number" id="salario" name="salario" placeholder="Salario" required>
+                            <input type="number" id="viatico" name="viatico" placeholder="Viático" required>
+                            <button type="button" onclick="addCargo()">Cargar</button>
+                        </div>
+
+                    </div>
+                    <div class="selected-cargos" id="selected-cargos">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo-recursos">Tipo Recursos: *</label>
+                        <div class="recursos-input-group">
+                            <select id="tipo-recursos" name="tipo-recursos">
+                                <option value="Camiones">Camiones</option>
+                                <option value="Excavadora minera">Excavadora minera</option>
+                            </select>
+                            <input type="number" id="coste" name="coste" placeholder="Coste" required>
+                            <input type="number" id="coste-mant" name="coste-mant" placeholder="Coste Mant." required>
+                            <button type="button" onclick="addRecurso()">Cargar</button>
+                        </div>
+                    </div>
+
+                    <div class="selected-recursos" id="selected-recursos">
+                    Dynamically added recursos will appear here
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion">Descripción:</label>
+                        <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+-->
+    </div>
+</body>
+
+</html>

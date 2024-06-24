@@ -1,0 +1,107 @@
+*{
+    margin: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.login-container{
+    display: flex;
+    justify-content: center;
+    margin-top: 6%;
+}
+
+.container2{
+    display: flex;
+    justify-content: center;
+    border: 1px solid;
+    height: 480px;
+    width: 476px;
+    border-radius: 10px;
+}
+
+.container3{
+    margin-top: 40px;
+}
+
+.tittle-inicio{
+    height: 60px;
+    width: 476px;
+    background: #D9D9D9;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.text-title{
+    margin-top: 10px;
+}
+
+.titulo{
+    text-align: center;
+    margin-top: 25px;
+}
+
+.div-input{
+    display: flex;
+    justify-content: center;
+}
+
+.input{
+    width: 80%;
+    margin-top: 5px;
+    height: 25px;
+}
+
+.correo{
+    margin-left: 45px;
+}
+
+.welcome-text{
+    font-size: 30px;
+}
+
+.button{
+    display: flex;
+    justify-content:center;
+}
+
+.button2{
+    height: 35px;
+    width: 82%;
+    margin-top: 60px;
+}
+
+.text-register{
+    margin-left: 42px;
+    margin-top: 5px;
+}
+
+.label{
+    margin-top: 15px;
+}
+
+.forgot-pass{
+    margin-top: 10px;
+    margin-left: 42px;
+}
+
+.container-logo{
+    height: 120px;
+    border-left: 1px solid;
+}
+
+.logo{
+    margin-left: 20px;
+    margin-top: 42px;
+    font-weight: 100;
+}
+
+.div-img{
+    margin-right: 20px;
+}
+
+.container{
+    display: flex;
+    margin-top: 40px;
+    margin-left: 40px;
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Detalle Empleado - MinerUCAB</title>
+    <link rel="stylesheet" href="detalle_empleado_styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="MinerUCAB Logo">
+                <h1>MINERUCAB</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <button class="back-button">&larr;</button>
+            <div class="header-left">
+                <h2>Proyectos</h2>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <header>
+                <h2>Empleado</h2>
+            </header>
+            <form class="empleado-form">
+                <div class="form-group">
+                    <label for="cedula">Cédula:</label>
+                    <input type="text" id="cedula" name="cedula" value="94326787" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="rif">RIF:</label>
+                    <input type="text" id="rif" name="rif" value="943267875" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="primer-nombre">Primer Nombre:</label>
+                    <input type="text" id="primer-nombre" name="primer-nombre" value="Leandro" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="segundo-nombre">Segundo Nombre:</label>
+                    <input type="text" id="segundo-nombre" name="segundo-nombre" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="primer-apellido">Primer Apellido:</label>
+                    <input type="text" id="primer-apellido" name="primer-apellido" value="Andrade" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="segundo-apellido">Segundo Apellido:</label>
+                    <input type="text" id="segundo-apellido" name="segundo-apellido" value="Da Silva" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="fecha-nacimiento">Fecha Nacimiento:</label>
+                    <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" value="2003-07-11" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección:</label>
+                    <div class="address-group">
+                        <select id="direccion-estado" name="direccion-estado" disabled>
+                            <option value="estado">Estado</option>
+                        </select>
+                        <select id="direccion-municipio" name="direccion-municipio" disabled>
+                            <option value="municipio">Municipio</option>
+                        </select>
+                        <select id="direccion-parroquia" name="direccion-parroquia" disabled>
+                            <option value="parroquia">Parroquia</option>
+                        </select>
+                        <input type="text" id="direccion-detalle" name="direccion-detalle" value="Sabana Grande 3" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="correo">Correo:</label>
+                    <input type="email" id="correo" name="correo" value="leandroandrade@gmail.com" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="telefono-prefijo">Teléfono:</label>
+                    <input type="text" id="telefono-prefijo" name="telefono-prefijo" value="0412" readonly style="width: 60px;">
+                    <input type="text" id="telefono-cuerpo" name="telefono-cuerpo" value="7462948" readonly style="width: calc(100% - 130px);">
+                    <select id="telefono-tipo" name="telefono-tipo" disabled style="width: 70px;">
+                        <option value="tipo">Tipo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cargo">Cargo:</label>
+                    <input type="text" id="cargo" name="cargo" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="empresa">Empresa:</label>
+                    <input type="text" id="empresa" name="empresa" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="representante">Representante:</label>
+                    <input type="text" id="representante" name="representante" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="horarios">Horarios:</label>
+                    <input type="text" id="horarios" name="horarios" value="Lunes 8:00 a.m. - 4:00 p.m." readonly>
+                    <input type="text" id="horarios" name="horarios" value="Miércoles 8:00 a.m. - 4:00 p.m." readonly>
+                </div>
+                <div class="form-group">
+                    <label for="beneficios">Beneficios:</label>
+                    <input type="text" id="beneficios-tipo" name="beneficios-tipo" value="Tipo" readonly style="width: 30%;">
+                    <input type="text" id="beneficios-monto" name="beneficios-monto" value="Monto" readonly style="width: 30%;">
+                    <input type="text" id="beneficios-detalle" name="beneficios-detalle" value="Detalle" readonly style="width: calc(40% - 80px);">
+                </div>
+            </form>
+        </main>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
+    </footer>
+</body>
+</html>
