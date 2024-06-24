@@ -1,105 +1,139 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Proyecto Config - MinerUCAB</title>
     <link rel="stylesheet" href="crear_proyecto_config_styles.css">
-    <style>
-        .etapa-row, .actividad-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            background-color: #f0f0f0;
-            padding: 5px;
-            border-radius: 5px;
-        }
-
-        .etapa-row span, .actividad-row span {
-            margin-right: 10px;
-        }
-
-        .etapa-row button, .actividad-row button {
-            background-color: #e0e0e0;
-            border: none;
-            cursor: pointer;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-
-        .actividad-row {
-            margin-left: 20px;
-        }
-    </style>
 </head>
+
 <body>
-    <div class="container">
-        <aside class="sidebar">
-            <div class="logo">
-                <img src="logo.png" alt="MinerUCAB Logo">
-                <h1>MINERUCAB</h1>
+    <header class="header">
+        <div class="logo">MINERUCAB</div>
+        <div class="nav-buttons">
+            <img class="img-proyectos" src="../catalogo/imagenes/image 4.svg" />
+            <div class="botones">
+                <button class="botones1">Proyectos</button>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="#">Inicio</a></li>
-                    <li><a href="#">Personal</a></li>
-                    <li><a href="#">Alianzas</a></li>
-                    <li><a href="#">Almacén</a></li>
-                    <li><a href="#">Clientes</a></li>
-                    <li><a href="#">Seguridad</a></li>
-                </ul>
-            </nav>
-        </aside>
-        <header class="header">
-            <button class="back-button">&larr;</button>
-            <div class="header-left">
-                <h2>Proyectos</h2>
-            </div>
-            <div class="header-right">
-                <button class="profile-button">Perfil</button>
-            </div>
-        </header>
-        <main class="main-content">
-            <header>
-                <h2>Proyecto</h2>
-            </header>
-            <form class="proyecto-form" method="POST" action="/create-proyecto"> <!-- Adjust action to your backend endpoint -->
-                <div class="form-group">
-                    <label for="nombre">Nombre: *</label>
-                    <input type="text" id="nombre" name="nombre" required>
-                </div>
-                <div class="form-group">
-                    <label for="mineral">Mineral: *</label>
-                    <select id="mineral" name="mineral" required>
-                        <option value="">Seleccione</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="etapas">Etapas: *</label>
-                    <div class="etapas-input-group">
-                        <select id="etapas" name="etapas">
-                            <option value="Inventario de Información">Inventario de Información</option>
-                            <option value="Geología de superficie">Geología de superficie</option>
-                        </select>
-                        <button type="button" onclick="addEtapa()">Agregar Etapa</button>
+            <button class="botones2">Perfil</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <ul>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="24px" class="icon" src="../catalogo/imagenes/image 2.svg" alt="" />
+                        <span class="text1">Crear perfil</span>
                     </div>
-                </div>
-                <div class="selected-etapas" id="selected-etapas">
-                    <!-- Dynamically added etapas and actividades will appear here -->
-                </div>
-                <div class="form-group">
-                    <label for="descripcion">Descripción:</label>
-                    <textarea id="descripcion" name="descripcion" rows="4"></textarea>
-                </div>
-                <div class="form-group">
-                    <button type="submit">Agregar</button>
-                </div>
-            </form>
-        </main>
+                </a>
+
+                <a href="#">
+                    <div class="list-item">
+                        <img width="45px" class="icon1" src="../catalogo/imagenes/image 5.svg" alt="" />
+                        <span class="text">Inicio</span>
+                    </div>
+                </a>
+
+                <a href="#">
+                    <div class="list-item">
+                        <img width="35px" class="icon" src="../catalogo/imagenes/image 7.svg" alt="" />
+                        <span class="text">Personal</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Empleados</li>
+                        <li class="li2" href="#">Recursos</li>
+                    </ul>
+                </a>
+
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="32px" class="icon" src="../catalogo/imagenes/image 16.svg" alt="" />
+                        <span class="text2">Alianza</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Aliados</li>
+                        <li class="li2" href="#">Solicitudes</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="35px" class="icon" src="../catalogo/imagenes/image 15.svg" alt="" />
+                        <span class="text">Compras</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="30px" class="icon" src="../catalogo/imagenes/image 14.svg" alt="" />
+                        <span class="text">Almacen</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Minerales</li>
+                        <li class="li2" href="#">Inventario</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="30px" class="icon" src="../catalogo/imagenes/image 18.svg" alt="" />
+                        <span class="text">Clientes</span>
+                    </div>
+                </a>
+            </ul>
+        </div>
+
+        <div class="login-container">
+            <div class="container2">
+                <form>
+                    <div class="text4">
+                        <h2 class="text5">Proyecto</h2>
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label1">Nombre: *</label>
+                        <input class="input1" id="nombre" name="nombre" required>
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label2">Mineral: *</label>
+                        <select class="input" id="mineral" name="mineral" required>
+                            <option value="">Seleccione</option>
+                            <option value="Mineral 1">Mineral 1</option>
+                            <option value="Mineral 2">Mineral 2</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label2">Etapas: *</label>
+                        <div class="etapas-input-group">
+                            <select class="input" id="etapas" name="etapas" required>
+                                <option value="">Seleccione</option>
+                                <option value="Inventario de Información">Inventario de Información</option>
+                                <option value="Perforación exploratoria 1">Perforación exploratoria 1</option>
+                            </select>
+                            <button type="button" onclick="addEtapa()">Agregar Etapa</button>
+                        </div>
+                    </div>
+                    
+                    <div class="selected-etapas" id="selected-etapas">
+                        <!-- Dynamically added etapas will appear here -->
+                    </div>
+
+                    <div class="form-group2">
+                        <div>
+                            <label>Descripción:</label>
+                        </div>
+                        <textarea style="width: 535px; height: 72px; margin-left: 62px;" for="descripcion" id="descripcion" name="descripcion" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group3">
+                        <button class="submit" type="submit">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <footer>
-        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
-    </footer>
 
     <script>
         function addEtapa() {
@@ -112,16 +146,6 @@
                 etapaRow.innerHTML = `
                     <span>${etapa}</span>
                     <button type="button" onclick="removeEtapa(this)">x</button>
-                    <div class="actividades-input-group">
-                        <select class="actividades" name="actividades">
-                            <option value="Perforación exploratoria 1">Perforación exploratoria 1</option>
-                            <option value="Análisis de Laboratorio">Análisis de Laboratorio</option>
-                        </select>
-                        <button type="button" onclick="addActividad(this)">Agregar Actividad</button>
-                    </div>
-                    <div class="selected-actividades">
-                        <!-- Dynamically added actividades will appear here -->
-                    </div>
                     <input type="hidden" name="etapas[]" value="${etapa}">
                 `;
 
@@ -132,35 +156,11 @@
             }
         }
 
-        function addActividad(button) {
-            const actividadesSelect = button.previousElementSibling;
-            const actividad = actividadesSelect.value;
-
-            if (actividad) {
-                const actividadRow = document.createElement('div');
-                actividadRow.classList.add('actividad-row');
-                actividadRow.innerHTML = `
-                    <span>${actividad}</span>
-                    <button type="button" onclick="removeActividad(this)">x</button>
-                    <input type="hidden" name="actividades[]" value="${actividad}">
-                `;
-
-                button.parentElement.nextElementSibling.appendChild(actividadRow);
-
-                // Clear select
-                actividadesSelect.value = '';
-            }
-        }
-
         function removeEtapa(button) {
             const etapaRow = button.parentElement;
             etapaRow.remove();
         }
-
-        function removeActividad(button) {
-            const actividadRow = button.parentElement;
-            actividadRow.remove();
-        }
     </script>
 </body>
+
 </html>

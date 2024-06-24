@@ -1,85 +1,129 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Recurso - MinerUCAB</title>
     <link rel="stylesheet" href="crear_recurso_styles.css">
 </head>
+
 <body>
-    <div class="container">
-        <aside class="sidebar">
-            <div class="logo">
-                <img src="logo.png" alt="MinerUCAB Logo">
-                <h1>MINERUCAB</h1>
+    <header class="header">
+        <div class="logo">MINERUCAB</div>
+        <div class="nav-buttons">
+            <img class="img-proyectos" src="../catalogo/imagenes/image 4.svg" />
+            <div class="botones">
+                <button class="botones1">Proyectos</button>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="#">Inicio</a></li>
-                    <li><a href="#">Personal</a></li>
-                    <li><a href="#">Alianzas</a></li>
-                    <li><a href="#">Almacén</a></li>
-                    <li><a href="#">Clientes</a></li>
-                    <li><a href="#">Seguridad</a></li>
-                </ul>
-            </nav>
-        </aside>
-        <header class="header">
-            <button class="back-button">&larr;</button>
-            <div class="header-left">
-                <h2>Proyectos</h2>
+            <button class="botones2">Perfil</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <ul>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="24px" class="icon" src="../catalogo/imagenes/image 2.svg" alt="" />
+                        <span class="text1">Crear perfil</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="45px" class="icon1" src="../catalogo/imagenes/image 5.svg" alt="" />
+                        <span class="text">Inicio</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="35px" class="icon" src="../catalogo/imagenes/image 7.svg" alt="" />
+                        <span class="text">Personal</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Empleados</li>
+                        <li class="li2" href="#">Recursos</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="32px" class="icon" src="../catalogo/imagenes/image 16.svg" alt="" />
+                        <span class="text2">Alianza</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Aliados</li>
+                        <li class="li2" href="#">Solicitudes</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="35px" class="icon" src="../catalogo/imagenes/image 15.svg" alt="" />
+                        <span class="text">Compras</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="list-item">
+                        <img width="30px" class="icon" src="../catalogo/imagenes/image 14.svg" alt="" />
+                        <span class="text">Almacen</span>
+                    </div>
+                    <ul class="sub-listas">
+                        <li class="li" href="#">Minerales</li>
+                        <li class="li2" href="#">Inventario</li>
+                    </ul>
+                </a>
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="30px" class="icon" src="../catalogo/imagenes/image 18.svg" alt="" />
+                        <span class="text">Clientes</span>
+                    </div>
+                </a>
+            </ul>
+        </div>
+
+        <div class="login-container">
+            <div class="container2">
+                <form>
+                    <div class="text4">
+                        <h2 class="text5">Recurso</h2>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label1">Nombre: *</label>
+                        <input class="input1" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label2">Numero de serie: *</label>
+                        <input class="input" id="numero-serie" name="numero-serie" required>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label2">Cantidad: *</label>
+                        <input class="input" id="cantidad" name="cantidad" required>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label2">Descripción:</label>
+                        <textarea class="input1" id="descripcion" name="descripcion" rows="4"></textarea>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label2">Tipo Recurso: *</label>
+                        <select class="input" id="tipo-recurso" name="tipo-recurso" required>
+                            <option value="Camiones">Camiones</option>
+                            <option value="Excavadora minera">Excavadora minera</option>
+                        </select>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label2">Marca: *</label>
+                        <input class="input" id="marca" name="marca" required>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label2">Modelo: *</label>
+                        <input class="input" id="modelo" name="modelo" required>
+                    </div>
+                    <div class="form-group3">
+                        <button class="submit" type="submit">Agregar</button>
+                    </div>
+                </form>
             </div>
-            <div class="header-right">
-                <button class="profile-button">Perfil</button>
-            </div>
-        </header>
-        <main class="main-content">
-            <header>
-                <h2>Recurso</h2>
-            </header>
-            <form class="recurso-form" method="POST" action="/create-recurso"> <!-- Adjust action to your backend endpoint -->
-                <div class="form-group">
-                    <label for="nombre">Nombre: *</label>
-                    <input type="text" id="nombre" name="nombre" required>
-                </div>
-                <div class="form-group">
-                    <label for="numero-serie">Número de serie: *</label>
-                    <input type="text" id="numero-serie" name="numero-serie" required>
-                </div>
-                <div class="form-group">
-                    <label for="cantidad">Cantidad: *</label>
-                    <input type="number" id="cantidad" name="cantidad" required>
-                </div>
-                <div class="form-group">
-                    <label for="descripcion">Descripción:</label>
-                    <textarea id="descripcion" name="descripcion" rows="4"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="tipo-recurso">Tipo Recurso: *</label>
-                    <select id="tipo-recurso" name="tipo-recurso" required>
-                        <option value="">Seleccione</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="marca">Marca: *</label>
-                    <select id="marca" name="marca" required>
-                        <option value="">Seleccione</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="modelo">Modelo: *</label>
-                    <select id="modelo" name="modelo" required>
-                        <option value="">Seleccione</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <button type="submit">Agregar</button>
-                </div>
-            </form>
-        </main>
+        </div>
     </div>
-    <footer>
-        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF: J-000000000-9</p>
-    </footer>
 </body>
+
 </html>

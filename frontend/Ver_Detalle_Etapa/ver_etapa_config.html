@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol - MinerUCAB</title>
-    <link rel="stylesheet" href="ver_rol_styles.css">
+    <title>Crear Etapa Config - MinerUCAB</title>
+    <link rel="stylesheet" href="ver_etapa_config_styles.css">
 </head>
 
 <body>
@@ -29,14 +29,12 @@
                         <span class="text1">Crear perfil</span>
                     </div>
                 </a>
-
                 <a href="#">
                     <div class="list-item">
                         <img width="45px" class="icon1" src="../catalogo/imagenes/image 5.svg" alt="" />
                         <span class="text">Inicio</span>
                     </div>
                 </a>
-
                 <a href="#">
                     <div class="list-item">
                         <img width="35px" class="icon" src="../catalogo/imagenes/image 7.svg" alt="" />
@@ -47,7 +45,6 @@
                         <li class="li2" href="#">Recursos</li>
                     </ul>
                 </a>
-
                 <a href="#">
                     <div class="list-item2">
                         <img width="32px" class="icon" src="../catalogo/imagenes/image 16.svg" alt="" />
@@ -87,34 +84,34 @@
             <div class="container2">
                 <form>
                     <div class="text4">
-                        <h2 class="text5">Rol</h2>
+                        <h2 class="text5">Etapa</h2>
                     </div>
-
                     <div class="form-group1">
                         <label class="label1">Nombre: *</label>
-                        <input class="input1" id="nombre-rol" name="nombre-rol" required>
+                        <input class="input1" id="nombre" name="nombre" required>
                     </div>
-
                     <div class="form-group1">
-                        <label class="label2">Privilegios: *</label>
-                        <div class="privilegios-input-group">
-                            <select class="input1" id="privilegios" name="privilegios">
-                                <option value="Consultar lista de aliados">Consultar lista de aliados</option>
-                                <option value="Registrar aliado">Registrar aliado</option>
+                        <label class="label2">Número: *</label>
+                        <input class="input1" id="numero" name="numero" required>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label3">Actividades: *</label>
+                        <div class="cargos-input-group">
+                            <select id="actividades" name="actividades" class="input2">
+                                <option value="Perforación exploratoria">Perforación exploratoria</option>
+                                <option value="Revisión de mapas mineros">Revisión de mapas mineros</option>
                             </select>
-                            <button type="button" onclick="addPrivilegio()">Agregar Privilegio</button>
+                            <button type="button" onclick="addActividad()" class="input3">Agregar</button>
                         </div>
                     </div>
-
-                    <div class="selected-privilegios" id="selected-privilegios">
-                        <!-- Dynamically added privileges will appear here -->
+                    <div class="selected-cargos" id="selected-cargos">
                     </div>
-
-                    <div class="form-group1">
-                        <label class="label2">Descripción:</label>
-                        <textarea class="input1" id="descripcion-rol" name="descripcion-rol" rows="4" required></textarea>
+                    <div class="form-group2">
+                        <div>
+                            <label>Descripción:</label>
+                        </div>
+                        <textarea for="descripcion" id="descripcion" name="descripcion" rows="4" class="textarea1"></textarea>
                     </div>
-
                     <div class="form-group3">
                         <button class="submit" type="submit">Modificar</button>
                         <button class="submit" type="submit">Eliminar</button>
@@ -123,30 +120,28 @@
             </div>
         </div>
     </div>
+
     <script>
-        function addPrivilegio() {
-            const privilegiosSelect = document.getElementById('privilegios');
-            const privilegio = privilegiosSelect.value;
+        function addActividad() {
+            const actividadesSelect = document.getElementById('actividades');
+            const actividad = actividadesSelect.value;
 
-            if (privilegio) {
-                const privilegioRow = document.createElement('div');
-                privilegioRow.classList.add('privilegio-row');
-                privilegioRow.innerHTML = `
-                    <span>${privilegio}</span>
-                    <button type="button" onclick="removePrivilegio(this)">x</button>
-                    <input type="hidden" name="privilegios[]" value="${privilegio}">
+            if (actividad) {
+                const actividadRow = document.createElement('div');
+                actividadRow.classList.add('actividad-row');
+                actividadRow.innerHTML = `
+                    <span>${actividad}</span>
+                    <button type="button" onclick="removeActividad(this)">x</button>
+                    <input type="hidden" name="actividades[]" value="${actividad}">
                 `;
-
-                document.getElementById('selected-privilegios').appendChild(privilegioRow);
-
-                // Clear select
-                privilegiosSelect.value = '';
+                document.getElementById('selected-cargos').appendChild(actividadRow);
+                actividadesSelect.value = '';
             }
         }
 
-        function removePrivilegio(button) {
-            const privilegioRow = button.parentElement;
-            privilegioRow.remove();
+        function removeActividad(button) {
+            const actividadRow = button.parentElement;
+            actividadRow.remove();
         }
     </script>
 </body>

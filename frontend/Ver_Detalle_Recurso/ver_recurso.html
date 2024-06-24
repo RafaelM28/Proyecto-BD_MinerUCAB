@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol - MinerUCAB</title>
-    <link rel="stylesheet" href="ver_rol_styles.css">
+    <title>Crear Recurso - MinerUCAB</title>
+    <link rel="stylesheet" href="ver_recurso_styles.css">
 </head>
 
 <body>
@@ -29,14 +29,12 @@
                         <span class="text1">Crear perfil</span>
                     </div>
                 </a>
-
                 <a href="#">
                     <div class="list-item">
                         <img width="45px" class="icon1" src="../catalogo/imagenes/image 5.svg" alt="" />
                         <span class="text">Inicio</span>
                     </div>
                 </a>
-
                 <a href="#">
                     <div class="list-item">
                         <img width="35px" class="icon" src="../catalogo/imagenes/image 7.svg" alt="" />
@@ -47,7 +45,6 @@
                         <li class="li2" href="#">Recursos</li>
                     </ul>
                 </a>
-
                 <a href="#">
                     <div class="list-item2">
                         <img width="32px" class="icon" src="../catalogo/imagenes/image 16.svg" alt="" />
@@ -87,34 +84,39 @@
             <div class="container2">
                 <form>
                     <div class="text4">
-                        <h2 class="text5">Rol</h2>
+                        <h2 class="text5">Recurso</h2>
                     </div>
-
                     <div class="form-group1">
                         <label class="label1">Nombre: *</label>
-                        <input class="input1" id="nombre-rol" name="nombre-rol" required>
+                        <input class="input1" id="nombre" name="nombre" required>
                     </div>
-
                     <div class="form-group1">
-                        <label class="label2">Privilegios: *</label>
-                        <div class="privilegios-input-group">
-                            <select class="input1" id="privilegios" name="privilegios">
-                                <option value="Consultar lista de aliados">Consultar lista de aliados</option>
-                                <option value="Registrar aliado">Registrar aliado</option>
-                            </select>
-                            <button type="button" onclick="addPrivilegio()">Agregar Privilegio</button>
-                        </div>
+                        <label class="label2">Numero de serie: *</label>
+                        <input class="input" id="numero-serie" name="numero-serie" required>
                     </div>
-
-                    <div class="selected-privilegios" id="selected-privilegios">
-                        <!-- Dynamically added privileges will appear here -->
+                    <div class="form-group1">
+                        <label class="label2">Cantidad: *</label>
+                        <input class="input" id="cantidad" name="cantidad" required>
                     </div>
-
                     <div class="form-group1">
                         <label class="label2">Descripción:</label>
-                        <textarea class="input1" id="descripcion-rol" name="descripcion-rol" rows="4" required></textarea>
+                        <textarea class="input1" id="descripcion" name="descripcion" rows="4"></textarea>
                     </div>
-
+                    <div class="form-group1">
+                        <label class="label2">Tipo Recurso: *</label>
+                        <select class="input" id="tipo-recurso" name="tipo-recurso" required>
+                            <option value="Camiones">Camiones</option>
+                            <option value="Excavadora minera">Excavadora minera</option>
+                        </select>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label2">Marca: *</label>
+                        <input class="input" id="marca" name="marca" required>
+                    </div>
+                    <div class="form-group1">
+                        <label class="label2">Modelo: *</label>
+                        <input class="input" id="modelo" name="modelo" required>
+                    </div>
                     <div class="form-group3">
                         <button class="submit" type="submit">Modificar</button>
                         <button class="submit" type="submit">Eliminar</button>
@@ -123,32 +125,6 @@
             </div>
         </div>
     </div>
-    <script>
-        function addPrivilegio() {
-            const privilegiosSelect = document.getElementById('privilegios');
-            const privilegio = privilegiosSelect.value;
-
-            if (privilegio) {
-                const privilegioRow = document.createElement('div');
-                privilegioRow.classList.add('privilegio-row');
-                privilegioRow.innerHTML = `
-                    <span>${privilegio}</span>
-                    <button type="button" onclick="removePrivilegio(this)">x</button>
-                    <input type="hidden" name="privilegios[]" value="${privilegio}">
-                `;
-
-                document.getElementById('selected-privilegios').appendChild(privilegioRow);
-
-                // Clear select
-                privilegiosSelect.value = '';
-            }
-        }
-
-        function removePrivilegio(button) {
-            const privilegioRow = button.parentElement;
-            privilegioRow.remove();
-        }
-    </script>
 </body>
 
 </html>

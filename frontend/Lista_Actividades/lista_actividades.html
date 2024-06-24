@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Actividades Config - MinerUCAB</title>
+    <link rel="stylesheet" href="lista_actividades_styles.css">
+    <style>
+        /* Additional styles specific to this page */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .content-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container input {
+            padding: 5px;
+            font-size: 16px;
+            flex: 1;
+            margin-right: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+        }
+
+        .search-button {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            background-color: #e0e0e0;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            font-weight: bold;
+            border-bottom: 2px solid #000;
+        }
+
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-table th, .activity-table td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .activity-table th {
+            background-color: #f2f2f2;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .page-button {
+            padding: 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 1px solid #cccccc;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .action-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-button img {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">MINERUCAB</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Alianzas</a></li>
+                    <li><a href="#">Almacén</a></li>
+                    <li><a href="#">Clientes</a></li>
+                    <li><a href="#">Seguridad</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <header class="header">
+            <div class="header-left">
+                <button class="projects-button">Proyectos</button>
+            </div>
+            <div class="header-right">
+                <button class="profile-button">Perfil</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Actividades</h1>
+            </div>
+            <div class="tabs">
+                <div class="tab">Proyectos</div>
+                <div class="tab">Etapas</div>
+                <div class="tab active">Actividades</div>
+            </div>
+            <div class="content-header">
+                <div class="search-container">
+                    <input type="text" placeholder="Buscar Actividad">
+                    <button class="search-button">🔍</button>
+                </div>
+                <div class="add-button-container">
+                    <button class="add-button">Agregar Actividad</button>
+                </div>
+            </div>
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Perforación exploratoria</td>
+                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Revisión de mapas mineros</td>
+                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Elaboración de informe</td>
+                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button class="page-button">1</button>
+                <button class="page-button">2</button>
+                <button class="page-button">3</button>
+                <button class="page-button">4</button>
+                <button class="page-button">5</button>
+                <button class="page-button">6</button>
+                <button class="page-button">7</button>
+                <button class="page-button">8</button>
+                <button class="page-button">9</button>
+                <button class="page-button">10</button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
