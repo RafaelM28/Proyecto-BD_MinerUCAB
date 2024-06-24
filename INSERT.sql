@@ -12523,21 +12523,21 @@ VALUES
 -- Insertando datos en la tabla 'etapa_ejecucion'
 INSERT INTO Etapa_Ejecucion (etapa_ejec_codigo, etapa_ejec_nombre, etapa_ejec_numero, etapa_ejec_fecha_fin_estimada, etapa_ejec_fecha_inicio_real, etapa_ejec_fecha_fin_real, fk_proyecto_ejecucion)
 VALUES
-(1, 'Exploración', 1, '15/07/2022', '24/08/2022', '05/07/2023', 1),
-(2, 'Planificación y diseño', 2, '24/08/2022', '03/10/2022', '14/08/2022', 1),
-(3, 'Extracción y procesamiento', 3, '03/10/2022', '12/11/2022', '23/09/2022', 1),
-(4, 'Producción', 4, '12/11/2022', '22/12/2022', '02/11/2022', 1),
-(5, 'Cierre y rehabilitación', 5, '22/12/2022', '31/01/2023', '12/12/2022', 1),
-(6, 'Exploración', 6, '10/02/2023', '22/03/2023', '31/01/2023', 2),
-(7, 'Planificación y diseño', 7, '22/03/2023', '01/05/2023', '12/03/2023', 2),
-(8, 'Extracción y procesamiento', 8, '01/05/2023', '10/06/2023', '21/04/2023', 2),
-(9, 'Producción y venta', 9, '10/06/2023', '20/07/2023', '31/05/2023', 2),
-(10, 'Cierre y rehabilitación', 10, '20/07/2023', '29/08/2023', '10/07/2023', 2),
-(11, 'Exploración', 11, '08/09/2023', '18/10/2023', '29/08/2023', 3),
-(12, 'Planificación y diseño', 12, '18/10/2023', '27/11/2023', '08/10/2023', 3),
-(13, 'Extracción y procesamiento', 13, '27/11/2023', '06/01/2024', '17/11/2023', 3),
-(14, 'Producción y venta', 14, '06/01/2024', '15/02/2024', '27/12/2023', 3),
-(15, 'Cierre y rehabilitación', 15, '15/02/2024', '26/03/2024', '05/02/2024', 3);
+(1, 'Exploración', 1, '15/07/2022', '05/07/2022', '14/08/2022', 1),
+(2, 'Planificación y diseño', 2, '24/08/2022', '14/08/2022', '23/09/2022', 1),
+(3, 'Extracción y procesamiento', 3, '03/10/2022', '23/09/2022', '02/11/2022', 1),
+(4, 'Producción', 4, '12/11/2022', '02/11/2022', '12/12/2022', 1),
+(5, 'Cierre y rehabilitación', 5, '22/12/2022', '12/12/2022', '31/01/2023', 1),
+(6, 'Exploración', 6, '10/02/2023', '31/01/2023', '12/03/2023', 2),
+(7, 'Planificación y diseño', 7, '22/03/2023', '12/03/2023', '21/04/2023', 2),
+(8, 'Extracción y procesamiento', 8, '01/05/2023', '21/04/2023', '31/05/2023', 2),
+(9, 'Producción y venta', 9, '10/06/2023', '31/05/2023', '10/07/2023', 2),
+(10, 'Cierre y rehabilitación', 10, '20/07/2023', '10/07/2023', '29/08/2023', 2),
+(11, 'Exploración', 11, '08/09/2023', '29/08/2023', '08/10/2023', 3),
+(12, 'Planificación y diseño', 12, '18/10/2023', '08/10/2023', '17/11/2023', 3),
+(13, 'Extracción y procesamiento', 13, '27/11/2023', '17/11/2023', '27/12/2023', 3),
+(14, 'Producción y venta', 14, '06/01/2024', '27/12/2023', '05/02/2024', 3),
+(15, 'Cierre y rehabilitación', 15, '15/02/2024', '05/02/2024', '16/03/2024', 3);
 
 -- Insertando datos en la tabla 'actividad_ejecucion'
 INSERT INTO Actividad_Ejecucion (actividad_ejec_codigo,actividad_ejec_nombre,actividad_ejec_duracion_dias,actividad_ejec_fecha_inicio_estimada, actividad_ejec_fecha_fin_estimada,actividad_ejec_fecha_inicio_real,actividad_ejec_fecha_fin_real,fk_etapa_ejecucion)

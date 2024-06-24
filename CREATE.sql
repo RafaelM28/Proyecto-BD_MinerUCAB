@@ -332,7 +332,9 @@ CREATE TABLE Horario (
     -- Restricción de clave primaria
     CONSTRAINT pk_horario PRIMARY KEY (horario_codigo),
     -- Restricción para verificar que el día sea 'Lunes', 'Martes', 'Miércoles', 'Jueves' o 'Viernes'
-    CONSTRAINT check_horario_dia CHECK (horario_dia IN ('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'))
+    CONSTRAINT check_horario_dia CHECK (horario_dia IN ('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo')),
+    -- Restricción para verificar que la hora de entrada sea menor a la hora de salida
+    CONSTRAINT check_horario_hora_salida CHECK (horario_hora_salida > horario_hora_entrada)
 );
 
 CREATE TABLE Empleado_Horario (
@@ -384,7 +386,11 @@ CREATE TABLE Contrato_Empleado (
     -- Restricción de clave foránea que referencia a la tabla EMPLEADO
     CONSTRAINT fk_empleado_contrato FOREIGN KEY (fk_empleado) REFERENCES Empleado (empleado_codigo),
     -- Restricción de clave foránea que referencia a la tabla CARGO
-    CONSTRAINT fk_cargo_contrato FOREIGN KEY (fk_cargo) REFERENCES Cargo (cargo_codigo)
+    CONSTRAINT fk_cargo_contrato FOREIGN KEY (fk_cargo) REFERENCES Cargo (cargo_codigo),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
+    CONSTRAINT check_emp_cargo_fecha_ingreso CHECK (emp_cargo_fecha_ingreso <= CURRENT_DATE),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_emp_cargo_fecha_salida CHECK (emp_cargo_fecha_salida >= emp_cargo_fecha_ingreso)
 );
 
 CREATE TABLE Estatus_Disponibilidad (
@@ -413,14 +419,18 @@ CREATE TABLE Historico_Estatus_Empleado (
     -- Fecha de inicio de estatus
     hist_est_empl_fecha_inicio TIMESTAMP NOT NULL,
     -- Fecha de fin de estatus
-    hist_est_emplo_fecha_fin TIMESTAMP,
+    hist_est_empl_fecha_fin TIMESTAMP,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_historico_estatus PRIMARY KEY (hist_est_empleado_codigo, fk_empleado, fk_estatus_disponibilidad),
     -- Restricción de clave foránea que referencia a la tabla EMPLEADO
     CONSTRAINT fk_empleado_historico_estatus FOREIGN KEY (fk_empleado) REFERENCES Empleado (empleado_codigo),
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_DISPONIBILIDAD
-    CONSTRAINT fk_estatus_historico_estatus FOREIGN KEY (fk_estatus_disponibilidad) REFERENCES Estatus_Disponibilidad (estatus_disponibilidad_codigo)
+    CONSTRAINT fk_estatus_historico_estatus FOREIGN KEY (fk_estatus_disponibilidad) REFERENCES Estatus_Disponibilidad (estatus_disponibilidad_codigo),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha de fin
+    CONSTRAINT check_hist_est_empl_fecha_inicio CHECK (hist_est_empl_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_emplo_fecha_fin CHECK (hist_est_empl_fecha_fin >= hist_est_empl_fecha_inicio)
 );
 
 CREATE TABLE Mineral (
@@ -632,7 +642,11 @@ CREATE TABLE Historico_Estatus_Pozo (
     -- Restricción de clave foránea que referencia a la tabla POZO para su primera, segunda y tercera PK
     CONSTRAINT fk_pozo_historico_estatus_pozo FOREIGN KEY (fk_pozo_1, fk_pozo_2, fk_pozo_3) REFERENCES Pozo (pozo_id, fk_mina_1, fk_mina_2),
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_POZO
-    CONSTRAINT fk_estatus_historico_estatus_pozo FOREIGN KEY (fk_estatus_pozo) REFERENCES Estatus_Pozo (estatus_pozo_codigo)
+    CONSTRAINT fk_estatus_historico_estatus_pozo FOREIGN KEY (fk_estatus_pozo) REFERENCES Estatus_Pozo (estatus_pozo_codigo),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha de fin
+    CONSTRAINT check_hist_est_pozo_fecha_inicio CHECK (hist_est_pozo_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_pozo_fecha_fin CHECK (hist_est_pozo_fecha_fin >= hist_est_pozo_fecha_inicio)
 );
 
 CREATE TABLE Inventario_Producto (
@@ -641,13 +655,13 @@ CREATE TABLE Inventario_Producto (
     -- Clave foránea del mineral
     fk_mineral SMALLINT NOT NULL,
     -- Cantidad de producto
-    inventario_producto_cantidad_total INTEGER NOT NULL,
+    inventario_producto_cantidad_total INTEGER,
     -- Cantidad de producto que ingresó en la operación
-    inventario_producto_operacion INTEGER NOT NULL,
+    inventario_producto_operacion INTEGER,
     -- Tipo de operación
-    inventario_producto_tipo_operacion VARCHAR(15) NOT NULL,
+    inventario_producto_tipo_operacion VARCHAR(15),
     -- Fecha de la operación
-    inventario_producto_fecha_movimiento DATE NOT NULL,
+    inventario_producto_fecha_movimiento DATE,
 
     -- Restricción de clave primaria
     CONSTRAINT pk_inventario_producto PRIMARY KEY (inventario_producto_codigo, fk_mineral),
@@ -658,7 +672,9 @@ CREATE TABLE Inventario_Producto (
     -- Restricción para verificar que el tipo de operación sea 'Ingreso' o 'Egreso'
     CONSTRAINT check_inventario_producto_tipo_operacion CHECK (inventario_producto_tipo_operacion IN ('Ingreso', 'Egreso')),
     -- Restricción de clave foránea que referencia a la tabla MINERAL
-    CONSTRAINT fk_mineral_inventario_producto FOREIGN KEY (fk_mineral) REFERENCES Mineral (mineral_codigo)
+    CONSTRAINT fk_mineral_inventario_producto FOREIGN KEY (fk_mineral) REFERENCES Mineral (mineral_codigo),
+    -- Restricción para verificar que la fecha de la operación sea menor o igual a la fecha actual
+    CONSTRAINT check_inventario_producto_fecha_movimiento CHECK (inventario_producto_fecha_movimiento <= CURRENT_DATE)
 );
 
 CREATE TABLE Marca (
@@ -794,7 +810,11 @@ CREATE TABLE Historico_Estatus_Recurso (
     -- Restricción de clave foránea que referencia a la tabla INVENTARIO_RECURSO para su primera y segunda PK
     CONSTRAINT fk_inventario_recurso_historico_estatus_recurso FOREIGN KEY (fk_inventario_recurso_1, fk_inventario_recurso_2) REFERENCES Inventario_Recurso (inventario_recurso_codigo, fk_recurso),
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_DISPONIBILIDAD
-    CONSTRAINT fk_estatus_historico_estatus_recurso FOREIGN KEY (fk_estatus_disponibilidad) REFERENCES Estatus_Disponibilidad (estatus_disponibilidad_codigo)
+    CONSTRAINT fk_estatus_historico_estatus_recurso FOREIGN KEY (fk_estatus_disponibilidad) REFERENCES Estatus_Disponibilidad (estatus_disponibilidad_codigo),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha de fin
+    CONSTRAINT check_hist_est_recurso_fecha_inicio CHECK (hist_est_recurso_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_recurso_fecha_fin CHECK (hist_est_recurso_fecha_fin >= hist_est_recurso_fecha_inicio)
 );
 
 CREATE TABLE Historico_Estatus_Concesion (
@@ -816,7 +836,11 @@ CREATE TABLE Historico_Estatus_Concesion (
     -- Restricción de clave foránea que referencia a la tabla INVENTARIO_CONCESION_RECURSO para su primera y segunda PK
     CONSTRAINT fk_inventario_concesion_recurso_historico_estatus_recurso FOREIGN KEY (fk_inventario_concesion_recurso_1, fk_inventario_concesion_recurso_2) REFERENCES Inventario_Concesion_Recurso (fk_recurso, fk_aliado),
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_DISPONIBILIDAD
-    CONSTRAINT fk_estatus_historico_estatus_recurso FOREIGN KEY (fk_estatus_disponibilidad) REFERENCES Estatus_Disponibilidad (estatus_disponibilidad_codigo)
+    CONSTRAINT fk_estatus_historico_estatus_recurso FOREIGN KEY (fk_estatus_disponibilidad) REFERENCES Estatus_Disponibilidad (estatus_disponibilidad_codigo),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha de fin
+    CONSTRAINT check_hist_est_recurso_fecha_inicio CHECK (hist_est_recurso_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_recurso_fecha_fin CHECK (hist_est_recurso_fecha_fin >= hist_est_recurso_fecha_inicio)
 );
 
 CREATE TABLE Proyecto_Configuracion (
@@ -973,6 +997,8 @@ CREATE TABLE Proyecto_Ejecucion (
     CONSTRAINT check_proyecto_ejecucion_descripcion CHECK (proyecto_ejec_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
     -- Restricción para verificar que la fecha de fin estimada sea mayor a la fecha de inicio estimada
     CONSTRAINT check_proyecto_ejecucion_fecha_fin_estimada CHECK (proyecto_ejec_fecha_fin_estimada > proyecto_ejec_fecha_inicio_estimada),
+    -- Restricción para verificar que la fecha de fin real sea mayor a la fecha de inicio real
+    CONSTRAINT check_proyecto_ejecucion_fecha_fin_real CHECK (proyecto_ejec_fecha_fin_real > proyecto_ejec_fecha_inicio_real),
     -- Restricción de clave foránea que referencia a la tabla POZO para su primera, segunda y tercera PK
     CONSTRAINT fk_pozo_proyecto_ejecucion FOREIGN KEY (fk_pozo_1, fk_pozo_2, fk_pozo_3) REFERENCES Pozo (pozo_id, fk_mina_1, fk_mina_2),
     -- Restricción de clave foránea que referencia a la tabla INVENTARIO_PRODUCTO para su primera y segunda PK
@@ -1009,6 +1035,8 @@ CREATE TABLE Etapa_Ejecucion (
     CONSTRAINT check_etapa_ejecucion_descripcion CHECK (etapa_ejec_descripcion ~ '^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]*$'),
     -- Restricción para verificar que la fecha de fin estimada sea mayor a la fecha de inicio estimada
     CONSTRAINT check_etapa_ejecucion_fecha_fin_estimada CHECK (etapa_ejec_fecha_fin_estimada > etapa_ejec_fecha_inicio_estimada),
+    -- Restricción para verificar que la fecha de fin real sea mayor a la fecha de inicio real
+    CONSTRAINT check_etapa_ejecucion_fecha_fin_real CHECK (etapa_ejec_fecha_fin_real > etapa_ejec_fecha_inicio_real),
     -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
     CONSTRAINT fk_proyecto_ejecucion_etapa_ejecucion FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo)
 );
@@ -1043,6 +1071,8 @@ CREATE TABLE Actividad_Ejecucion (
     CONSTRAINT check_actividad_ejecucion_duracion_dias CHECK (actividad_ejec_duracion_dias > 0),
     -- Restricción para verificar que la fecha de fin estimada sea mayor a la fecha de inicio estimada
     CONSTRAINT check_actividad_ejecucion_fecha_fin_estimada CHECK (actividad_ejec_fecha_fin_estimada > actividad_ejec_fecha_inicio_estimada),
+    -- Restricción para verificar que la fecha de fin real sea mayor a la fecha de inicio real
+    CONSTRAINT check_actividad_ejecucion_fecha_fin_real CHECK (actividad_ejec_fecha_fin_real > actividad_ejec_fecha_inicio_real),
     -- Restricción de clave foranea que referencia a la tabla ETAPA_EJECUCION
     CONSTRAINT fk_etapa_ejecucion_actividad_ejecucion FOREIGN KEY (fk_etapa_ejecucion) REFERENCES Etapa_Ejecucion (etapa_ejec_codigo)
 );
@@ -1080,7 +1110,11 @@ CREATE TABLE Historico_Estatus_Proyecto (
     -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
     CONSTRAINT fk_proyecto_historico_estatus_proyecto FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo),
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_EJECUCION
-    CONSTRAINT fk_estatus_historico_estatus_proyecto FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo)
+    CONSTRAINT fk_estatus_historico_estatus_proyecto FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
+    CONSTRAINT check_hist_est_proyecto_fecha_inicio CHECK (hist_est_proyecto_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_proyecto_fecha_fin CHECK (hist_est_proyecto_fecha_fin >= hist_est_proyecto_fecha_inicio)
 );
 
 CREATE TABLE Historico_Estatus_Etapa (
@@ -1100,7 +1134,11 @@ CREATE TABLE Historico_Estatus_Etapa (
     -- Restricción de clave foránea que referencia a la tabla ETAPA_EJECUCION
     CONSTRAINT fk_etapa_historico_estatus_etapa FOREIGN KEY (fk_etapa_ejecucion) REFERENCES Etapa_Ejecucion (etapa_ejec_codigo),
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_EJECUCION
-    CONSTRAINT fk_estatus_historico_estatus_etapa FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo)
+    CONSTRAINT fk_estatus_historico_estatus_etapa FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
+    CONSTRAINT check_hist_est_etapa_fecha_inicio CHECK (hist_est_etapa_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_etapa_fecha_fin CHECK (hist_est_etapa_fecha_fin >= hist_est_etapa_fecha_inicio)
 );
 
 CREATE TABLE Historico_Estatus_Actividad (
@@ -1120,7 +1158,11 @@ CREATE TABLE Historico_Estatus_Actividad (
     -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_EJECUCION
     CONSTRAINT fk_actividad_historico_estatus_actividad FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo),
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_EJECUCION
-    CONSTRAINT fk_estatus_historico_estatus_actividad FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo)
+    CONSTRAINT fk_estatus_historico_estatus_actividad FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
+    CONSTRAINT check_hist_est_actividad_fecha_inicio CHECK (hist_est_actividad_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_actividad_fecha_fin CHECK (hist_est_actividad_fecha_fin >= hist_est_actividad_fecha_inicio)
 );
 
 CREATE TABLE Presupuesto (
@@ -1138,7 +1180,9 @@ CREATE TABLE Presupuesto (
     -- Restricción para verificar que el costo subtil sea mayor a 0
     CONSTRAINT check_presupuesto_costo_subtil CHECK (presupuesto_costo_subtil > 0),
     -- Restricción para verificar que el costo total sea mayor a 0
-    CONSTRAINT check_presupuesto_costo_total CHECK (presupuesto_costo_total > 0)
+    CONSTRAINT check_presupuesto_costo_total CHECK (presupuesto_costo_total > 0),
+    -- Restricción para verificar que el costo subtil sea menor o igual al costo total
+    CONSTRAINT check_presupuesto_costo_subtil_total CHECK (presupuesto_costo_subtil <= presupuesto_costo_total)
 );
 
 CREATE TABLE Solicitud_Proyecto_Aliados (
@@ -1152,7 +1196,9 @@ CREATE TABLE Solicitud_Proyecto_Aliados (
     -- Restricción de clave primaria
     CONSTRAINT pk_solicitud_proyecto PRIMARY KEY (solicitud_aliados_numero, fk_aliado),
     -- Restricción de clave foránea que referencia a la tabla ALIADO
-    CONSTRAINT fk_aliado_solicitud_proyecto FOREIGN KEY (fk_aliado) REFERENCES Aliado (persona_jur_codigo)
+    CONSTRAINT fk_aliado_solicitud_proyecto FOREIGN KEY (fk_aliado) REFERENCES Aliado (persona_jur_codigo),
+    -- Restricción para verificar que la fecha de emisión sea menor o igual a la fecha actual
+    CONSTRAINT check_solicitud_aliados_fecha_emision CHECK (solicitud_aliados_fecha_emision <= CURRENT_DATE)
 );
 
 CREATE TABLE Estatus_Pedido (
@@ -1187,8 +1233,14 @@ CREATE TABLE Historico_Estatus_Solicitud_Aliados (
 
     -- Restricción de clave primaria
     CONSTRAINT pk_historico_estatus_solicitud_aliados PRIMARY KEY (hist_est_solic_aliados_codigo, fk_solicitud_aliados_1, fk_solicitud_aliados_2, fk_estatus_pedido),
+    -- Restricción de clave foránea que referencia a la tabla ESTATUS_PEDIDO
     CONSTRAINT fk_estatus_historico_estatus_solicitud_aliados FOREIGN KEY (fk_estatus_pedido) REFERENCES Estatus_Pedido (estatus_pedido_codigo),
-    CONSTRAINT fk_solicitud_historico_estatus_solicitud_aliados FOREIGN KEY (fk_solicitud_aliados_1, fk_solicitud_aliados_2) REFERENCES Solicitud_Proyecto_Aliados (solicitud_aliados_numero, fk_aliado)
+    -- Restricción de clave foránea que referencia a la tabla SOLICITUD_PROYECTO_ALIADOS
+    CONSTRAINT fk_solicitud_historico_estatus_solicitud_aliados FOREIGN KEY (fk_solicitud_aliados_1, fk_solicitud_aliados_2) REFERENCES Solicitud_Proyecto_Aliados (solicitud_aliados_numero, fk_aliado),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
+    CONSTRAINT check_hist_est_solic_aliados_fecha_inicio CHECK (hist_est_solic_aliados_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_solic_aliados_fecha_fin CHECK (hist_est_solic_aliados_fecha_fin >= hist_est_solic_aliados_fecha_inicio)
 );
 
 CREATE TABLE Ejecucion_Empleado (
@@ -1342,7 +1394,11 @@ CREATE TABLE Pedido_Compra (
     -- Restricción para verificar que el costo total sea mayor a 0
     CONSTRAINT check_pedido_compra_monto_total CHECK (pedido_compra_monto_total > 0),
     -- Restricción de clave foránea que referencia a la tabla ALIADO
-    CONSTRAINT fk_aliado_pedido_compra FOREIGN KEY (fk_aliado) REFERENCES Aliado (persona_jur_codigo)
+    CONSTRAINT fk_aliado_pedido_compra FOREIGN KEY (fk_aliado) REFERENCES Aliado (persona_jur_codigo),
+    -- Restricción para verificar que la fecha de emisión sea menor o igual a la fecha actual
+    CONSTRAINT check_pedido_compra_fecha_emision CHECK (pedido_compra_fecha_emision <= CURRENT_DATE),
+    -- Restricción para verificar que el monto subtil sea menor o igual al costo total
+    CONSTRAINT check_pedido_compra_monto_subtil_total CHECK (pedido_compra_monto_subtil <= pedido_compra_monto_total)
 );
 
 CREATE TABLE Detalle_Pedido_Compra (
@@ -1392,7 +1448,11 @@ CREATE TABLE Historico_Estatus_Pedido_Compra (
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_PEDIDO
     CONSTRAINT fk_estatus_historico_estatus_pedido_compra FOREIGN KEY (fk_estatus_pedido) REFERENCES Estatus_Pedido (estatus_pedido_codigo),
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_COMPRA
-    CONSTRAINT fk_pedido_historico_estatus_pedido_compra FOREIGN KEY (fk_pedido_compra_1, fk_pedido_compra_2) REFERENCES Pedido_Compra (pedido_compra_numero, fk_aliado)
+    CONSTRAINT fk_pedido_historico_estatus_pedido_compra FOREIGN KEY (fk_pedido_compra_1, fk_pedido_compra_2) REFERENCES Pedido_Compra (pedido_compra_numero, fk_aliado),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
+    CONSTRAINT check_hist_est_pedido_compra_fecha_inicio CHECK (hist_est_pedido_compra_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_pedido_compra_fecha_fin CHECK (hist_est_pedido_compra_fecha_fin >= hist_est_pedido_compra_fecha_inicio)
 );
 
 CREATE TABLE Pedido_Venta (
@@ -1414,7 +1474,11 @@ CREATE TABLE Pedido_Venta (
     -- Restricción para verificar que el costo total sea mayor a 0
     CONSTRAINT check_pedido_venta_monto_total CHECK (pedido_venta_monto_total > 0),
     -- Restricción de clave foránea que referencia a la tabla CLIENTE
-    CONSTRAINT fk_cliente_pedido_venta FOREIGN KEY (fk_cliente) REFERENCES Cliente (persona_jur_codigo)
+    CONSTRAINT fk_cliente_pedido_venta FOREIGN KEY (fk_cliente) REFERENCES Cliente (persona_jur_codigo),
+    -- Restricción para verificar que la fecha de emisión sea menor o igual a la fecha actual
+    CONSTRAINT check_pedido_venta_fecha_emision CHECK (pedido_venta_fecha_emision <= CURRENT_DATE),
+    -- Restricción para verificar que el monto subtil sea menor o igual al costo total
+    CONSTRAINT check_pedido_venta_monto_subtil_total CHECK (pedido_venta_monto_subtil <= pedido_venta_monto_total)
 );
 
 CREATE TABLE Detalle_Pedido_Venta (
@@ -1464,7 +1528,11 @@ CREATE TABLE Historico_Estatus_Pedido_Venta (
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_PEDIDO
     CONSTRAINT fk_estatus_historico_estatus_pedido_venta FOREIGN KEY (fk_estatus_pedido) REFERENCES Estatus_Pedido (estatus_pedido_codigo),
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
-    CONSTRAINT fk_pedido_historico_estatus_pedido_venta FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente)
+    CONSTRAINT fk_pedido_historico_estatus_pedido_venta FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
+    -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
+    CONSTRAINT check_hist_est_pedido_venta_fecha_inicio CHECK (hist_est_pedido_venta_fecha_inicio <= CURRENT_TIMESTAMP),
+    -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
+    CONSTRAINT check_hist_est_pedido_venta_fecha_fin CHECK (hist_est_pedido_venta_fecha_fin >= hist_est_pedido_venta_fecha_inicio)
 );
 
 CREATE TABLE Pedido_Compra_Venta (
@@ -1644,7 +1712,9 @@ CREATE TABLE Pago_Compra (
     -- Restricción de clave foránea que referencia a la tabla CHEQUE
     CONSTRAINT fk_cheque_pago_compra FOREIGN KEY (fk_cheque) REFERENCES Cheque (metodo_pago_codigo),
     -- Restricción de clave foránea que referencia a la tabla PAGO_COMPRA
-    CONSTRAINT check_pago_compra_monto CHECK (pago_compra_monto > 0)
+    CONSTRAINT check_pago_compra_monto CHECK (pago_compra_monto > 0),
+    -- Restricción para verificar que la fecha de emisión sea menor o igual a la fecha actual
+    CONSTRAINT check_pago_compra_fecha_emision CHECK (pago_compra_fecha_emision <= CURRENT_DATE)
 );
 
 CREATE TABLE Pago_Venta (
@@ -1678,5 +1748,7 @@ CREATE TABLE Pago_Venta (
     -- Restricción de clave foránea que referencia a la tabla CHEQUE
     CONSTRAINT fk_cheque_pago_venta FOREIGN KEY (fk_cheque) REFERENCES Cheque (metodo_pago_codigo),
     -- Restricción de clave foránea que referencia a la tabla PAGO_VENTA
-    CONSTRAINT check_pago_venta_monto CHECK (pago_venta_monto > 0)
+    CONSTRAINT check_pago_venta_monto CHECK (pago_venta_monto > 0),
+    -- Restricción para verificar que la fecha de emisión sea menor o igual a la fecha actual
+    CONSTRAINT check_pago_venta_fecha_emision CHECK (pago_venta_fecha_emision <= CURRENT_DATE)
 );
