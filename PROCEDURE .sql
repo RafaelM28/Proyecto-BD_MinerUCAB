@@ -185,3 +185,56 @@ BEGIN
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE sp_crear_cliente(p_razon_social VARCHAR,p_rif VARCHAR,p_denominacion_comercial VARCHAR,capital NUMERIC,p_detalle_principal VARCHAR,p_detalle_fiscal VARCHAR,p_estado_principal VARCHAR,p_municipio_principal VARCHAR,p_parroquia_principal VARCHAR,p_estado_fiscal VARCHAR,p_municipio_fiscal VARCHAR,p_parroquia_fiscal VARCHAR,p_correo_electronico VARCHAR,p_telefono_prefijo VARCHAR,p_telefono_numero VARCHAR,p_nombre_usuario VARCHAR,p_clave VARCHAR,p_confirmar_clave VARCHAR)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Verificar que la clave y la confirmación de clave sean iguales
+    IF p_clave != p_confirmar_clave THEN
+        RAISE EXCEPTION 'La clave y la confirmación de clave no coinciden';
+    END IF;
+
+    -- Insertar los datos en la tabla de empresas
+    INSERT INTO Cliente (persona_jur_codigo,persona_jur_razon_social,persona_jur_RIF,persona_jur_denominacion_comercial,persona_jur_capital_total,persona_jur_direccion_fiscal,persona_jur_direccion_principal,fk_lugar_1,fk_lugar_2) VALUES 
+	((SELECT MAX(persona_jur_codigo) FROM Cliente)+1,p_razon_social,p_rif,p_denominacion_comercial,capital,p_detalle_fiscal,p_detalle_principal,(Select lugar_codigo 
+																																				 From Lugar 
+																																				 Where lugar_nombre = p_parroquia_principal 
+																																				 And lugar_tipo = 'Parroquia' 
+																																				 AND fk_lugar = (Select lugar_codigo 
+																																				 				 From Lugar 
+																																								 Where lugar_nombre = p_municipio_principal 
+																																				 				 And lugar_tipo = 'Municipio' 
+																																								 AND fk_lugar = (Select lugar_codigo 
+																																								 				 From Lugar 
+																																												 Where lugar_nombre = p_estado_principal 
+																																												 And lugar_tipo = 'Estado')))
+	 																																	 	   ,(Select lugar_codigo 
+																																				 From Lugar 
+																																				 Where lugar_nombre = p_parroquia_fiscal
+																																				 And lugar_tipo = 'Parroquia' 
+																																				 AND fk_lugar = (Select lugar_codigo 
+																																				 				 From Lugar 
+																																								 Where lugar_nombre = p_municipio_fiscal
+																																				 				 And lugar_tipo = 'Municipio' 
+																																								 AND fk_lugar = (Select lugar_codigo 
+																																								 				 From Lugar 
+																																												 Where lugar_nombre = p_estado_fiscal
+																																												 And lugar_tipo = 'Estado'))));
+	If p_correo_electronico IS NOT NULL then
+		INSERT INTO Correo (correo_codigo,correo_nombre,fk_cliente) VALUES 
+		((SELECT MAX(correo_codigo) FROM Correo)+1,p_correo_electronico,(SELECT MAX(persona_jur_codigo) FROM Cliente));
+	END IF;
+	
+	If p_telefono_prefijo IS NOT NULL AND p_telefono_numero IS NOT NULL then
+		INSERT INTO Telefono (telefono_codigo,telefono_prefijo,telefono_numero,telefono_tipo,fk_cliente) VALUES 
+		((SELECT MAX(telefono_codigo) FROM Telefono)+1,p_telefono_prefijo,p_telefono_numero,'Casa',(SELECT MAX(persona_jur_codigo) FROM Cliente));
+	END IF;
+	
+    -- Insertar los datos en la tabla de usuarios
+    INSERT INTO Usuario (usuario_codigo,usuario_nombre,usuario_clave,fk_cliente,fk_rol) VALUES 
+	((SELECT MAX(usuario_codigo) FROM Usuario)+1,p_nombre_usuario,p_clave,(SELECT MAX(persona_jur_codigo) FROM Cliente),(Select rol_codigo 
+																			   From Rol 
+																			   Where rol_nombre = 'Cliente'));
+END;
+$$;
