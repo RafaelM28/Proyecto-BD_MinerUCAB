@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol - MinerUCAB</title>
+    <title>MinerUCAB -  Actividades</title>
     <link rel="stylesheet" href="lista_actividades_styles.css">
 </head>
 
@@ -132,25 +132,17 @@
                     <tr>
                         <th>Código</th>
                         <th>Nombre</th>
-                        <th>Acciones</th>
+                        <th>Opción</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for actividad in actividades %}
                     <tr>
-                        <td>1</td>
-                        <td>Perforación exploratoria</td>
+                        <td>{{ actividad[0] }}</td>
+                        <td>{{ actividad[1] }}</td>
                         <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Revisión de mapas mineros</td>
-                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Elaboración de informe</td>
-                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">
@@ -167,32 +159,6 @@
             </div>
         </main>
     </div>
-    <script>
-        function addPrivilegio() {
-            const privilegiosSelect = document.getElementById('privilegios');
-            const privilegio = privilegiosSelect.value;
-
-            if (privilegio) {
-                const privilegioRow = document.createElement('div');
-                privilegioRow.classList.add('privilegio-row');
-                privilegioRow.innerHTML = `
-                    <span>${privilegio}</span>
-                    <button type="button" onclick="removePrivilegio(this)">x</button>
-                    <input type="hidden" name="privilegios[]" value="${privilegio}">
-                `;
-
-                document.getElementById('selected-privilegios').appendChild(privilegioRow);
-
-                // Clear select
-                privilegiosSelect.value = '';
-            }
-        }
-
-        function removePrivilegio(button) {
-            const privilegioRow = button.parentElement;
-            privilegioRow.remove();
-        }
-    </script>
 </body>
 
 </html>

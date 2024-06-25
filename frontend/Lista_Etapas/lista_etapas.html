@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol - MinerUCAB</title>
+    <title>MinerUCAB - Etapas</title>
     <link rel="stylesheet" href="lista_etapas_styles.css">
 </head>
 
@@ -131,25 +131,19 @@
                     <tr>
                         <th>Código</th>
                         <th>Nombre</th>
-                        <th>Acciones</th>
+                        <th>Número</th>
+                        <th>Opción</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for etapa in etapas %}
                     <tr>
-                        <td>1</td>
-                        <td>Inventario de Informacion</td>
+                        <td>{{ etapa[0] }}</td>
+                        <td>{{ etapa[1] }}</td>
+                        <td>{{ etapa[2] }}</td>
                         <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Geologia de superficie</td>
-                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Analisis de laboratorio</td>
-                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">

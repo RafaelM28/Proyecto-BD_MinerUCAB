@@ -127,25 +127,17 @@
                     <tr>
                         <th>Código</th>
                         <th>Nombre Rol</th>
-                        <th>Acciones</th>
+                        <th>Opción</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for rol in roles %}
                     <tr>
-                        <td>1</td>
-                        <td>Aliado</td>
+                        <td> {{ rol[0] }} </td>
+                        <td> {{ rol[1] }} </td>
                         <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Cliente</td>
-                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Lider de Proyecto</td>
-                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">

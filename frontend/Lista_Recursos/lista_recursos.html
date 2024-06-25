@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinerUCAB -  Proyectos</title>
-    <link rel="stylesheet" href="lista_proyectos_styles.css">
+    <title>MinerUCAB - Recursos</title>
+    <link rel="stylesheet" href="lista_recursos_styles.css">
 </head>
 
 <body>
@@ -105,25 +105,21 @@
                         <li class="li2" href="#">Privilegios</li>
                     </a>
                 </ul>
+
             </ul>
         </div>
 
         <main class="main-content">
             <div class="content-header">
-                <h1>Proyectos</h1>
-            </div>
-            <div class="tabs">
-                <div class="tab active">Proyectos</div>
-                <div class="tab">Etapas</div>
-                <div class="tab">Proyectos</div>
+                <h1>Recursos</h1>
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Proyecto">
+                    <input type="text" placeholder="Buscar Mineral">
                     <button class="search-button">🔍</button>
                 </div>
                 <div class="add-button-container">
-                    <button class="add-button">Agregar Proyecto</button>
+                    <a href="#" class="add-button">Agregar Recurso</a>
                 </div>
             </div>
             <table class="activity-table">
@@ -131,16 +127,20 @@
                     <tr>
                         <th>Código</th>
                         <th>Nombre</th>
-                        <th>Mineral</th>
+                        <th>Tipo</th>
+                        <th>Modelo</th>
+                        <th>Cantidad</th>
                         <th>Opción</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for proyecto in proyectos %}
+                    {% for recurso in recursos %}
                     <tr>
-                        <td>{{ proyecto[0] }}</td>
-                        <td>{{ proyecto[1] }}</td>
-                        <td>{{ proyecto[2] }}</td>
+                        <td> {{ recurso[0] }} </td>
+                        <td> {{ recurso[1] }} </td>
+                        <td> {{ recurso[2] }} </td>
+                        <td> {{ recurso[3] }} </td>
+                        <td> {{ recurso[4] }} </td>
                         <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
                     </tr>
                     {% endfor %}
