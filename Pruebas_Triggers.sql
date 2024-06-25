@@ -14,11 +14,11 @@ Where rol_codigo =1;
 
 INSERT INTO inventario_producto (inventario_producto_codigo, fk_mineral, inventario_producto_cantidad_total, inventario_producto_operacion, inventario_producto_tipo_operacion, inventario_producto_fecha_movimiento)
 VALUES
-	(64, 1, 10, 10, 'Ingreso', '2010-01-15');
+	(64, 2, 10, NULL, NULL, NULL);
 
 INSERT INTO detalle_pedido_compra (detalle_pedido_compra_codigo, fk_pedido_compra_1, fk_pedido_compra_2, fk_inventario_producto_1, fk_inventario_producto_2, detalle_compra_cantidad_mineral, detalle_compra_precio_unitario)
 VALUES
-	(51, 51, 40, 64, 1, 20, 1200.00);
+	(51, 51, 40, 64, 2, 20, 1200.00);
 
 INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
 VALUES
