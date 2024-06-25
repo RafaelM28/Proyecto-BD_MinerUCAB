@@ -640,7 +640,7 @@ CREATE TABLE Historico_Estatus_Pozo (
     -- Restricción de clave primaria
     CONSTRAINT pk_historico_estatus_pozo PRIMARY KEY (hist_est_pozo_codigo, fk_pozo_1, fk_pozo_2, fk_pozo_3, fk_estatus_pozo),
     -- Restricción de clave foránea que referencia a la tabla POZO para su primera, segunda y tercera PK
-    CONSTRAINT fk_pozo_historico_estatus_pozo FOREIGN KEY (fk_pozo_1, fk_pozo_2, fk_pozo_3) REFERENCES Pozo (pozo_id, fk_mina_1, fk_mina_2),
+    CONSTRAINT fk_pozo_historico_estatus_pozo FOREIGN KEY (fk_pozo_1, fk_pozo_2, fk_pozo_3) REFERENCES Pozo (pozo_id, fk_mina_1, fk_mina_2) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_POZO
     CONSTRAINT fk_estatus_historico_estatus_pozo FOREIGN KEY (fk_estatus_pozo) REFERENCES Estatus_Pozo (estatus_pozo_codigo),
     -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha de fin
@@ -1000,7 +1000,7 @@ CREATE TABLE Proyecto_Ejecucion (
     -- Restricción para verificar que la fecha de fin real sea mayor a la fecha de inicio real
     CONSTRAINT check_proyecto_ejecucion_fecha_fin_real CHECK (proyecto_ejec_fecha_fin_real > proyecto_ejec_fecha_inicio_real),
     -- Restricción de clave foránea que referencia a la tabla POZO para su primera, segunda y tercera PK
-    CONSTRAINT fk_pozo_proyecto_ejecucion FOREIGN KEY (fk_pozo_1, fk_pozo_2, fk_pozo_3) REFERENCES Pozo (pozo_id, fk_mina_1, fk_mina_2),
+    CONSTRAINT fk_pozo_proyecto_ejecucion FOREIGN KEY (fk_pozo_1, fk_pozo_2, fk_pozo_3) REFERENCES Pozo (pozo_id, fk_mina_1, fk_mina_2) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla INVENTARIO_PRODUCTO para su primera y segunda PK
     CONSTRAINT fk_inventario_producto_proyecto_ejecucion FOREIGN KEY (fk_inventario_producto_1, fk_inventario_producto_2) REFERENCES Inventario_Producto (inventario_producto_codigo, fk_mineral)
 );
@@ -1038,7 +1038,7 @@ CREATE TABLE Etapa_Ejecucion (
     -- Restricción para verificar que la fecha de fin real sea mayor a la fecha de inicio real
     CONSTRAINT check_etapa_ejecucion_fecha_fin_real CHECK (etapa_ejec_fecha_fin_real > etapa_ejec_fecha_inicio_real),
     -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
-    CONSTRAINT fk_proyecto_ejecucion_etapa_ejecucion FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo)
+    CONSTRAINT fk_proyecto_ejecucion_etapa_ejecucion FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo) ON DELETE CASCADE
 );
 
 CREATE TABLE Actividad_Ejecucion (
@@ -1074,7 +1074,7 @@ CREATE TABLE Actividad_Ejecucion (
     -- Restricción para verificar que la fecha de fin real sea mayor a la fecha de inicio real
     CONSTRAINT check_actividad_ejecucion_fecha_fin_real CHECK (actividad_ejec_fecha_fin_real > actividad_ejec_fecha_inicio_real),
     -- Restricción de clave foranea que referencia a la tabla ETAPA_EJECUCION
-    CONSTRAINT fk_etapa_ejecucion_actividad_ejecucion FOREIGN KEY (fk_etapa_ejecucion) REFERENCES Etapa_Ejecucion (etapa_ejec_codigo)
+    CONSTRAINT fk_etapa_ejecucion_actividad_ejecucion FOREIGN KEY (fk_etapa_ejecucion) REFERENCES Etapa_Ejecucion (etapa_ejec_codigo) ON DELETE CASCADE
 );
 
 CREATE TABLE Estatus_Ejecucion (
@@ -1108,7 +1108,7 @@ CREATE TABLE Historico_Estatus_Proyecto (
     -- Restricción de clave primaria
     CONSTRAINT pk_historico_estatus_proyecto PRIMARY KEY (hist_est_proyecto_codigo, fk_proyecto_ejecucion, fk_estatus_ejecucion),
     -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
-    CONSTRAINT fk_proyecto_historico_estatus_proyecto FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo),
+    CONSTRAINT fk_proyecto_historico_estatus_proyecto FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_EJECUCION
     CONSTRAINT fk_estatus_historico_estatus_proyecto FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo),
     -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
@@ -1132,7 +1132,7 @@ CREATE TABLE Historico_Estatus_Etapa (
     -- Restricción de clave primaria
     CONSTRAINT pk_historico_estatus_etapa PRIMARY KEY (hist_est_etapa_codigo, fk_etapa_ejecucion, fk_estatus_ejecucion),
     -- Restricción de clave foránea que referencia a la tabla ETAPA_EJECUCION
-    CONSTRAINT fk_etapa_historico_estatus_etapa FOREIGN KEY (fk_etapa_ejecucion) REFERENCES Etapa_Ejecucion (etapa_ejec_codigo),
+    CONSTRAINT fk_etapa_historico_estatus_etapa FOREIGN KEY (fk_etapa_ejecucion) REFERENCES Etapa_Ejecucion (etapa_ejec_codigo) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_EJECUCION
     CONSTRAINT fk_estatus_historico_estatus_etapa FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo),
     -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
@@ -1156,7 +1156,7 @@ CREATE TABLE Historico_Estatus_Actividad (
     -- Restricción de clave primaria
     CONSTRAINT pk_historico_estatus_actividad PRIMARY KEY (hist_est_actividad_codigo, fk_actividad_ejecucion, fk_estatus_ejecucion),
     -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_EJECUCION
-    CONSTRAINT fk_actividad_historico_estatus_actividad FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo),
+    CONSTRAINT fk_actividad_historico_estatus_actividad FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_EJECUCION
     CONSTRAINT fk_estatus_historico_estatus_actividad FOREIGN KEY (fk_estatus_ejecucion) REFERENCES Estatus_Ejecucion (estatus_ejecucion_codigo),
     -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
@@ -1268,7 +1268,7 @@ CREATE TABLE Ejecucion_Empleado (
     -- Restricción para verificar que los viáticos quincenales sean mayores a 0
     CONSTRAINT check_ejecucion_empleado_viaticos CHECK (ejecucion_empleado_viaticos > 0),
     -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_EJECUCION
-    CONSTRAINT fk_actividad_ejecucion_ejecucion_empleado FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo),
+    CONSTRAINT fk_actividad_ejecucion_ejecucion_empleado FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla PRESUPUESTO
     CONSTRAINT fk_presupuesto_ejecucion_empleado FOREIGN KEY (fk_presupuesto) REFERENCES Presupuesto (presupuesto_numero),
     -- Restricción de clave foránea que referencia a la tabla EMPLEADO
@@ -1308,7 +1308,7 @@ CREATE TABLE Ejecucion_Recurso (
     -- Restricción para verificar que el costo de mantenimiento sea mayor a 0
     CONSTRAINT check_ejecucion_recurso_costo_mantenimiento CHECK (ejecucion_recurso_costo_mantenimiento > 0),
     -- Restricción de clave foránea que referencia a la tabla ACTIVIDAD_EJECUCION
-    CONSTRAINT fk_actividad_ejecucion_ejecucion_recurso FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo),
+    CONSTRAINT fk_actividad_ejecucion_ejecucion_recurso FOREIGN KEY (fk_actividad_ejecucion) REFERENCES Actividad_Ejecucion (actividad_ejec_codigo) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla PRESUPUESTO
     CONSTRAINT fk_presupuesto_ejecucion_recurso FOREIGN KEY (fk_presupuesto) REFERENCES Presupuesto (presupuesto_numero),
     -- Restricción de clave foránea que referencia a la tabla SOLICITUD_PROYECTO_ALIADOS
@@ -1426,7 +1426,7 @@ CREATE TABLE Detalle_Pedido_Compra (
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_COMPRA
     CONSTRAINT fk_pedido_compra_detalle_pedido_compra FOREIGN KEY (fk_pedido_compra_1, fk_pedido_compra_2) REFERENCES Pedido_Compra (pedido_compra_numero, fk_aliado) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla INVENTARIO_PRODUCTO
-    CONSTRAINT fk_inventario_producto_detalle_pedido_compra FOREIGN KEY (fk_inventario_producto_1, fk_inventario_producto_2) REFERENCES Inventario_Producto (inventario_producto_codigo, fk_mineral)
+    CONSTRAINT fk_inventario_producto_detalle_pedido_compra FOREIGN KEY (fk_inventario_producto_1, fk_inventario_producto_2) REFERENCES Inventario_Producto (inventario_producto_codigo, fk_mineral) ON DELETE CASCADE
 );
 
 CREATE TABLE Historico_Estatus_Pedido_Compra (
@@ -1506,7 +1506,7 @@ CREATE TABLE Detalle_Pedido_Venta (
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
     CONSTRAINT fk_pedido_venta_detalle_pedido_venta FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
     -- Restricción de clave foránea que referencia a la tabla INVENTARIO_PRODUCTO
-    CONSTRAINT fk_inventario_producto_detalle_pedido_venta FOREIGN KEY (fk_inventario_producto_1, fk_inventario_producto_2) REFERENCES Inventario_Producto (inventario_producto_codigo, fk_mineral)
+    CONSTRAINT fk_inventario_producto_detalle_pedido_venta FOREIGN KEY (fk_inventario_producto_1, fk_inventario_producto_2) REFERENCES Inventario_Producto (inventario_producto_codigo, fk_mineral) ON DELETE CASCADE
 );
 
 CREATE TABLE Historico_Estatus_Pedido_Venta (
@@ -1566,7 +1566,7 @@ CREATE TABLE Pedido_Venta_Proyecto (
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
     CONSTRAINT fk_pedido_venta_pedido_venta_proyecto FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
     -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
-    CONSTRAINT fk_proyecto_pedido_venta_proyecto FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo)
+    CONSTRAINT fk_proyecto_pedido_venta_proyecto FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo) ON DELETE CASCADE
 );
 
 CREATE TABLE Banco (
