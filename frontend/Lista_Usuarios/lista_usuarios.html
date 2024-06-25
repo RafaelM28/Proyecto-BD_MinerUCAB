@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinerUCAB - Empleados</title>
-    <link rel="stylesheet" href="lista_empleados_styles.css">
+    <title>MinerUCAB - Usuarios</title>
+    <link rel="stylesheet" href="lista_usuarios_styles.css">
 </head>
 
 <body>
@@ -111,36 +111,34 @@
 
         <main class="main-content">
             <div class="content-header">
-                <h1>Empleados</h1>
+                <h1>Usuarios</h1>
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Empleado">
+                    <input type="text" placeholder="Buscar Usuario">
                     <button class="search-button">🔍</button>
                 </div>
                 <div class="add-button-container">
-                    <a href="#" class="add-button">Agregar Empleado</a>
+                    <a href="#" class="add-button">Agregar Usuario</a>
                 </div>
             </div>
             <table class="activity-table">
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>Cédula</th>
-                        <th>Nombre</th>
-                        <th>Empresa</th>
-                        <th>Cargo</th>
+                        <th>Cédula o RIF</th>
+                        <th>Nombre o Razón Social</th>
+                        <th>Nombre Usuario</th>
+                        <th>Rol</th>
                         <th>Opción</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for empleado in empleados %}
+                    {% for usuario in usuarios %}
                     <tr>
-                        <td>{{ empleado[0] }}</td>
-                        <td>{{ empleado[1] }}</td>
-                        <td>{{ empleado[2] }}</td>
-                        <td>{{ empleado[3] }}</td>
-                        <td>{{ empleado[4] }}</td>
+                        <td>{{ usuario[0] }}</td>
+                        <td>{{ usuario[1] }}</td>
+                        <td>{{ usuario[2] }}</td>
+                        <td>{{ usuario[3] }}</td>
                         <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
                     </tr>
                     {% endfor %}

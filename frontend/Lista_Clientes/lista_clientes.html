@@ -45,24 +45,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for cliente in clientes %}
                     <tr>
-                        <td>1</td>
-                        <td>943267874</td>
-                        <td>CVG VENALUM</td>
-                        <td>Sabana Grande 3, Caracas</td>
+                        <td>{{ cliente[0] }}</td>
+                        <td>{{ cliente[1] }}</td>
+                        <td>{{ cliente[2] }}</td>
+                        <td>{{ cliente[3] }}</td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>839487268</td>
-                        <td>CVG BAUXILUM</td>
-                        <td>av. orinoco 25, Caracas</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>178264767</td>
-                        <td>CVG Minerven</td>
-                        <td>baruta 30, Caracas</td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">

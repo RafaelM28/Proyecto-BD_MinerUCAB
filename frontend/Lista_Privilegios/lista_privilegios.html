@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinerUCAB - Empleados</title>
-    <link rel="stylesheet" href="lista_empleados_styles.css">
+    <title>MinerUCAB - Privilegios</title>
+    <link rel="stylesheet" href="lista_privilegios_styles.css">
 </head>
 
 <body>
@@ -111,37 +111,26 @@
 
         <main class="main-content">
             <div class="content-header">
-                <h1>Empleados</h1>
+                <h1>Privilegios</h1>
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Empleado">
+                    <input type="text" placeholder="Buscar Privilegio">
                     <button class="search-button">🔍</button>
-                </div>
-                <div class="add-button-container">
-                    <a href="#" class="add-button">Agregar Empleado</a>
                 </div>
             </div>
             <table class="activity-table">
                 <thead>
                     <tr>
                         <th>Código</th>
-                        <th>Cédula</th>
-                        <th>Nombre</th>
-                        <th>Empresa</th>
-                        <th>Cargo</th>
-                        <th>Opción</th>
+                        <th>Nombre Privilegio</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for empleado in empleados %}
+                    {% for privilegio in privilegios %}
                     <tr>
-                        <td>{{ empleado[0] }}</td>
-                        <td>{{ empleado[1] }}</td>
-                        <td>{{ empleado[2] }}</td>
-                        <td>{{ empleado[3] }}</td>
-                        <td>{{ empleado[4] }}</td>
-                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
+                        <td>{{ privilegio[0] }}</td>
+                        <td>{{ privilegio[1] }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

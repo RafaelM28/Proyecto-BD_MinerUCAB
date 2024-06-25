@@ -185,3 +185,30 @@ BEGIN
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_clientes()
+CREATE OR REPLACE FUNCTION lista_clientes()
+-- Esta función devuelve una tabla con información de los clientes
+RETURNS TABLE (cliente_codigo SMALLINT, cliente_rif VARCHAR(20), cliente_denom_comercial VARCHAR(30), cliente_dir_fiscal VARCHAR(100))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla cliente
+    RETURN QUERY SELECT C.persona_jur_codigo, C.persona_jur_rif, C.persona_jur_denominacion_comercial, C.persona_jur_direccion_fiscal
+    FROM cliente C
+    -- Limita el número de resultados a 30
+    LIMIT 30;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_aliados()
+CREATE OR REPLACE FUNCTION lista_aliados()
+RETURNS TABLE (aliado_codigo SMALLINT, aliado_rif VARCHAR(20), aliado_denom_comercial VARCHAR(30), aliado_dir_fiscal VARCHAR(100))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla aliado
+    RETURN QUERY SELECT A.persona_jur_codigo, A.persona_jur_rif, A.persona_jur_denominacion_comercial, A.persona_jur_direccion_fiscal
+    FROM aliado A
+    -- Limita el número de resultados a 30
+    LIMIT 30;
+END;
+$$ LANGUAGE plpgsql;
