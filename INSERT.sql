@@ -1712,6 +1712,18 @@ VALUES
 (48, 'J000093110', 'Exploraciones Mineras del Delta ', 'EXMINDELTA',10200000000, 'Calle Independencia  Edificio EXMINDELTA  Piso 3 ', 'Calle Independencia  Edificio EXMINDELTA  Piso 3 ',1482,1482),
 (49, 'J000000009', 'Corporación Nacional de Desarollo Mineral', 'MinerUCAB', 9000000000, 'Avenida Bolívar  Edificio MINDeltaA  Piso 2 ', 'Avenida Bolívar  Edificio MINDeltaA  Piso 2 ',1474,1474);
 
+INSERT INTO Estatus_Disponibilidad (estatus_disponibilidad_codigo,estatus_disponibilidad_nombre) VALUES
+(1,'Disponible'),
+(2,'Ocupado'),
+(3,'En espera'),
+(4,'Apto'),
+(5,'Libre'),
+(6,'Desocupado'),
+(7,'Util'),
+(8,'Concurrido'),
+(9,'Absorto'),
+(10,'Envolvido');
+
 -- Insertando datos en la tabla Empleado
 INSERT INTO Empleado (empleado_codigo, empleado_cedula, empleado_RIF, empleado_primer_nombre, empleado_segundo_nombre, empleado_primer_apellido, empleado_segundo_apellido, empleado_fecha_nacimiento, empleado_detalle_direccion, fk_lugar, fk_cliente, fk_aliado_1, fk_aliado_2)
 VALUES
@@ -11993,6 +12005,49 @@ VALUES
 (9, '0000021900', 9, 30),
 (10, '0000949214', 10, 30);
 
+-- Insertando datos en la tabla 'estatus_pedido'
+INSERT INTO estatus_pedido (estatus_pedido_codigo, estatus_pedido_nombre, estatus_pedido_descripcion)
+VALUES
+(1, 'En proceso', NULL),
+(2, 'Aprobado', NULL),
+(3, 'Rechazado', NULL),
+(4, 'Por pagar', NULL),
+(5, 'Pagado', NULL),
+(6, 'Cancelado', NULL),
+(7, 'En espera', NULL),
+(8, 'Completado', NULL),
+(9, 'En revisión', NULL),
+(10, 'Confirmado ', NULL);
+
+
+-- Insertando datos en la tabla 'pedido_venta'
+INSERT INTO pedido_venta (pedido_venta_numero, fk_cliente, pedido_venta_fecha_emision, pedido_venta_monto_subtil, pedido_venta_monto_total)
+VALUES
+(1, 1, '2022-07-30', 1200.00, 1392.00),
+(2, 2, '2022-08-10', 950.00, 1102.00),
+(3, 3, '2022-08-30', 450.00, 522.00),
+(4, 4, '2023-02-01', 1300.00, 1508.00),
+(5, 5, '2023-03-20', 750.00, 870.00),
+(6, 6, '2023-03-30', 1450.00, 1682.00),
+(7, 7, '2023-08-30', 600.00, 696.00),
+(8, 8, '2023-09-20', 800.00, 928.00),
+(9, 9, '2023-09-25', 300.00, 348.00),
+(10,10, '2023-10-30', 1000.00, 1160.00);
+
+-- Insertando datos en la tabla 'pago_venta'
+INSERT INTO pago_venta (pago_venta_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_venta_1, fk_pedido_venta_2, pago_venta_monto, pago_venta_fecha_emision)
+VALUES
+(1, NULL, 9, NULL, NULL, 1, 1, 1392.00, '2022-07-30'),
+(2, NULL, 9, NULL, NULL, 2, 2, 1102.00, '2022-08-10'),
+(3, NULL, 9, NULL, NULL, 3, 3, 522.00, '2022-08-30'),
+(4, NULL, 9, NULL, NULL, 4, 4, 1508.00, '2023-02-01'),
+(5, NULL, 9, NULL, NULL, 5, 5, 870.00, '2023-03-20'),
+(6, NULL, 9, NULL, NULL, 6, 6, 1682.00, '2023-03-30'),
+(7, NULL, 9, NULL, NULL, 7, 7, 696.00, '2023-08-30'),
+(8, NULL, 9, NULL, NULL, 8, 8, 928.00, '2023-09-20'),
+(9, NULL, 9, NULL, NULL, 9, 9, 348.00, '2023-09-25'),
+(10, NULL, 9, NULL, NULL, 10, 10, 1160.00, '2023-10-30');
+
 -- Insertando datos en la tabla 'pedido_compra'
 INSERT INTO pedido_compra (pedido_compra_numero, fk_aliado, pedido_compra_fecha_emision, pedido_compra_monto_subtil, pedido_compra_monto_total)
 VALUES
@@ -12047,115 +12102,6 @@ VALUES
 (49, 40, '2023-12-10', 1400.00, 1624.00),
 (50, 40, '2024-01-15', 1500.00, 1740.00);
 
--- Insertando datos en la tabla 'pago_compra'
-INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
-VALUES
-(1, NULL, 10, NULL, NULL, 1, 1, 1392.00, '2022-07-30'),
-(2, NULL, 10, NULL, NULL, 2, 1, 1102.00, '2022-08-10'),
-(3, NULL, 10, NULL, NULL, 3, 1, 522.00, '2022-08-30'),
-(4, NULL, 10, NULL, NULL, 4, 1, 1508.00, '2023-02-01'),
-(5, NULL, 10, NULL, NULL, 5, 1, 870.00, '2023-03-20'),
-(6, NULL, 10, NULL, NULL, 6, 1, 1682.00, '2023-03-30'),
-(7, NULL, 10, NULL, NULL, 7, 1, 696.00, '2023-08-30'),
-(8, NULL, 10, NULL, NULL, 8, 1, 928.00, '2023-09-20'),
-(9, NULL, 10, NULL, NULL, 9, 1, 348.00, '2023-09-25'),
-(10, NULL, 10, NULL, NULL, 10, 1, 1160.00, '2023-10-30'),
-(11, NULL, 10, NULL, NULL, 11, 10, 1392.00, '2020-11-05'),
-(12, NULL, 10, NULL, NULL, 12, 10, 1508.00, '2021-12-10'),
-(13, NULL, 10, NULL, NULL, 13, 10, 1624.00, '2022-01-15'),
-(14, NULL, 10, NULL, NULL, 14, 10, 1740.00, '2023-02-20'),
-(15, NULL, 10, NULL, NULL, 15, 10, 1276.00, '2023-03-25'),
-(16, NULL, 10, NULL, NULL, 16, 10, 1044.00, '2023-04-30'),
-(17, NULL, 10, NULL, NULL, 17, 10, 928.00, '2023-05-05'),
-(18, NULL, 10, NULL, NULL, 18, 10, 580.00, '2023-06-10'),
-(19, NULL, 10, NULL, NULL, 19, 10, 522.00, '2023-07-15'),
-(20, NULL, 10, NULL, NULL, 20, 20, 406.00, '2023-08-20'),
-(21, NULL, 10, NULL, NULL, 21, 20, 1624.00, '2023-09-25'),
-(22, NULL, 10, NULL, NULL, 22, 20, 1450.00, '2023-10-30'),
-(23, NULL, 10, NULL, NULL, 23, 20, 1566.00, '2023-11-05'),
-(24, NULL, 10, NULL, NULL, 24, 20, 1682.00, '2023-12-10'),
-(25, NULL, 10, NULL, NULL, 26, 20, 1334.00, '2010-01-15'),
-(26, NULL, 10, NULL, NULL, 27, 20, 348.00, '2011-02-20'),
-(27, NULL, 10, NULL, NULL, 28, 20, 580.00, '2012-03-25'),
-(28, NULL, 10, NULL, NULL, 29, 20, 812.00, '2013-04-30'),
-(29, NULL, 10, NULL, NULL, 30, 20, 1044.00, '2014-05-05'),
-(30, NULL, 10, NULL, NULL, 31, 30, 1276.00, '2015-06-10'),
-(31, NULL, 10, NULL, NULL, 32, 30, 1508.00, '2016-07-15'),
-(32, NULL, 10, NULL, NULL, 33, 30, 1740.00, '2017-08-20'),
-(33, NULL, 10, NULL, NULL, 34, 30, 522.00, '2018-09-25'),
-(34, NULL, 10, NULL, NULL, 35, 30, 696.00, '2019-10-30'),
-(35, NULL, 10, NULL, NULL, 36, 30, 1102.00, '2020-11-05'),
-(36, NULL, 10, NULL, NULL, 37, 30, 1334.00, '2021-12-10'),
-(37, NULL, 10, NULL, NULL, 38, 30, 1450.00, '2022-01-15'),
-(38, NULL, 10, NULL, NULL, 39, 30, 1566.00, '2023-02-20'),
-(39, NULL, 10, NULL, NULL, 40, 30, 1682.00, '2023-03-25'),
-(40, NULL, 10, NULL, NULL, 41, 40, 1798.00, '2023-04-30'),
-(41, NULL, 10, NULL, NULL, 42, 40, 522.00, '2023-05-05'),
-(42, NULL, 10, NULL, NULL, 43, 40, 696.00, '2023-06-10'),
-(43, NULL, 10, NULL, NULL, 44, 40, 1044.00, '2023-07-15'),
-(44, NULL, 10, NULL, NULL, 45, 40, 1160.00, '2023-08-20'),
-(45, NULL, 10, NULL, NULL, 46, 40, 1276.00, '2023-09-25'),
-(46, NULL, 10, NULL, NULL, 47, 40, 1392.00, '2023-10-30'),
-(47, NULL, 10, NULL, NULL, 48, 40, 1508.00, '2023-11-05'),
-(48, NULL, 10, NULL, NULL, 49, 40, 1624.00, '2023-12-10'),
-(49, NULL, 10, NULL, NULL, 50, 40, 1740.00, '2024-01-15');
-
--- Insertando datos en la tabla 'pedido_venta'
-INSERT INTO pedido_venta (pedido_venta_numero, fk_cliente, pedido_venta_fecha_emision, pedido_venta_monto_subtil, pedido_venta_monto_total)
-VALUES
-(1, 1, '2022-07-30', 1200.00, 1392.00),
-(2, 2, '2022-08-10', 950.00, 1102.00),
-(3, 3, '2022-08-30', 450.00, 522.00),
-(4, 4, '2023-02-01', 1300.00, 1508.00),
-(5, 5, '2023-03-20', 750.00, 870.00),
-(6, 6, '2023-03-30', 1450.00, 1682.00),
-(7, 7, '2023-08-30', 600.00, 696.00),
-(8, 8, '2023-09-20', 800.00, 928.00),
-(9, 9, '2023-09-25', 300.00, 348.00),
-(10,10, '2023-10-30', 1000.00, 1160.00);
-
--- Insertando datos en la tabla 'pedido_compra_venta'
-INSERT INTO pedido_compra_venta (fk_pedido_venta_1, fk_pedido_venta_2, fk_pedido_compra_1, fk_pedido_compra_2)
-VALUES
-(1,1,1,1),
-(2,2,2,1),
-(3,3,3,1),
-(4,4,4,1),
-(5,5,5,1),
-(6,6,6,1),
-(7,7,7,1),
-(8,8,8,1),
-(9,9,9,1),
-(10,10,10,1);
-
--- Insertando datos en la tabla 'pago_venta'
-INSERT INTO pago_venta (pago_venta_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_venta_1, fk_pedido_venta_2, pago_venta_monto, pago_venta_fecha_emision)
-VALUES
-(1, NULL, 9, NULL, NULL, 1, 1, 1392.00, '2022-07-30'),
-(2, NULL, 9, NULL, NULL, 2, 2, 1102.00, '2022-08-10'),
-(3, NULL, 9, NULL, NULL, 3, 3, 522.00, '2022-08-30'),
-(4, NULL, 9, NULL, NULL, 4, 4, 1508.00, '2023-02-01'),
-(5, NULL, 9, NULL, NULL, 5, 5, 870.00, '2023-03-20'),
-(6, NULL, 9, NULL, NULL, 6, 6, 1682.00, '2023-03-30'),
-(7, NULL, 9, NULL, NULL, 7, 7, 696.00, '2023-08-30'),
-(8, NULL, 9, NULL, NULL, 8, 8, 928.00, '2023-09-20'),
-(9, NULL, 9, NULL, NULL, 9, 9, 348.00, '2023-09-25'),
-(10, NULL, 9, NULL, NULL, 10, 10, 1160.00, '2023-10-30');
-
--- Insertando datos en la tabla 'estatus_pedido'
-INSERT INTO estatus_pedido (estatus_pedido_codigo, estatus_pedido_nombre, estatus_pedido_descripcion)
-VALUES
-(1, 'En proceso', NULL),
-(2, 'Aprobado', NULL),
-(3, 'Rechazado', NULL),
-(4, 'Por pagar', NULL),
-(5, 'Pagado', NULL),
-(6, 'Cancelado', NULL),
-(7, 'En espera', NULL),
-(8, 'Completado', NULL),
-(9, 'En revisión', NULL),
-(10, 'Confirmado ', NULL);
-
 -- Insertando datos en la tabla 'historico_estatus_pedido_compra'
 INSERT INTO historico_estatus_pedido_compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio, hist_est_pedido_compra_fecha_fin)
 VALUES
@@ -12209,6 +12155,73 @@ VALUES
 (48, 5, 48, 40, '2023-11-05', '2023-11-05'),
 (49, 5, 49, 40, '2023-12-10', '2023-12-10'),
 (50, 7, 50, 40, '2024-01-15', NULL);
+
+-- Insertando datos en la tabla 'pedido_compra_venta'
+INSERT INTO pedido_compra_venta (fk_pedido_venta_1, fk_pedido_venta_2, fk_pedido_compra_1, fk_pedido_compra_2)
+VALUES
+(1,1,1,1),
+(2,2,2,1),
+(3,3,3,1),
+(4,4,4,1),
+(5,5,5,1),
+(6,6,6,1),
+(7,7,7,1),
+(8,8,8,1),
+(9,9,9,1),
+(10,10,10,1);
+
+-- Insertando datos en la tabla 'pago_compra'
+INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
+VALUES
+(1, NULL, 10, NULL, NULL, 1, 1, 1392.00, '2022-07-30'),
+(2, NULL, 10, NULL, NULL, 2, 1, 1102.00, '2022-08-10'),
+(3, NULL, 10, NULL, NULL, 3, 1, 522.00, '2022-08-30'),
+(4, NULL, 10, NULL, NULL, 4, 1, 1508.00, '2023-02-01'),
+(5, NULL, 10, NULL, NULL, 5, 1, 870.00, '2023-03-20'),
+(6, NULL, 10, NULL, NULL, 6, 1, 1682.00, '2023-03-30'),
+(7, NULL, 10, NULL, NULL, 7, 1, 696.00, '2023-08-30'),
+(8, NULL, 10, NULL, NULL, 8, 1, 928.00, '2023-09-20'),
+(9, NULL, 10, NULL, NULL, 9, 1, 348.00, '2023-09-25'),
+(10, NULL, 10, NULL, NULL, 10, 1, 1160.00, '2023-10-30'),
+(11, NULL, 10, NULL, NULL, 11, 10, 1392.00, '2020-11-05'),
+(12, NULL, 10, NULL, NULL, 12, 10, 1508.00, '2021-12-10'),
+(13, NULL, 10, NULL, NULL, 13, 10, 1624.00, '2022-01-15'),
+(14, NULL, 10, NULL, NULL, 14, 10, 1740.00, '2023-02-20'),
+(15, NULL, 10, NULL, NULL, 15, 10, 1276.00, '2023-03-25'),
+(16, NULL, 10, NULL, NULL, 16, 10, 1044.00, '2023-04-30'),
+(17, NULL, 10, NULL, NULL, 17, 10, 928.00, '2023-05-05'),
+(18, NULL, 10, NULL, NULL, 18, 10, 580.00, '2023-06-10'),
+(19, NULL, 10, NULL, NULL, 19, 10, 522.00, '2023-07-15'),
+(20, NULL, 10, NULL, NULL, 20, 20, 406.00, '2023-08-20'),
+(21, NULL, 10, NULL, NULL, 21, 20, 1624.00, '2023-09-25'),
+(22, NULL, 10, NULL, NULL, 22, 20, 1450.00, '2023-10-30'),
+(23, NULL, 10, NULL, NULL, 23, 20, 1566.00, '2023-11-05'),
+(24, NULL, 10, NULL, NULL, 24, 20, 1682.00, '2023-12-10'),
+(25, NULL, 10, NULL, NULL, 26, 20, 1334.00, '2010-01-15'),
+(26, NULL, 10, NULL, NULL, 27, 20, 348.00, '2011-02-20'),
+(27, NULL, 10, NULL, NULL, 28, 20, 580.00, '2012-03-25'),
+(28, NULL, 10, NULL, NULL, 29, 20, 812.00, '2013-04-30'),
+(29, NULL, 10, NULL, NULL, 30, 20, 1044.00, '2014-05-05'),
+(30, NULL, 10, NULL, NULL, 31, 30, 1276.00, '2015-06-10'),
+(31, NULL, 10, NULL, NULL, 32, 30, 1508.00, '2016-07-15'),
+(32, NULL, 10, NULL, NULL, 33, 30, 1740.00, '2017-08-20'),
+(33, NULL, 10, NULL, NULL, 34, 30, 522.00, '2018-09-25'),
+(34, NULL, 10, NULL, NULL, 35, 30, 696.00, '2019-10-30'),
+(35, NULL, 10, NULL, NULL, 36, 30, 1102.00, '2020-11-05'),
+(36, NULL, 10, NULL, NULL, 37, 30, 1334.00, '2021-12-10'),
+(37, NULL, 10, NULL, NULL, 38, 30, 1450.00, '2022-01-15'),
+(38, NULL, 10, NULL, NULL, 39, 30, 1566.00, '2023-02-20'),
+(39, NULL, 10, NULL, NULL, 40, 30, 1682.00, '2023-03-25'),
+(40, NULL, 10, NULL, NULL, 41, 40, 1798.00, '2023-04-30'),
+(41, NULL, 10, NULL, NULL, 42, 40, 522.00, '2023-05-05'),
+(42, NULL, 10, NULL, NULL, 43, 40, 696.00, '2023-06-10'),
+(43, NULL, 10, NULL, NULL, 44, 40, 1044.00, '2023-07-15'),
+(44, NULL, 10, NULL, NULL, 45, 40, 1160.00, '2023-08-20'),
+(45, NULL, 10, NULL, NULL, 46, 40, 1276.00, '2023-09-25'),
+(46, NULL, 10, NULL, NULL, 47, 40, 1392.00, '2023-10-30'),
+(47, NULL, 10, NULL, NULL, 48, 40, 1508.00, '2023-11-05'),
+(48, NULL, 10, NULL, NULL, 49, 40, 1624.00, '2023-12-10'),
+(49, NULL, 10, NULL, NULL, 50, 40, 1740.00, '2024-02-15');
 
 -- Insertando datos en la tabla 'historico_estatus_pedido_venta'
 INSERT INTO historico_estatus_pedido_venta (hist_est_pedido_venta_codigo, fk_estatus_pedido, fk_pedido_venta_1, fk_pedido_venta_2, hist_est_pedido_venta_fecha_inicio, hist_est_pedido_venta_fecha_fin)
@@ -13417,17 +13430,7 @@ VALUES
 (9, 1, 1, 9, 1, 1, 100, 190),
 (10, 1, 1, 10, 1, 1, 125, 200);
 
-INSERT INTO Estatus_Disponibilidad (estatus_disponibilidad_codigo,estatus_disponibilidad_nombre) VALUES
-(1,'Disponible'),
-(2,'Ocupado'),
-(3,'En espera'),
-(4,'Apto'),
-(5,'Libre'),
-(6,'Desocupado'),
-(7,'Util'),
-(8,'Concurrido'),
-(9,'Absorto'),
-(10,'Envolvido');
+
 
 INSERT INTO Historico_Estatus_Empleado (hist_est_empleado_codigo,fk_estatus_disponibilidad,fk_empleado,hist_est_empl_fecha_inicio) VALUES 
 (1,1,1,'	2024-03-16	'),

@@ -102,3 +102,86 @@ BEGIN
 END;
 -- Se especifica que el lenguaje de la función es plpgsql
 $$ LANGUAGE plpgsql;
+
+--Creacion de una funcion insertar_historico_estatus_empleado
+CREATE OR REPLACE FUNCTION insertar_historico_estatus_empleado()
+RETURNS TRIGGER AS $$
+BEGIN
+	--Inserta un registro en la tabla Historico_Estatus_Empleado
+	--El registro tiene la fecha del momento que se ejecuto
+    INSERT INTO Historico_Estatus_Empleado (hist_est_empleado_codigo,fk_estatus_disponibilidad,fk_empleado,hist_est_empl_fecha_inicio) VALUES (
+        (SELECT MAX(hist_est_empleado_codigo) FROM Historico_Estatus_Empleado)+1,1, NEW.empleado_codigo, CURRENT_TIMESTAMP );
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+--Creacion de una funcion insertar_historico_estatus_pedido_compra
+CREATE OR REPLACE FUNCTION insertar_historico_estatus_pedido_compra()
+RETURNS TRIGGER AS $$
+BEGIN
+	--Inserta un registro en la tabla Historico_Estatus_Pedido_Compra
+	--El registro tiene la fecha del momento que se ejecuto
+    INSERT INTO historico_estatus_pedido_compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio) VALUES (
+        (SELECT MAX(hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra)+1,1, NEW.pedido_compra_numero, NEW.fk_aliado, CURRENT_TIMESTAMP );
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+--Creacion de una funcion borrar_detalle_pedido_compra
+CREATE OR REPLACE FUNCTION borrar_detalle_pedido_compra()
+RETURNS TRIGGER AS $$
+BEGIN
+	--Borra el registro correspondiente en la tabla Inventario_Producto
+    DELETE FROM Inventario_Producto
+    WHERE inventario_producto_codigo = OLD.fk_inventario_producto_1
+    AND fk_mineral = OLD.fk_inventario_producto_2;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+--Creacion de una funcion  pago_compra_insert
+CREATE OR REPLACE FUNCTION pago_compra_insert()
+RETURNS TRIGGER AS $$
+DECLARE 
+	fk_inventario_producto SMALLINT;
+	cantidad INTEGER;
+	ultimo_registro_id SMALLINT;
+BEGIN
+	
+	--Se cambia el estatus, fecha inicio y fecha final del registro en Historico_Estatus_Pedido_Compra
+	--Ya que se registro el pago
+    UPDATE Historico_Estatus_Pedido_Compra
+    SET fk_estatus_pedido = 5, hist_est_pedido_compra_fecha_fin = NEW.pago_compra_fecha_emision, hist_est_pedido_compra_fecha_inicio = NEW.pago_compra_fecha_emision
+    WHERE fk_pedido_compra_1 = NEW.fk_pedido_compra_1;
+    
+	--Se obtiene la fk correspondiente al inventario producto que se registra
+	--con el pago compra y la fk de Detalle_Pedido_Compra
+    SELECT fk_inventario_producto_1 INTO fk_inventario_producto
+    FROM Detalle_Pedido_Compra
+    WHERE fk_pedido_compra_1 = NEW.fk_pedido_compra_1;
+	
+	--Obtenemos la cantidad de minerales del detalle pedido compra correspondiente
+	SELECT detalle_compra_cantidad_mineral INTO cantidad
+	FROM Detalle_Pedido_Compra
+	WHERE fk_pedido_compra_1 = NEW.fk_pedido_compra_1;
+
+	--Actualizamos el registro de Inventario_Producto con la cantidad, fecha y tipo operacion del pago y detalle
+    UPDATE Inventario_Producto
+    SET inventario_producto_fecha_movimiento = NEW.pago_compra_fecha_emision,
+        inventario_producto_operacion = cantidad,
+        inventario_producto_tipo_operacion = 'Ingreso'
+    WHERE inventario_producto_codigo = fk_inventario_producto;
+
+    --Buscamos el ultimo registro del mineral obtenido en el Inventario_Producto
+    SELECT MAX(inventario_producto_codigo) INTO ultimo_registro_id
+    FROM Inventario_Producto
+    WHERE fk_mineral = (SELECT fk_mineral FROM Inventario_Producto WHERE inventario_producto_codigo = fk_inventario_producto);
+
+	--Y igualamos la cantidad total del registro a la suma del detalle con la cantidad total del ultimo registro del mineral asociado
+    UPDATE Inventario_Producto
+    SET inventario_producto_cantidad_total = cantidad + (SELECT inventario_producto_cantidad_total FROM Inventario_Producto WHERE inventario_producto_codigo = ultimo_registro_id)
+    WHERE inventario_producto_codigo = fk_inventario_producto;
+	
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
