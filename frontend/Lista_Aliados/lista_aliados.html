@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Etapa Config - MinerUCAB</title>
-    <link rel="stylesheet" href="ver_etapa_config_styles.css">
+    <title>Crear Rol - MinerUCAB</title>
+    <link rel="stylesheet" href="lista_aliados_styles.css">
 </head>
 
 <body>
@@ -105,71 +105,95 @@
                         <li class="li2" href="#">Privilegios</li>
                     </a>
                 </ul>
+
             </ul>
         </div>
 
-        <div class="login-container">
-            <div class="container2">
-                <form>
-                    <div class="text4">
-                        <h2 class="text5">Etapa</h2>
-                    </div>
-                    <div class="form-group1">
-                        <label class="label1">Nombre: *</label>
-                        <input class="input1" id="nombre" name="nombre" required>
-                    </div>
-                    <div class="form-group1">
-                        <label class="label2">Número: *</label>
-                        <input class="input1" id="numero" name="numero" required>
-                    </div>
-                    <div class="form-group1">
-                        <label class="label3">Actividades: *</label>
-                        <div class="cargos-input-group">
-                            <select id="actividades" name="actividades" class="input2">
-                                <option value="Perforación exploratoria">Perforación exploratoria</option>
-                                <option value="Revisión de mapas mineros">Revisión de mapas mineros</option>
-                            </select>
-                            <button type="button" onclick="addActividad()" class="input3">Agregar</button>
-                        </div>
-                    </div>
-                    <div class="selected-cargos" id="selected-cargos">
-                    </div>
-                    <div class="form-group2">
-                        <div>
-                            <label>Descripción:</label>
-                        </div>
-                        <textarea for="descripcion" id="descripcion" name="descripcion" rows="4" class="textarea1"></textarea>
-                    </div>
-                    <div class="form-group3">
-                        <button class="submit" type="submit">Modificar</button>
-                        <button class="submit" type="submit">Eliminar</button>
-                    </div>
-                </form>
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Aliados</h1>
             </div>
-        </div>
+            <div class="content-header">
+                <div class="search-container">
+                    <input type="text" placeholder="Buscar Aliado">
+                    <button class="search-button">🔍</button>
+                </div>
+                <div class="add-button-container">
+                    <button class="add-button">Agregar Aliado</button>
+                </div>
+            </div>
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>RIF</th>
+                        <th>Denominacion Comercial</th>
+                        <th>Direccion F.</th>
+                        <th>Opcion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>12346789</td>
+                        <td>CVG VENALUM</td>
+                        <td>Las Mercedes</td>
+                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>12346789</td>
+                        <td>CVG VENALUM</td>
+                        <td>Montalban 3</td>
+                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>12346789</td>
+                        <td>CVG VENALUM</td>
+                        <td>Plaza Venezuela</td>
+                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button class="page-button">1</button>
+                <button class="page-button">2</button>
+                <button class="page-button">3</button>
+                <button class="page-button">4</button>
+                <button class="page-button">5</button>
+                <button class="page-button">6</button>
+                <button class="page-button">7</button>
+                <button class="page-button">8</button>
+                <button class="page-button">9</button>
+                <button class="page-button">10</button>
+            </div>
+        </main>
     </div>
-
     <script>
-        function addActividad() {
-            const actividadesSelect = document.getElementById('actividades');
-            const actividad = actividadesSelect.value;
+        function addPrivilegio() {
+            const privilegiosSelect = document.getElementById('privilegios');
+            const privilegio = privilegiosSelect.value;
 
-            if (actividad) {
-                const actividadRow = document.createElement('div');
-                actividadRow.classList.add('actividad-row');
-                actividadRow.innerHTML = `
-                    <span>${actividad}</span>
-                    <button type="button" onclick="removeActividad(this)">x</button>
-                    <input type="hidden" name="actividades[]" value="${actividad}">
+            if (privilegio) {
+                const privilegioRow = document.createElement('div');
+                privilegioRow.classList.add('privilegio-row');
+                privilegioRow.innerHTML = `
+                    <span>${privilegio}</span>
+                    <button type="button" onclick="removePrivilegio(this)">x</button>
+                    <input type="hidden" name="privilegios[]" value="${privilegio}">
                 `;
-                document.getElementById('selected-cargos').appendChild(actividadRow);
-                actividadesSelect.value = '';
+
+                document.getElementById('selected-privilegios').appendChild(privilegioRow);
+
+                // Clear select
+                privilegiosSelect.value = '';
             }
         }
 
-        function removeActividad(button) {
-            const actividadRow = button.parentElement;
-            actividadRow.remove();
+        function removePrivilegio(button) {
+            const privilegioRow = button.parentElement;
+            privilegioRow.remove();
         }
     </script>
 </body>
