@@ -110,7 +110,7 @@ BEGIN
 	--Inserta un registro en la tabla Historico_Estatus_Empleado
 	--El registro tiene la fecha del momento que se ejecuto
     INSERT INTO Historico_Estatus_Empleado (hist_est_empleado_codigo,fk_estatus_disponibilidad,fk_empleado,hist_est_empl_fecha_inicio) VALUES (
-        DEFAULT,1, NEW.empleado_codigo, CURRENT_TIMESTAMP );
+        (SELECT MAX(hist_est_empleado_codigo) FROM Historico_Estatus_Empleado)+1,1, NEW.empleado_codigo, CURRENT_TIMESTAMP );
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -121,8 +121,8 @@ RETURNS TRIGGER AS $$
 BEGIN
 	--Inserta un registro en la tabla Historico_Estatus_Pedido_Compra
 	--El registro tiene la fecha del momento que se ejecuto
-    INSERT INTO Historico_Estatus_Pedido_Compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio) VALUES (
-        DEFAULT,1, NEW.pedido_compra_numero, NEW.fk_aliado, CURRENT_TIMESTAMP );
+    INSERT INTO historico_estatus_pedido_compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio) VALUES (
+        (SELECT MAX(hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra)+1,1, NEW.pedido_compra_numero, NEW.fk_aliado, CURRENT_TIMESTAMP );
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
