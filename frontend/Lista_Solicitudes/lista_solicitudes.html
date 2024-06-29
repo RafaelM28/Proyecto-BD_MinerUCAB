@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol - MinerUCAB</title>
-    <link rel="stylesheet" href="lista_empleados_styles.css">
+    <title>MinerUCAB - Solicitudes</title>
+    <link rel="stylesheet" href="lista_solicitudes_styles.css">
 </head>
 
 <body>
@@ -115,49 +115,32 @@
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Empleado">
+                    <input type="text" placeholder="Buscar Solicitud">
                     <button class="search-button">🔍</button>
                 </div>
                 <div class="add-button-container">
-                    <a href="#" class="add-button">Agregar Empleado</a>
+                    <a href="#" class="add-button">Agregar Solicitud</a>
                 </div>
             </div>
             <table class="activity-table">
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>Cedula</th>
-                        <th>Nombre</th>
-                        <th>Empresa</th>
-                        <th>Cargo</th>
-                        <th>Acciones</th>
+                        <th>Número</th>
+                        <th>Fecha Emisión</th>
+                        <th>Aliado</th>
+                        <th>Estatus</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for solicitud in solicitudes %}
                     <tr>
-                        <td>1</td>
-                        <td>1234567</td>
-                        <td>Leandro Andrade</td>
-                        <td>MinerUCAB</td>
-                        <td>Gerente de Ventas</td>
+                        <td>{{ solicitud[0] }}</td>
+                        <td>{{ solicitud[1] }}</td>
+                        <td>{{ solicitud[2] }}</td>
+                        <td>{{ solicitud[3] }}</td>
                         <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>12345678</td>
-                        <td>Rafael Marcano</td>
-                        <td>MinerUCAB</td>
-                        <td>Gerente de Ventas</td>
-                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>23456789</td>
-                        <td>Yustin Chacon</td>
-                        <td>MinerUCAB</td>
-                        <td>Gerente de Ventas</td>
-                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">
@@ -174,32 +157,6 @@
             </div>
         </main>
     </div>
-    <script>
-        function addPrivilegio() {
-            const privilegiosSelect = document.getElementById('privilegios');
-            const privilegio = privilegiosSelect.value;
-
-            if (privilegio) {
-                const privilegioRow = document.createElement('div');
-                privilegioRow.classList.add('privilegio-row');
-                privilegioRow.innerHTML = `
-                    <span>${privilegio}</span>
-                    <button type="button" onclick="removePrivilegio(this)">x</button>
-                    <input type="hidden" name="privilegios[]" value="${privilegio}">
-                `;
-
-                document.getElementById('selected-privilegios').appendChild(privilegioRow);
-
-                // Clear select
-                privilegiosSelect.value = '';
-            }
-        }
-
-        function removePrivilegio(button) {
-            const privilegioRow = button.parentElement;
-            privilegioRow.remove();
-        }
-    </script>
 </body>
 
 </html>

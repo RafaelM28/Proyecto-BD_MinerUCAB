@@ -287,38 +287,6 @@ textarea {
     margin-top: 26px;
 }
 
-.privilegios-input-group {
-    display: flex;
-    align-items: center;
-}
-
-.privilegios-input-group select {
-    flex: 1;
-    margin-right: 10px;
-}
-
-.privilegio-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    background-color: #f0f0f0;
-    padding: 5px;
-    border-radius: 5px;
-}
-
-.privilegio-row span {
-    flex: 1;
-    margin-right: 10px;
-}
-
-.privilegio-row button {
-    background-color: #e0e0e0;
-    border: none;
-    cursor: pointer;
-    padding: 2px 5px;
-    border-radius: 3px;
-}
-
 .content-header {
     display: flex;
     justify-content: space-between;

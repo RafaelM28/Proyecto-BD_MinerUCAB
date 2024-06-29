@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol - MinerUCAB</title>
+    <title>MinerUCAB - Inventario</title>
     <link rel="stylesheet" href="lista_operaciones_styles.css">
 </head>
 
@@ -132,33 +132,17 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for operacion in inventario %}
                     <tr>
-                        <td>1</td>
-                        <td>Cobre</td>
-                        <td>20</td>
-                        <td>100</td>
-                        <td>Ingreso</td>
-                        <td>10/06/2024</td>
-                        <td>Compra</td>
+                        <td>{{ operacion[0] }}</td>
+                        <td>{{ operacion[1] }}</td>
+                        <td>{{ operacion[2] }}</td>
+                        <td>{{ operacion[3] }}</td>
+                        <td>{{ operacion[4] }}</td>
+                        <td>{{ operacion[5] }}</td>
+                        <td>{{ operacion[6] }}</td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Hierro</td>
-                        <td>30</td>
-                        <td>50</td>
-                        <td>Ingreso</td>
-                        <td>10/06/2024</td>
-                        <td>Compra</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Carbon</td>
-                        <td>10</td>
-                        <td>10</td>
-                        <td>Ingreso</td>
-                        <td>10/06/2024</td>
-                        <td>Compra</td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">
@@ -175,32 +159,6 @@
             </div>
         </main>
     </div>
-    <script>
-        function addPrivilegio() {
-            const privilegiosSelect = document.getElementById('privilegios');
-            const privilegio = privilegiosSelect.value;
-
-            if (privilegio) {
-                const privilegioRow = document.createElement('div');
-                privilegioRow.classList.add('privilegio-row');
-                privilegioRow.innerHTML = `
-                    <span>${privilegio}</span>
-                    <button type="button" onclick="removePrivilegio(this)">x</button>
-                    <input type="hidden" name="privilegios[]" value="${privilegio}">
-                `;
-
-                document.getElementById('selected-privilegios').appendChild(privilegioRow);
-
-                // Clear select
-                privilegiosSelect.value = '';
-            }
-        }
-
-        function removePrivilegio(button) {
-            const privilegioRow = button.parentElement;
-            privilegioRow.remove();
-        }
-    </script>
 </body>
 
 </html>
