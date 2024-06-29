@@ -67,9 +67,9 @@ def lista_clientes():
 def register():
     if request.method == 'POST':
         # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
-        print("paso por aca (antes de conectarme a la base de datos)")
-        cur = connection().cursor()
-        print("paso por aca (ya me conecte a la base de datos)")
+        conn = connection()
+        cur = conn.cursor()
+
         # Obtener informacion del form
         razon_social = request.form['razonSocial']
         rif = request.form['rif']
@@ -90,7 +90,6 @@ def register():
         nombre_usuario = request.form['nombreUsuario']
         clave = request.form['clave']
 
-        print("paso por aca (antes de insertar)")
         # Ejecución de la función almacenada 'lista_clientes' que retorna una lista de clientes
         cur.execute(f'''INSERT INTO Cliente 
         (persona_jur_codigo, persona_jur_razon_social, persona_jur_rif, persona_jur_denominacion_comercial, fk_lugar_1, persona_jur_direccion_principal, fk_lugar_2, persona_jur_direccion_fiscal, persona_jur_capital_total) 
@@ -102,7 +101,6 @@ def register():
         From Lugar e, Lugar mu, Lugar pa
         Where e.lugar_codigo = mu.fk_lugar and mu.lugar_codigo = pa.fk_lugar and e.lugar_codigo = {estado_2} and mu.lugar_codigo = {municipio_2} and pa.lugar_codigo = {parroquia_2}), '{direccion_fiscal_detalle}', {capital_total})''')
 
-        print("paso por aca (ya inserte el cliente)")
         # Ejecucion del insert para el correo
         cur.execute(f"INSERT INTO Correo (correo_codigo, correo_nombre, fk_cliente) values (DEFAULT, '{correo_electronico}', (SELECT persona_jur_codigo FROM Cliente WHERE persona_jur_rif = '{rif}'))")
 
@@ -113,13 +111,11 @@ def register():
         cur.execute(f"INSERT INTO Usuario (usuario_codigo, usuario_nombre, usuario_clave, fk_cliente, fk_rol) values (DEFAULT, '{nombre_usuario}', '{clave}', (SELECT persona_jur_codigo FROM Cliente WHERE persona_jur_rif = '{rif}'), 11)")
 
         # Commit de los cambios
-        connection().commit()
-
-        print("paso por aca (ya inserte el correo, telefono y usuario)")
+        conn.commit()
 
         # Cierre del cursor y de la conexión a la base de datos
         cur.close()  
-        connection().close() 
+        conn.close() 
     
         # Renderización de la plantilla HTML para 'crear_cliente'
         return redirect(url_for('lista_clientes'))
