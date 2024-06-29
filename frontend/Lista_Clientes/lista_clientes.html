@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinerUCAB - Clientes</title>
     <link rel="stylesheet" href="style_clients_list.css">
+    <script>
+        function sortTable(column) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSort = urlParams.get('sort');
+            const currentOrder = urlParams.get('order');
+            let newOrder = 'asc';
+            if (currentSort === column && currentOrder === 'asc') {
+                newOrder = 'desc';
+            }
+            urlParams.set('sort', column);
+            urlParams.set('order', newOrder);
+            window.location.search = urlParams.toString();
+        }
+
+        function searchClients() {
+            const searchValue = document.getElementById('searchInput').value;
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('search', searchValue);
+            window.location.search = urlParams.toString();
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -32,16 +53,16 @@
         <main class="main-content">
             <h1>Clientes</h1>
             <div class="search-container">
-                <input type="text" placeholder="Buscar Clientes">
-                <button class="search-button">🔍</button>
+                <input type="text" id="searchInput" placeholder="Buscar Clientes">
+                <button class="search-button" onclick="searchClients()">🔍</button>
             </div>
             <table class="client-table">
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>RIF</th>
-                        <th>Denominación Comercial</th>
-                        <th>Dirección F.</th>
+                        <th><a href="#" onclick="sortTable('cliente_codigo')">Código</a></th>
+                        <th><a href="#" onclick="sortTable('cliente_rif')">RIF</a></th>
+                        <th><a href="#" onclick="sortTable('cliente_denom_comercial')">Denominación Comercial</a></th>
+                        <th><a href="#" onclick="sortTable('cliente_dir_fiscal')">Dirección F.</a></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,16 +77,7 @@
                 </tbody>
             </table>
             <div class="pagination">
-                <button class="page-button">1</button>
-                <button class="page-button">2</button>
-                <button class="page-button">3</button>
-                <button class="page-button">4</button>
-                <button class="page-button">5</button>
-                <button class="page-button">6</button>
-                <button class="page-button">7</button>
-                <button class="page-button">8</button>
-                <button class="page-button">9</button>
-                <button class="page-button">10</button>
+                <!-- Add pagination if needed -->
             </div>
         </main>
     </div>
