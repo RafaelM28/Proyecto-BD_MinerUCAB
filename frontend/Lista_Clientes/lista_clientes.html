@@ -7,23 +7,35 @@
     <link rel="stylesheet" href="style_clients_list.css">
     <script>
         function sortTable(column) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentSort = urlParams.get('sort');
-            const currentOrder = urlParams.get('order');
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            let currentSort = searchParams.get('sort');
+            let currentOrder = searchParams.get('order');
             let newOrder = 'asc';
+
             if (currentSort === column && currentOrder === 'asc') {
                 newOrder = 'desc';
             }
-            urlParams.set('sort', column);
-            urlParams.set('order', newOrder);
-            window.location.search = urlParams.toString();
+
+            searchParams.set('sort', column);
+            searchParams.set('order', newOrder);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
         }
 
         function searchClients() {
             const searchValue = document.getElementById('searchInput').value;
-            const urlParams = new URLSearchParams(window.location.search);
-            urlParams.set('search', searchValue);
-            window.location.search = urlParams.toString();
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            searchParams.set('search', searchValue);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
         }
     </script>
 </head>

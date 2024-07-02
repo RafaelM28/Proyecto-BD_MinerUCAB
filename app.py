@@ -39,11 +39,7 @@ def lista_clientes():
     
     # Añadir condición de búsqueda si hay un término de búsqueda
     if search:
-        query += " WHERE cliente_codigo ILIKE %s OR cliente_rif ILIKE %s OR cliente_denom_comercial ILIKE %s OR cliente_dir_fiscal ILIKE %s"
-        search_term = f"%{search}%"
-        params = (search_term, search_term, search_term, search_term)
-    else:
-        params = ()
+        query += f" WHERE CAST(cliente_codigo AS TEXT) LIKE '%{search}%' OR cliente_rif LIKE '%{search}%' OR cliente_denom_comercial LIKE '%{search}%' OR cliente_dir_fiscal LIKE '%{search}%'"
 
     # Añadir ordenamiento
     query += f" ORDER BY {sort} {order}"
@@ -52,7 +48,7 @@ def lista_clientes():
     cur = connection().cursor()
     
     # Ejecución de la función almacenada 'lista_clientes' que retorna una lista de clientes
-    cur.execute(query, params)
+    cur.execute(query)
     clientes = cur.fetchall()  
     
     # Cierre del cursor y de la conexión a la base de datos
