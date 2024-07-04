@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Detalle Aliado - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/detalle_aliado_styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">MINERUCAB</div>
+        <div class="nav-buttons">
+            <img class="img-proyectos" src="/static/images/image 4.svg" />
+            <div class="botones">
+                <button class="botones1" onclick="location.href='lista_proyectos_config';">Proyectos</button>
+            </div>
+            <button class="botones2">Perfil</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <ul>
+                <div class="list-item">
+                    <img width="24px" class="icon" src="/static/images/image 2.svg" alt="" />
+                    <span class="text1">Crear perfil</span>
+                </div>
+
+                <div class="list-item">
+                    <img width="45px" class="icon1" src="/static/images/image 5.svg" alt="" />
+                    <span class="text">Inicio</span>
+                </div>
+
+                <div class="list-item">
+                    <img width="35px" class="icon" src="/static/images/image 7.svg" alt="" />
+                    <span class="text">Personal</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_empleados')}}">
+                        <li class="li" href="#">Empleados</li>
+                    </a>
+                    <a href="{{ url_for('lista_recursos')}}">
+                        <li class="li2" href="#">Recursos</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="32px" class="icon" src="/static/images/image 16.svg" alt="" />
+                    <span class="text2">Alianzas</span>
+                </div>
+                
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_aliados') }}">
+                        <li class="li" href="#">Aliados</li>
+                    </a>
+                    <a href="{{ url_for('lista_solicitudes') }}">
+                        <li class="li" href="#">Solicitudes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos Compra</li>
+                    </a>
+                </ul>
+                
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 14.svg" alt="" />
+                    <span class="text">Almacen</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_minerales')}}">
+                        <li class="li" href="#">Minerales</li>
+                    </a>
+                    <a href="{{ url_for('lista_inventario')}}">
+                        <li class="li2" href="#">Inventario</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 18.svg" alt="" />
+                    <span class="text">Ventas</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_clientes')}}">
+                        <li class="li" href="#">Clientes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li" href="#">Pedidos</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos de Venta</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 20.svg" alt="" />
+                    <span class="text">Seguridad</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_usuarios')}}">
+                        <li class="li" href="#">Usuarios</li>
+                    </a>
+                    <a href="{{ url_for('lista_roles')}}">
+                        <li class="li" href="#">Roles</li>
+                    </a>
+                    <a href="{{ url_for('lista_privilegios')}}">
+                        <li class="li2" href="#">Privilegios</li>
+                    </a>
+                </ul>
+
+            </ul>
+        </div>
+
+        <main class="main-content">
+            <header>
+                <h2>Aliado</h2>
+            </header>
+            <form class="aliado-form">
+                <div class="form-group">
+                    <label for="rif">RIF:</label>
+                    <input type="text" id="rif" name="rif" value="943267875" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="razon-social">Razón Social:</label>
+                    <input type="text" id="razon-social" name="razon-social" value="CVG Industria Venezolana de Aluminio C.A." readonly>
+                </div>
+                <div class="form-group">
+                    <label for="denominacion-comercial">Denominacion Comercial:</label>
+                    <input type="text" id="denominacion-comercial" name="denominacion-comercial" value="CVG VENALUM" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="correo-electronico">Correo Electrónico:</label>
+                    <input type="email" id="correo-electronico" name="correo-electronico" value="cvgvenalum@gmail.com" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="telefono-prefijo">Teléfono:</label>
+                    <input type="text" id="telefono-prefijo" name="telefono-prefijo" value="0412" readonly style="width: 60px;">
+                    <input type="text" id="telefono-cuerpo" name="telefono-cuerpo" value="7462948" readonly style="width: calc(100% - 130px);">
+                    <select id="telefono-tipo" name="telefono-tipo" disabled style="width: 70px;">
+                        <option value="tipo">Tipo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="direccion-principal">Dirección Principal:</label>
+                    <div class="address-group">
+                        <select id="direccion-principal-estado" name="direccion-principal-estado" disabled>
+                            <option value="estado">Estado</option>
+                        </select>
+                        <select id="direccion-principal-municipio" name="direccion-principal-municipio" disabled>
+                            <option value="municipio">Municipio</option>
+                        </select>
+                        <select id="direccion-principal-parroquia" name="direccion-principal-parroquia" disabled>
+                            <option value="parroquia">Parroquia</option>
+                        </select>
+                        <input type="text" id="direccion-principal-detalle" name="direccion-principal-detalle" value="Sabana Grande 3" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="direccion-fiscal">Dirección Fiscal:</label>
+                    <div class="address-group">
+                        <select id="direccion-fiscal-estado" name="direccion-fiscal-estado" disabled>
+                            <option value="estado">Estado</option>
+                        </select>
+                        <select id="direccion-fiscal-municipio" name="direccion-fiscal-municipio" disabled>
+                            <option value="municipio">Municipio</option>
+                        </select>
+                        <select id="direccion-fiscal-parroquia" name="direccion-fiscal-parroquia" disabled>
+                            <option value="parroquia">Parroquia</option>
+                        </select>
+                        <input type="text" id="direccion-fiscal-detalle" name="direccion-fiscal-detalle" value="Sabana Grande 3" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="minerales">Minerales:</label>
+                    <div class="selected-minerales">
+                        <input type="text" class="mineral" value="Cobre" readonly>
+                        <input type="text" class="mineral" value="Carbón" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="recursos">Recursos:</label>
+                    <div class="selected-recursos">
+                        <input type="text" class="recurso" value="Excavadora" readonly>
+                        <input type="text" class="recurso" value="Vehículo" readonly>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

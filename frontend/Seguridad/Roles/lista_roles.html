@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roles - MinerUCAB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_roles_styles.css') }}">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">MINERUCAB</div>
+        <div class="nav-buttons">
+            <img class="img-proyectos" src="/static/images/image 4.svg" />
+            <div class="botones">
+                <button class="botones1" onclick="location.href='lista_proyectos_config';">Proyectos</button>
+            </div>
+            <button class="botones2">Perfil</button>
+        </div>
+    </header>
+
+       <div class="main-container">
+        <div class="sidebar">
+            <ul>
+                <div class="list-item">
+                    <img width="24px" class="icon" src="/static/images/image 2.svg" alt="" />
+                    <span class="text1">Crear perfil</span>
+                </div>
+
+                <div class="list-item">
+                    <img width="45px" class="icon1" src="/static/images/image 5.svg" alt="" />
+                    <span class="text">Inicio</span>
+                </div>
+
+                <div class="list-item">
+                    <img width="35px" class="icon" src="/static/images/image 7.svg" alt="" />
+                    <span class="text">Personal</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_empleados')}}">
+                        <li class="li" href="#">Empleados</li>
+                    </a>
+                    <a href="{{ url_for('lista_recursos')}}">
+                        <li class="li2" href="#">Recursos</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="32px" class="icon" src="/static/images/image 16.svg" alt="" />
+                    <span class="text2">Alianzas</span>
+                </div>
+                
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_aliados') }}">
+                        <li class="li" href="#">Aliados</li>
+                    </a>
+                    <a href="{{ url_for('lista_solicitudes') }}">
+                        <li class="li" href="#">Solicitudes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos Compra</li>
+                    </a>
+                </ul>
+                
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 14.svg" alt="" />
+                    <span class="text">Almacen</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_minerales')}}">
+                        <li class="li" href="#">Minerales</li>
+                    </a>
+                    <a href="{{ url_for('lista_inventario')}}">
+                        <li class="li2" href="#">Inventario</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 18.svg" alt="" />
+                    <span class="text">Ventas</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_clientes')}}">
+                        <li class="li" href="#">Clientes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li" href="#">Pedidos</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos de Venta</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 20.svg" alt="" />
+                    <span class="text">Seguridad</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_usuarios')}}">
+                        <li class="li" href="#">Usuarios</li>
+                    </a>
+                    <a href="{{ url_for('lista_roles')}}">
+                        <li class="li" href="#">Roles</li>
+                    </a>
+                    <a href="{{ url_for('lista_privilegios')}}">
+                        <li class="li2" href="#">Privilegios</li>
+                    </a>
+                </ul>
+
+            </ul>
+        </div>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Roles</h1>
+            </div>
+            <div class="content-header">
+                <div class="search-container">
+                    <input type="text" placeholder="Buscar Rol">
+                    <button class="search-button">🔍</button>
+                </div>
+                <button class="add-button-container" onclick="location.href='#'";>Agregar Rol</button>
+            </div>
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre Rol</th>
+                        <th>Opción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rol in roles %}
+                    <tr>
+                        <td> {{ rol[0] }} </td>
+                        <td> {{ rol[1] }} </td>
+                        <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination">
+                <!-- Add pagination if needed -->
+            </div>
+        </main>
+    </div>
+    <script>
+        function addPrivilegio() {
+            const privilegiosSelect = document.getElementById('privilegios');
+            const privilegio = privilegiosSelect.value;
+
+            if (privilegio) {
+                const privilegioRow = document.createElement('div');
+                privilegioRow.classList.add('privilegio-row');
+                privilegioRow.innerHTML = `
+                    <span>${privilegio}</span>
+                    <button type="button" onclick="removePrivilegio(this)">x</button>
+                    <input type="hidden" name="privilegios[]" value="${privilegio}">
+                `;
+
+                document.getElementById('selected-privilegios').appendChild(privilegioRow);
+
+                // Clear select
+                privilegiosSelect.value = '';
+            }
+        }
+
+        function removePrivilegio(button) {
+            const privilegioRow = button.parentElement;
+            privilegioRow.remove();
+        }
+    </script>
+</body>
+
+</html>

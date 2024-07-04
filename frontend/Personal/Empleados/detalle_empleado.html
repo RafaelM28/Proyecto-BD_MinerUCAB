@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Detalle Empleado - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/detalle_empleado_styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">MINERUCAB</div>
+        <div class="nav-buttons">
+            <img class="img-proyectos" src="/static/images/image 4.svg" />
+            <div class="botones">
+                <button class="botones1" onclick="location.href='lista_proyectos_config';">Proyectos</button>
+            </div>
+            <button class="botones2">Perfil</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <ul>
+                <div class="list-item">
+                    <img width="24px" class="icon" src="/static/images/image 2.svg" alt="" />
+                    <span class="text1">Crear perfil</span>
+                </div>
+    
+                <div class="list-item">
+                    <img width="45px" class="icon1" src="/static/images/image 5.svg" alt="" />
+                    <span class="text">Inicio</span>
+                </div>
+    
+                <div class="list-item">
+                    <img width="35px" class="icon" src="/static/images/image 7.svg" alt="" />
+                    <span class="text">Personal</span>
+                </div>
+    
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_empleados')}}">
+                        <li class="li" href="#">Empleados</li>
+                    </a>
+                    <a href="{{ url_for('lista_recursos')}}">
+                        <li class="li2" href="#">Recursos</li>
+                    </a>
+                </ul>
+    
+                <div class="list-item2">
+                    <img width="32px" class="icon" src="/static/images/image 16.svg" alt="" />
+                    <span class="text2">Alianzas</span>
+                </div>
+                    
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_aliados') }}">
+                        <li class="li" href="#">Aliados</li>
+                    </a>
+                    <a href="{{ url_for('lista_solicitudes') }}">
+                        <li class="li" href="#">Solicitudes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos Compra</li>
+                    </a>
+                </ul>
+                    
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 14.svg" alt="" />
+                    <span class="text">Almacen</span>
+                </div>
+    
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_minerales')}}">
+                        <li class="li" href="#">Minerales</li>
+                    </a>
+                    <a href="{{ url_for('lista_inventario')}}">
+                        <li class="li2" href="#">Inventario</li>
+                    </a>
+                </ul>
+    
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 18.svg" alt="" />
+                    <span class="text">Ventas</span>
+                </div>
+    
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_clientes')}}">
+                        <li class="li" href="#">Clientes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li" href="#">Pedidos</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos de Venta</li>
+                    </a>
+                </ul>
+    
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 20.svg" alt="" />
+                    <span class="text">Seguridad</span>
+                </div>
+    
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_usuarios')}}">
+                        <li class="li" href="#">Usuarios</li>
+                    </a>
+                    <a href="{{ url_for('lista_roles')}}">
+                        <li class="li" href="#">Roles</li>
+                    </a>
+                    <a href="{{ url_for('lista_privilegios')}}">
+                        <li class="li2" href="#">Privilegios</li>
+                    </a>
+                </ul>
+    
+            </ul>
+        </div>
+
+        <main class="main-content">
+            <header>
+                <h2>Empleado</h2>
+            </header>
+            <form class="empleado-form">
+                <div class="form-group">
+                    <label for="cedula">Cédula:</label>
+                    <input type="text" id="cedula" name="cedula" value="94326787" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="rif">RIF:</label>
+                    <input type="text" id="rif" name="rif" value="943267875" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="primer-nombre">Primer Nombre:</label>
+                    <input type="text" id="primer-nombre" name="primer-nombre" value="Leandro" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="segundo-nombre">Segundo Nombre:</label>
+                    <input type="text" id="segundo-nombre" name="segundo-nombre" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="primer-apellido">Primer Apellido:</label>
+                    <input type="text" id="primer-apellido" name="primer-apellido" value="Andrade" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="segundo-apellido">Segundo Apellido:</label>
+                    <input type="text" id="segundo-apellido" name="segundo-apellido" value="Da Silva" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="fecha-nacimiento">Fecha Nacimiento:</label>
+                    <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" value="2003-07-11" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección:</label>
+                    <div class="address-group">
+                        <select id="direccion-estado" name="direccion-estado" disabled>
+                            <option value="estado">Estado</option>
+                        </select>
+                        <select id="direccion-municipio" name="direccion-municipio" disabled>
+                            <option value="municipio">Municipio</option>
+                        </select>
+                        <select id="direccion-parroquia" name="direccion-parroquia" disabled>
+                            <option value="parroquia">Parroquia</option>
+                        </select>
+                        <input type="text" id="direccion-detalle" name="direccion-detalle" value="Sabana Grande 3" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="correo">Correo:</label>
+                    <input type="email" id="correo" name="correo" value="leandroandrade@gmail.com" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="telefono-prefijo">Teléfono:</label>
+                    <input type="text" id="telefono-prefijo" name="telefono-prefijo" value="0412" readonly style="width: 60px;">
+                    <input type="text" id="telefono-cuerpo" name="telefono-cuerpo" value="7462948" readonly style="width: calc(100% - 130px);">
+                    <select id="telefono-tipo" name="telefono-tipo" disabled style="width: 70px;">
+                        <option value="tipo">Tipo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cargo">Cargo:</label>
+                    <input type="text" id="cargo" name="cargo" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="empresa">Empresa:</label>
+                    <input type="text" id="empresa" name="empresa" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="representante">Representante:</label>
+                    <input type="text" id="representante" name="representante" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="horarios">Horarios:</label>
+                    <input type="text" id="horarios" name="horarios" value="Lunes 8:00 a.m. - 4:00 p.m." readonly>
+                    <input type="text" id="horarios" name="horarios" value="Miércoles 8:00 a.m. - 4:00 p.m." readonly>
+                </div>
+                <div class="form-group">
+                    <label for="beneficios">Beneficios:</label>
+                    <input type="text" id="beneficios-tipo" name="beneficios-tipo" value="Tipo" readonly style="width: 30%;">
+                    <input type="text" id="beneficios-monto" name="beneficios-monto" value="Monto" readonly style="width: 30%;">
+                    <input type="text" id="beneficios-detalle" name="beneficios-detalle" value="Detalle" readonly style="width: calc(40% - 80px);">
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>
