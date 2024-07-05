@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Usuario - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/crear_usuario_styles.css">
+    <script>
+        async function loadMunicipios() {
+            const estado = document.getElementById("estado1").value;
+            const response = await fetch(`/get_municipios/${estado}`);
+            const municipios = await response.json();
+            const municipioSelect = document.getElementById("municipio1");
+            municipioSelect.innerHTML = '<option value="">Seleccione Municipio</option>';
+            municipios.forEach(municipio => {
+                municipioSelect.innerHTML += `<option value="${municipio.lugar_codigo}">${municipio.lugar_nombre}</option>`;
+            });
+            loadParroquias();
+        }
+
+        async function loadParroquias() {
+            const municipio = document.getElementById("municipio1").value;
+            const response = await fetch(`/get_parroquias/${municipio}`);
+            const parroquias = await response.json();
+            const parroquiaSelect = document.getElementById("parroquia1");
+            parroquiaSelect.innerHTML = '<option value="">Seleccione Parroquia</option>';
+            parroquias.forEach(parroquia => {
+                parroquiaSelect.innerHTML += `<option value="${parroquia.lugar_codigo}">${parroquia.lugar_nombre}</option>`;
+            });
+        }
+
+        async function loadMunicipios2() {
+            const estado2 = document.getElementById("estado2").value;
+            const response = await fetch(`/get_municipios/${estado2}`);
+            const municipios = await response.json();
+            const municipioSelect = document.getElementById("municipio2");
+            municipioSelect.innerHTML = '<option value="">Seleccione Municipio</option>';
+            municipios.forEach(municipio => {
+                municipioSelect.innerHTML += `<option value="${municipio.lugar_codigo}">${municipio.lugar_nombre}</option>`;
+            });
+            loadParroquias2();
+        }
+
+        async function loadParroquias2() {
+            const municipio2 = document.getElementById("municipio2").value;
+            const response = await fetch(`/get_parroquias/${municipio2}`);
+            const parroquias = await response.json();
+            const parroquiaSelect = document.getElementById("parroquia2");
+            parroquiaSelect.innerHTML = '<option value="">Seleccione Parroquia</option>';
+            parroquias.forEach(parroquia => {
+                parroquiaSelect.innerHTML += `<option value="${parroquia.lugar_codigo}">${parroquia.lugar_nombre}</option>`;
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="div-img">
+            <img src="/static/images/Ellipse 15.svg">
+        </div>
+
+        <div class="container-logo">
+            <h1 class="logo">MINERUCAB</h1>
+        </div>
+
+    </div>
+
+    <button class="back-button">&larr;</button>
+
+    <div class="login-container">
+        <div class="container2">
+            <form class="form" action="{{ url_for('register') }}" method="POST">
+                <div class="tittle-inicio">
+                    <h2 class="text-title">Regístrate</h2>
+                </div>
+
+                <div class="titulo">
+                    <h3>¡Bienvenido!</h3>
+                    <p>Ingrese sus datos</p>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="razonSocial">Razón Social: *</label>
+                    <div>
+                        <input type="text" id="razonSocial" name="razonSocial" required>
+                    </div>
+                    <div>
+                        <label for="rif">RIF: *</label>
+                    </div>
+                    <input type="text" id="rif" name="rif" required>
+                </div>
+                <div class="form-group">
+                    <label for="denominacionComercial">Denominación Comercial: *</label>
+                    <input type="text" id="denominacionComercial" name="denominacionComercial" required>
+                </div>
+                <div class="form-group">
+                    <label for="correoElectronico">Correo Electrónico:</label>
+                    <input type="email" id="correoElectronico" name="correoElectronico">
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <div class="telefono-group">
+                        <input type="text" id="prefijo" name="prefijo" placeholder="Prefijo" style="width: 50px;">
+                        <input type="text" id="numero" name="numero" placeholder="Número">
+                        <input type="text" id="tipo" name="tipo" placeholder="Tipo">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="direccionPrincipal">Dirección Principal: *</label>
+                    <div class="direccion-group">
+                        <select id="estado1" onchange="loadMunicipios()" name="estado1" required>
+                            <option value="">Estado</option>
+                            {% for estado in estados %}
+                            <option value="{{ estado[0] }}">{{ estado[1] }}</option>
+                            {% endfor %}
+                        </select>
+                        <select id="municipio1" onchange="loadParroquias()" name="municipio1" required>
+                            <option value="">Municipio</option>
+                        </select>
+                        <select id="parroquia1" name="parroquia1" required>
+                            <option value="">Parroquia</option>
+                        </select>
+                        <input type="text" id="detalle1" name="detalle1" placeholder="Detalle">
+                        <button type="button">Cargar</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="direccionFiscal">Dirección Fiscal: *</label>
+                    <div class="direccion-group">
+                        <select id="estado2" onchange="loadMunicipios2()" name="estado2" required>
+                            <option value="">Estado</option>
+                            {% for estado in estados %}
+                            <option value="{{ estado[0] }}">{{ estado[1] }}</option>
+                            {% endfor %}
+                        </select>
+                        <select id="municipio2" onchange="loadParroquias2()" name="municipio2" required>
+                            <option value="">Municipio</option>
+                        </select>
+                        <select id="parroquia2" name="parroquia2" required>
+                            <option value="">Parroquia</option>
+                        </select>
+                        <input type="text" id="detalle2" name="detalle2" placeholder="Detalle">
+                        <button type="button">Cargar</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="nombreUsuario">Capital Total: *</label>
+                    <input type="text" id="capitalTotal" name="capitalTotal" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombreUsuario">Nombre de Usuario: *</label>
+                    <input type="text" id="nombreUsuario" name="nombreUsuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="clave">Clave: *</label>
+                    <input type="password" id="clave" name="clave" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmarClave">Confirmar Clave: *</label>
+                    <input type="password" id="confirmarClave" name="confirmarClave" required>
+                </div>
+                <button type="submit" class="btn">Registrar</button>
+
+                <p>¿Tienes una cuenta? <a href="#">Inicia Sesión</a></p>
+            </form>
+        </div>
+    </div>
+    <footer>
+        <p>(c) 1886-2024 Corporación Nacional de Desarrollo Mineral, C.A. MinerUCAB Todos los Derechos Reservados. RIF:
+            J-000000000-9</p>
+    </footer>
+</body>
+
+</html>

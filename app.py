@@ -28,6 +28,27 @@ def connection():
         print("Ocurrió un error al conectar a la base de datos:", e)
         return None  
     
+
+@app.route('/')
+def inicio():
+    return redirect(url_for('home'))
+
+@app.route('/home')
+def home():
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'lista_aliados' que retorna una lista de aliados
+    cur.execute("SELECT * FROM lista_minerales_home()")
+    minerales_home = cur.fetchall()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'lista_aliados', pasando los datos de aliados al template
+    return render_template('Home/home.html', minerales_home=minerales_home)
+    
 # Definición de la ruta '/lista_clientes' 
 @app.route('/lista_clientes', methods=['GET'])
 def lista_clientes():
@@ -56,7 +77,7 @@ def lista_clientes():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_clientes', pasando los datos de clientes al template
-    return render_template('Lista_Clientes/lista_clientes.html', clientes=clientes)
+    return render_template('Ventas/lista_clientes.html', clientes=clientes)
 
 # Definicion de la ruta '/register'
 @app.route('/register', methods=['GET','POST'])
@@ -158,7 +179,7 @@ def lista_aliados():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_aliados', pasando los datos de aliados al template
-    return render_template('Lista_Aliados/lista_aliados.html', aliados=aliados)
+    return render_template('Alianzas/Aliados/lista_aliados.html', aliados=aliados)
 
 @app.route('/lista_empleados')
 def lista_empleados():
@@ -174,7 +195,7 @@ def lista_empleados():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_empleados', pasando los datos de empleados al template
-    return render_template('Lista_Empleados/lista_empleados.html', empleados=empleados)
+    return render_template('Personal/Empleados/lista_empleados.html', empleados=empleados)
 
 # Definición de la ruta '/lista_productos'
 @app.route('/lista_usuarios')
@@ -191,7 +212,7 @@ def lista_usuarios():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_usuarios', pasando los datos de usuarios al template
-    return render_template('Lista_Usuarios/lista_usuarios.html', usuarios=usuarios)
+    return render_template('Seguridad/Usuarios/lista_usuarios.html', usuarios=usuarios)
 
 @app.route('/lista_privilegios')
 def lista_privilegios():
@@ -207,7 +228,7 @@ def lista_privilegios():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_privilegios', pasando los datos de privilegios al template
-    return render_template('Lista_Privilegios/lista_privilegios.html', privilegios=privilegios)
+    return render_template('Seguridad/Privilegios/lista_privilegios.html', privilegios=privilegios)
 
 @app.route('/lista_roles')
 def lista_roles():
@@ -223,7 +244,7 @@ def lista_roles():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_roles', pasando los datos de roles al template
-    return render_template('Lista_Roles/lista_roles.html', roles=roles)
+    return render_template('Seguridad/Roles/lista_roles.html', roles=roles)
 
 # Definición de la ruta '/lista_minerales'
 @app.route('/lista_minerales')
@@ -240,7 +261,7 @@ def lista_minerales():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_minerales', pasando los datos de minerales al template
-    return render_template('Lista_Minerales/lista_minerales.html', minerales=minerales)
+    return render_template('Almacen/Minerales/lista_minerales.html', minerales=minerales)
 
 # Definición de la ruta '/lista_recursos'
 @app.route('/lista_recursos')
@@ -257,7 +278,7 @@ def lista_recursos():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_recursos', pasando los datos de recursos al template
-    return render_template('Lista_Recursos/lista_recursos.html', recursos=recursos)
+    return render_template('Personal/Recursos/lista_recursos.html', recursos=recursos)
 
 # Definición de la ruta '/lista_inventario'
 @app.route('/lista_inventario')
@@ -274,7 +295,7 @@ def lista_inventario():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_inventario', pasando los datos de inventario al template
-    return render_template('Lista_Inventario_Operaciones/lista_operaciones.html', inventario=inventario)
+    return render_template('Almacen/Inventario/lista_operaciones.html', inventario=inventario)
 
 # Definición de la ruta '/lista_solicitudes'
 @app.route('/lista_solicitudes')
@@ -291,7 +312,7 @@ def lista_solicitudes():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_solicitudes', pasando los datos de solicitudes al template
-    return render_template('Lista_Solicitudes/lista_solicitudes.html', solicitudes=solicitudes)
+    return render_template('Alianzas/Solicitudes/lista_solicitudes.html', solicitudes=solicitudes)
 
 # Definición de la ruta '/lista_proyectos_config'
 @app.route('/lista_proyectos_config')
@@ -308,7 +329,7 @@ def lista_proyectos():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_proyectos', pasando los datos de proyectos al template
-    return render_template('Lista_Proyectos/lista_proyectos.html', proyectos=proyectos)
+    return render_template('Proyecto_Config/Proyecto/lista_proyectos.html', proyectos=proyectos)
 
 # Definición de la ruta '/lista_etapas_config'
 @app.route('/lista_etapas_config')
@@ -325,7 +346,7 @@ def lista_etapas():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_etapas', pasando los datos de etapas al template
-    return render_template('Lista_Etapas/lista_etapas.html', etapas=etapas)
+    return render_template('Proyecto_Config/Etapa/lista_etapas.html', etapas=etapas)
 
 # Definición de la ruta '/lista_actividades_config'
 @app.route('/lista_actividades_config')
@@ -342,7 +363,7 @@ def lista_actividades():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_actividades', pasando los datos de actividades al template
-    return render_template('Lista_Actividades/lista_actividades.html', actividades=actividades)
+    return render_template('Proyecto_Config/Actividad/lista_actividades.html', actividades=actividades)
 
 if __name__ == '__main__': 
     app.run(debug=True) 

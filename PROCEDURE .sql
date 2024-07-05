@@ -317,6 +317,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Creación de una función lista_minerales_home()
+CREATE OR REPLACE FUNCTION lista_minerales_home()
+RETURNS TABLE (mineral_nombre VARCHAR(50))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla mineral
+    RETURN QUERY SELECT M.mineral_nombre
+    FROM mineral M
+    ORDER BY M.mineral_codigo;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Creación de una función lista_minerales()
 CREATE OR REPLACE FUNCTION lista_minerales()
 RETURNS TABLE (mineral_codigo SMALLINT, mineral_nombre VARCHAR(50), mineral_tipo VARCHAR(15), inventario_cantidad INTEGER)
