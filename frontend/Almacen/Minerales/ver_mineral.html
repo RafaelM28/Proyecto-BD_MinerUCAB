@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Solicitud - MinerUCAB</title>
-    <link rel="stylesheet" href="/static/css/crear_solicitud_compra_styles.css">
+    <title>Crear Mineral - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/ver_mineral_styles.css">
 </head>
+
 <body>
     <header class="header">
         <div class="logo">MINERUCAB</div>
@@ -18,7 +20,7 @@
         </div>
     </header>
 
-    <div class="main-container">
+       <div class="main-container">
         <div class="sidebar">
             <ul>
                 <div class="list-item">
@@ -114,38 +116,100 @@
 
             </ul>
         </div>
-        
-        <main class="main-content">
-            <header>
-                <h2>Solicitud</h2>
-            </header>
-            <form class="solicitud-form" method="POST" action="/create-solicitud"> <!-- Adjust action to your backend endpoint -->
-                <div class="form-group">
-                    <label for="aliado">Aliado: *</label>
-                    <select id="aliado" name="aliado" required>
-                        <option value="CVG VENALUM">CVG VENALUM</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="minerales">Minerales: *</label>
-                    <div class="minerales-input-group">
-                        <select id="minerales" name="minerales">
-                            <option value="Carbon">Carbon</option>
-                            <option value="Cobre">Cobre</option>
-                        </select>
-                        <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad" required>
-                        <input type="number" id="precio-unit" name="precio-unit" placeholder="Precio Unit." required>
-                        <button type="button" onclick="addMineral()">Cargar</button>
+
+        <div class="login-container">
+            <div class="container2">
+
+                <form>
+                    <div class="text4">
+                        <h2 class="text5">Mineral</h2>
                     </div>
-                </div>
-                <div class="selected-minerales" id="selected-minerales">
-                    <!-- Dynamically added minerals will appear here -->
-                </div>
-                <div class="form-group">
-                    <button type="submit">Crear</button>
-                </div>
-            </form>
-        </main>
+
+                    <div class="form-group1">
+                        <label class="label1">Nombre: *</label>
+                        <input class="input1" id="nombre" name="nombre" required>
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label2">Dureza: *</label>
+                        <input class="input" id="dureza" name="dureza" required>
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label2">Porcentaje composición:</label>
+                        <input class="input" id="porcentaje-composicion" name="porcentaje-composicion">
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="transparencia">Transparencia:</label>
+                        <select class="input" id="transparencia" name="transparencia">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="exfoliacion">Exfoliación:</label>
+                        <select class="input" id="exfoliacion" name="exfoliacion">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="densidad">Densidad:</label>
+                        <input class="input" id="densidad" name="densidad">
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="tipo">Tipo: *</label>
+                        <select class="input" id="tipo" name="tipo" required>
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="rayado">Rayado:</label>
+                        <input class="input" id="rayado" name="rayado">
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="fractura">Fractura:</label>
+                        <input class="input" id="fractura" name="fractura">
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="habito-cristalino">Hábito Cristalino:</label>
+                        <select class="input" id="habito-cristalino" name="habito-cristalino">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="brillo">Brillo:</label>
+                        <input class="input" id="brillo" name="brillo">
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="conductividad">Conductividad:</label>
+                        <input class="input" id="conductividad" name="conductividad">
+                    </div>
+
+                    <div class="form-group1">
+                        <label for="tenacidad">Tenacidad:</label>
+                        <input class="input" id="tenacidad" name="tenacidad">
+                    </div>
+
+                    <div class="form-group2">
+                        <label>Descripción:</label>
+                        <textarea class="input" for="descripcion" id="descripcion" name="descripcion" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group3">
+                        <button class="submit" type="submit">Modificar</button>
+                        <button class="submit" type="submit">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
 </html>

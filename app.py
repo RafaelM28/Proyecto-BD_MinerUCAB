@@ -261,7 +261,7 @@ def lista_minerales():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_minerales', pasando los datos de minerales al template
-    return render_template('Lista_Minerales/lista_minerales.html', minerales=minerales)
+    return render_template('Almacen/Minerales/lista_minerales.html', minerales=minerales)
 
 # Definición de la ruta '/lista_recursos'
 @app.route('/lista_recursos')
@@ -295,7 +295,7 @@ def lista_inventario():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_inventario', pasando los datos de inventario al template
-    return render_template('Lista_Inventario_Operaciones/lista_operaciones.html', inventario=inventario)
+    return render_template('Almacen/Inventario/lista_operaciones.html', inventario=inventario)
 
 # Definición de la ruta '/lista_solicitudes'
 @app.route('/lista_solicitudes')
@@ -329,7 +329,7 @@ def lista_proyectos():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_proyectos', pasando los datos de proyectos al template
-    return render_template('Lista_Proyectos/lista_proyectos.html', proyectos=proyectos)
+    return render_template('Proyecto_Config/Proyecto/lista_proyectos.html', proyectos=proyectos)
 
 # Definición de la ruta '/lista_etapas_config'
 @app.route('/lista_etapas_config')
@@ -346,7 +346,7 @@ def lista_etapas():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_etapas', pasando los datos de etapas al template
-    return render_template('Lista_Etapas/lista_etapas.html', etapas=etapas)
+    return render_template('Proyecto_Config/Etapa/lista_etapas.html', etapas=etapas)
 
 # Definición de la ruta '/lista_actividades_config'
 @app.route('/lista_actividades_config')
@@ -363,7 +363,7 @@ def lista_actividades():
     connection().close()  
     
     # Renderización de la plantilla HTML para 'lista_actividades', pasando los datos de actividades al template
-    return render_template('Lista_Actividades/lista_actividades.html', actividades=actividades)
+    return render_template('Proyecto_Config/Actividad/lista_actividades.html', actividades=actividades)
 
 if __name__ == '__main__': 
     app.run(debug=True) 
