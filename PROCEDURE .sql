@@ -122,8 +122,36 @@ BEGIN
 	--Inserta un registro en la tabla Historico_Estatus_Pedido_Compra
 	--El registro tiene la fecha del momento que se ejecuto
     INSERT INTO historico_estatus_pedido_compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio) VALUES (
-        (SELECT MAX(hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra)+1,1, NEW.pedido_compra_numero, NEW.fk_aliado, CURRENT_TIMESTAMP );
+        (SELECT MAX(hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra)+1,
+        (SELECT estatus_pedido_codigo FROM estatus_pedido WHERE estatus_pedido_nombre = 'En proceso'),
+        NEW.pedido_compra_numero, NEW.fk_aliado, CURRENT_TIMESTAMP );
 	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+--Creacion de una funcion check_update_hist_est_pedido_compra
+CREATE OR REPLACE FUNCTION check_update_hist_est_pedido_compra()
+RETURNS trigger AS $$
+BEGIN
+    -- Verifica si el estatus del pedido de compra era 'En proceso'
+    -- Si es así, se inserta un nuevo registro en la tabla Historico_Estatus_Pedido_Compra con estatus 'Por pagar'
+    IF OLD.fk_estatus_pedido = (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre = 'En proceso') THEN
+            INSERT INTO historico_estatus_pedido_compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio, hist_est_pedido_compra_fecha_fin)
+            VALUES
+                ((SELECT MAX(hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra)+1,
+                (SELECT estatus_pedido_codigo FROM estatus_pedido WHERE estatus_pedido_nombre = 'Por pagar'),
+                OLD.fk_pedido_compra_1, OLD.fk_pedido_compra_2, CURRENT_TIMESTAMP, NULL);
+
+    -- Verifica si el estatus del pedido de compra era 'Por pagar'
+    -- Si es así, se inserta un nuevo registro en la tabla Historico_Estatus_Pedido_Compra con estatus 'Pagado'
+    ELSIF OLD.fk_estatus_pedido = (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre = 'Por pagar') THEN
+            INSERT INTO historico_estatus_pedido_compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio, hist_est_pedido_compra_fecha_fin)
+            VALUES
+                ((SELECT MAX(hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra)+1,
+                (SELECT estatus_pedido_codigo FROM estatus_pedido WHERE estatus_pedido_nombre = 'Pagado'),
+                OLD.fk_pedido_compra_1, OLD.fk_pedido_compra_2, CURRENT_TIMESTAMP, NULL);
+    END IF;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -147,13 +175,15 @@ DECLARE
 	cantidad INTEGER;
 	ultimo_registro_id SMALLINT;
 BEGIN
-	
-	--Se cambia el estatus, fecha inicio y fecha final del registro en Historico_Estatus_Pedido_Compra
-	--Ya que se registro el pago
-    UPDATE Historico_Estatus_Pedido_Compra
-    SET fk_estatus_pedido = 5, hist_est_pedido_compra_fecha_fin = NEW.pago_compra_fecha_emision, hist_est_pedido_compra_fecha_inicio = NEW.pago_compra_fecha_emision
-    WHERE fk_pedido_compra_1 = NEW.fk_pedido_compra_1;
-    
+
+    --Se actualiza el registro de Historico_Estatus_Pedido_Compra con la fecha de fin
+    -- Esto activa un trigger check_update_hist_est_pedido_compra que inserta un nuevo registro con el estatus 'Pagado'
+    UPDATE Historico_Estatus_Pedido_Compra HPC
+    SET hist_est_pedido_compra_fecha_fin = CURRENT_TIMESTAMP
+    WHERE HPC.hist_est_pedido_compra_codigo = (SELECT MAX(HPC_2.hist_est_pedido_compra_codigo)
+                                                                                FROM historico_estatus_pedido_compra HPC_2
+                                                                                WHERE HPC_2.fk_pedido_compra_1 = NEW.fk_pedido_compra_1);
+
 	--Se obtiene la fk correspondiente al inventario producto que se registra
 	--con el pago compra y la fk de Detalle_Pedido_Compra
     SELECT fk_inventario_producto_1 INTO fk_inventario_producto
@@ -527,49 +557,63 @@ $$ LANGUAGE plpgsql;
 
 -- Creación de una función ver_solicitud_compra()
 CREATE OR REPLACE FUNCTION ver_solicitud_compra(pedido_compra_id SMALLINT)
-RETURNS TABLE (pedido_compra_fecha_emision DATE, estatus_pedido_nombre VARCHAR(15), aliado_nombre VARCHAR(45), aliado_rif VARCHAR(20), aliado_correo VARCHAR(50),
-               aliado_direccion VARCHAR(100), aliado_telefono VARCHAR(15), aliado_emp VARCHAR(35), fecha_pago DATE, venta_asociada SMALLINT, pedido_compra_monto_total NUMERIC(10,2))
+RETURNS TABLE (pedido_compra_fecha_emision DATE, estatus_pedido_nombre VARCHAR(15), aliado_id SMALLINT, aliado_nombre VARCHAR(45), aliado_rif VARCHAR(20), aliado_correo VARCHAR(50),
+               aliado_direccion VARCHAR(100), aliado_telefono VARCHAR(15), ucab_emp VARCHAR(35), fecha_pago DATE, venta_asociada SMALLINT, pedido_compra_monto_total NUMERIC(10,2))
 AS $$
 BEGIN
     -- La consulta selecciona los campos de la tabla pedido_compra y tablas asociadas a ella
-    RETURN QUERY SELECT P.pedido_compra_fecha_emision, EP.estatus_pedido_nombre, A.persona_jur_razon_social, A.persona_jur_rif,
+    RETURN QUERY SELECT P.pedido_compra_fecha_emision, EP.estatus_pedido_nombre, A.persona_jur_codigo, A.persona_jur_razon_social, A.persona_jur_rif,
                         -- Se utiliza COALESCE para manejar valores nulos en caso de que no existan registros asociados
                         COALESCE(C.correo_nombre, NULL) AS correo, A.persona_jur_direccion_fiscal, COALESCE((T.telefono_prefijo||'-'||T.telefono_numero), NULL) AS aliado_telefono,
-                        COALESCE(E.empleado_primer_nombre||' '||E.empleado_primer_apellido, NULL) AS aliado_emp, COALESCE(PC.pago_compra_fecha_emision, NULL) AS fecha_pago,
+                        COALESCE(E.empleado_primer_nombre||' '||E.empleado_primer_apellido, NULL) AS ucab_emp, COALESCE(PC.pago_compra_fecha_emision, NULL) AS fecha_pago,
                         COALESCE(PCV.fk_pedido_venta_1, NULL) AS venta_asociada, P.pedido_compra_monto_total
 
     FROM pedido_compra P INNER JOIN historico_estatus_pedido_compra HPC ON P.pedido_compra_numero = HPC.fk_pedido_compra_1,
          historico_estatus_pedido_compra HPC INNER JOIN estatus_pedido EP ON HPC.fk_estatus_pedido = EP.estatus_pedido_codigo,
-         aliado A LEFT JOIN correo C ON A.persona_jur_codigo = C.fk_aliado, aliado A LEFT JOIN telefono T ON A.persona_jur_codigo = T.fk_aliado, aliado A LEFT JOIN empleado E ON A.persona_jur_codigo = E.fk_aliado_1,
+         aliado A LEFT JOIN correo C ON A.persona_jur_codigo = C.fk_aliado, aliado A LEFT JOIN telefono T ON A.persona_jur_codigo = T.fk_aliado,
+         aliado AUCAB LEFT JOIN empleado E ON AUCAB.persona_jur_codigo = E.fk_aliado_1,
          pago_compra PC LEFT JOIN pedido_compra P ON (PC.fk_pedido_compra_1 = P.pedido_compra_numero AND PC.fk_pedido_compra_2 = P.fk_aliado),
         pedido_compra P LEFT JOIN pedido_compra_venta PCV ON P.pedido_compra_numero = PCV.fk_pedido_compra_1
 
-    WHERE P.pedido_compra_numero = pedido_compra_id AND P.fk_aliado = A.persona_jur_codigo;
+    WHERE P.pedido_compra_numero = pedido_compra_id AND P.fk_aliado = A.persona_jur_codigo AND AUCAB.persona_jur_denominacion_comercial = 'MinerUCAB';
 END;
 $$ LANGUAGE plpgsql;
 
+-- Creación de una función update_estatus_pedido_compra()
+CREATE OR REPLACE PROCEDURE update_estatus_pedido_compra (IN pedido_compra_id SMALLINT, IN aliado_id SMALLINT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Actualiza el registro de Historico_Estatus_Pedido_Compra con la fecha de fin
+    UPDATE historico_estatus_pedido_compra HPC
+    SET hist_est_pedido_compra_fecha_fin = CURRENT_TIMESTAMP
+    WHERE HPC.hist_est_pedido_compra_codigo = (SELECT MAX(HPC_2.hist_est_pedido_compra_codigo)
+                                                                                FROM historico_estatus_pedido_compra HPC_2
+                                                                                WHERE HPC_2.fk_pedido_compra_1 = pedido_compra_id AND HPC_2.fk_pedido_compra_2 = aliado_id);
+END;
+$$;
+
 -- Creación de una función obtener_metodos_pago()
 CREATE OR REPLACE FUNCTION obtener_metodos_pago(cliente_id SMALLINT)
-RETURNS TABLE (metodo_codigo_1 SMALLINT, metodo_codigo_2 SMALLINT, metodo_pago VARCHAR(30), tipo_metodo text)
+RETURNS TABLE (metodo_codigo SMALLINT, metodo_pago VARCHAR(30), tipo_metodo text)
 AS $$
 BEGIN
     RETURN QUERY
         -- La consulta selecciona los campos de las tablas tarjeta_debito, tarjeta_credito, efectivo y cheque
-        -- Se utiliza UNION para unir los resultados de las consultas en dos columnas
-        -- La primera columna es el identificador y la segunda es el tipo de método de pago
-        SELECT TD.metodo_pago_codigo, TD.fk_banco, TD.tdb_numero, 'Tarjeta de Débito'
+        -- Se utiliza UNION para unir los resultados de las consultas en tres columnas
+        SELECT TD.metodo_pago_codigo, TD.tdb_numero, 'Tarjeta de Débito'
                 FROM tarjeta_debito TD
                 WHERE TD.fk_cliente = cliente_id
         UNION
-            SELECT TC.metodo_pago_codigo, TC.fk_banco, TC.tdc_numero, 'Tarjeta de Crédito'
+            SELECT TC.metodo_pago_codigo, TC.tdc_numero, 'Tarjeta de Crédito'
                 FROM tarjeta_credito TC
                 WHERE TC.fk_cliente = cliente_id
         UNION
-            SELECT E.metodo_pago_codigo,NULL,CAST(E.efectivo_denominacion AS varchar), 'Efectivo'
+            SELECT E.metodo_pago_codigo, (CAST(E.efectivo_denominacion AS varchar)||' '||'$') AS dolares, 'Efectivo'
                 FROM efectivo E
                 WHERE E.fk_cliente = cliente_id
         UNION
-            SELECT CH.metodo_pago_codigo,NULL,CAST(CH.cheque_numero AS varchar), 'Cheque'
+            SELECT CH.metodo_pago_codigo, CAST(CH.cheque_numero AS varchar), 'Cheque'
                 FROM cheque CH
                 WHERE CH.fk_cliente = cliente_id;
 END;
@@ -586,3 +630,59 @@ BEGIN
     WHERE DPC.fk_pedido_compra_1 = pedido_compra_id AND DPC.fk_inventario_producto_2 = M.mineral_codigo;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION obtener_pago_compra(pedido_compra_id SMALLINT, aliado_id SMALLINT)
+RETURNS TABLE (tipo_metodo text, fecha_pago DATE)
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla pago_compra
+    RETURN QUERY SELECT
+        CASE
+            WHEN PC.fk_tarjeta_debito IS NOT NULL THEN 'Tarjeta de Débito'
+            WHEN PC.fk_tarjeta_credito IS NOT NULL THEN 'Tarjeta de Crédito'
+            WHEN PC.fk_efectivo IS NOT NULL THEN 'Efectivo'
+            WHEN PC.fk_cheque IS NOT NULL THEN 'Cheque'
+        END AS tipo_metodo, pago_compra_fecha_emision
+    FROM pago_compra PC
+    WHERE PC.fk_pedido_compra_1 = pedido_compra_id AND PC.fk_pedido_compra_2 = aliado_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de un procedimiento almacenado sp_crear_pago_compra
+CREATE OR REPLACE PROCEDURE sp_crear_pago_compra (IN pedido_compra_id SMALLINT, IN aliado_id SMALLINT,  metodo_codigo SMALLINT, tipo_metodo text, IN monto_pedido NUMERIC(10,2), IN fecha_pago DATE)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Se utiliza un CASE para insertar el pago de compra según el tipo de método de pago
+    CASE
+        -- Si el tipo de método de pago es 'Tarjeta de Débito', se inserta el pago de compra con el método de pago correspondiente
+        WHEN tipo_metodo = 'Tarjeta de Débito' THEN
+                INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
+                VALUES
+                        ((SELECT MAX(pago_compra_codigo) FROM pago_compra)+1,
+                        metodo_codigo, NULL, NULL, NULL,
+                        pedido_compra_id, aliado_id, monto_pedido, fecha_pago);
+        -- Si el tipo de método de pago es 'Tarjeta de Crédito', se inserta el pago de compra con el método de pago correspondiente
+        WHEN tipo_metodo = 'Tarjeta de Crédito' THEN
+                INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
+                VALUES
+                        ((SELECT MAX(pago_compra_codigo) FROM pago_compra)+1,
+                        NULL, metodo_codigo, NULL, NULL,
+                        pedido_compra_id, aliado_id, monto_pedido, fecha_pago);
+        -- Si el tipo de método de pago es 'Efectivo', se inserta el pago de compra con el método de pago correspondiente
+        WHEN tipo_metodo = 'Efectivo' THEN
+                INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
+                VALUES
+                        ((SELECT MAX(pago_compra_codigo) FROM pago_compra)+1,
+                        NULL, NULL, metodo_codigo, NULL,
+                        pedido_compra_id, aliado_id, monto_pedido, fecha_pago);
+        -- Si el tipo de método de pago es 'Cheque', se inserta el pago de compra con el método de pago correspondiente
+        WHEN tipo_metodo = 'Cheque' THEN
+                INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
+                VALUES
+                        ((SELECT MAX(pago_compra_codigo) FROM pago_compra)+1,
+                        NULL, NULL, NULL, metodo_codigo,
+                        pedido_compra_id, aliado_id, monto_pedido, fecha_pago);
+    END CASE;
+END;
+$$;

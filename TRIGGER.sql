@@ -74,3 +74,8 @@ BEFORE INSERT OR UPDATE ON mineral
 FOR EACH ROW
 -- Se llama a la función 'check_mineral_tipo' para cada fila
 EXECUTE PROCEDURE check_mineral_tipo();
+
+CREATE OR REPLACE TRIGGER trigger_check_update_hist_est_pedido_compra
+AFTER UPDATE ON historico_estatus_pedido_compra
+FOR EACH ROW
+EXECUTE FUNCTION check_update_hist_est_pedido_compra();
