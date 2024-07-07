@@ -350,21 +350,5 @@ def lista_actividades():
     # Renderización de la plantilla HTML para 'lista_actividades', pasando los datos de actividades al template
     return render_template('Proyecto_Config/Actividad/lista_actividades.html', actividades=actividades)
 
-@app.route('/ver_solicitud_compra/<int:solicitud_id>', methods=['GET'])
-def ver_solicitud_compra(solicitud_id):
-    
-    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
-    cur = connection().cursor()
-    cur.execute("SELECT * FROM ver_solicitud_compra(%s)", (solicitud_id,))
-    solicitud = cur.fetchone()
-    
-    # Cierre del cursor y de la conexión a la base de datos
-    cur.close()
-    connection().close()
-    
-    # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
-    return render_template('Alianzas/Solicitudes/ver_solicitud_compra.html', solicitud=solicitud)
-
-
 if __name__ == '__main__': 
     app.run(debug=True) 
