@@ -1389,10 +1389,6 @@ CREATE TABLE Pedido_Compra (
 
     -- Restricción de clave primaria
     CONSTRAINT pk_pedido_compra PRIMARY KEY (pedido_compra_numero, fk_aliado),
-    -- Restricción para verificar que el monto subtil sea mayor a 0
-    CONSTRAINT check_pedido_compra_monto_subtil CHECK (pedido_compra_monto_subtil > 0),
-    -- Restricción para verificar que el costo total sea mayor a 0
-    CONSTRAINT check_pedido_compra_monto_total CHECK (pedido_compra_monto_total > 0),
     -- Restricción de clave foránea que referencia a la tabla ALIADO
     CONSTRAINT fk_aliado_pedido_compra FOREIGN KEY (fk_aliado) REFERENCES Aliado (persona_jur_codigo),
     -- Restricción para verificar que la fecha de emisión sea menor o igual a la fecha actual
@@ -1751,4 +1747,10 @@ CREATE TABLE Pago_Venta (
     CONSTRAINT check_pago_venta_monto CHECK (pago_venta_monto > 0),
     -- Restricción para verificar que la fecha de emisión sea menor o igual a la fecha actual
     CONSTRAINT check_pago_venta_fecha_emision CHECK (pago_venta_fecha_emision <= CURRENT_DATE)
+);
+
+CREATE TYPE tipo_detalle_compra AS (
+    detalle_mineral SMALLINT,
+    detalle_cantidad SMALLINT,
+    detalle_precio NUMERIC(10,2)
 );
