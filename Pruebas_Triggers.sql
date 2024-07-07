@@ -23,5 +23,3 @@ VALUES
 INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
 VALUES
 	(50,NULL,10,NULL,NULL,51,40,1392.00,'2024-06-21');
-
-CALL sp_crear_cliente (CAST('leandroinc' AS Varchar) ,CAST('J18472399' AS Varchar),CAST('leandro' AS Varchar),20000000,CAST('calle 2' AS Varchar),CAST('Calle 3' AS Varchar),CAST('Distrito Capital' AS Varchar),CAST('Libertador' AS Varchar),CAST('Candelaria' AS Varchar),CAST('Distrito Capital' AS Varchar),CAST('Libertador' AS Varchar),CAST('Candelaria' AS Varchar),CAST('leo@gmail.com' AS Varchar),'0414','0987654',CAST('leo' AS Varchar),CAST('12345678' AS Varchar),CAST('12345678' AS Varchar))

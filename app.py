@@ -106,26 +106,12 @@ def register():
         capital_total = request.form['capitalTotal']
         nombre_usuario = request.form['nombreUsuario']
         clave = request.form['clave']
+        confirmar_clave = request.form['confirmarClave']
 
-        # Ejecución de la función almacenada 'lista_clientes' que retorna una lista de clientes
-        cur.execute(f'''INSERT INTO Cliente 
-        (persona_jur_codigo, persona_jur_razon_social, persona_jur_rif, persona_jur_denominacion_comercial, fk_lugar_1, persona_jur_direccion_principal, fk_lugar_2, persona_jur_direccion_fiscal, persona_jur_capital_total) 
-        values (DEFAULT, '{razon_social}', '{rif}', '{denominacion_comercial}', 
-        (SELECT pa.lugar_codigo
-        From Lugar e, Lugar mu, Lugar pa
-        Where e.lugar_codigo = mu.fk_lugar and mu.lugar_codigo = pa.fk_lugar and e.lugar_codigo = {estado_1} and mu.lugar_codigo = {municipio_1} and pa.lugar_codigo = {parroquia_1}), '{direccion_principal_detalle}',
-        (SELECT pa.lugar_codigo
-        From Lugar e, Lugar mu, Lugar pa
-        Where e.lugar_codigo = mu.fk_lugar and mu.lugar_codigo = pa.fk_lugar and e.lugar_codigo = {estado_2} and mu.lugar_codigo = {municipio_2} and pa.lugar_codigo = {parroquia_2}), '{direccion_fiscal_detalle}', {capital_total})''')
-
-        # Ejecucion del insert para el correo
-        cur.execute(f"INSERT INTO Correo (correo_codigo, correo_nombre, fk_cliente) values (DEFAULT, '{correo_electronico}', (SELECT persona_jur_codigo FROM Cliente WHERE persona_jur_rif = '{rif}'))")
-
-        # Ejecucion del insert para el telefono
-        cur.execute(f"INSERT INTO Telefono (telefono_codigo, telefono_prefijo, telefono_numero, telefono_tipo, fk_cliente) values (DEFAULT, '{telefono_prefijo}', '{telefono_numero}', '{telefono_tipo}', (SELECT persona_jur_codigo FROM Cliente WHERE persona_jur_rif = '{rif}'))")
-
-        # Ejecucion del insert para el usuario
-        cur.execute(f"INSERT INTO Usuario (usuario_codigo, usuario_nombre, usuario_clave, fk_cliente, fk_rol) values (DEFAULT, '{nombre_usuario}', '{clave}', (SELECT persona_jur_codigo FROM Cliente WHERE persona_jur_rif = '{rif}'), 11)")
+        cur.execute("CALL sp_crear_cliente(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+                    (razon_social, rif, denominacion_comercial, capital_total, direccion_principal_detalle, 
+                     direccion_fiscal_detalle, estado_1, municipio_1, parroquia_1, estado_2, municipio_2, parroquia_2, 
+                     correo_electronico, telefono_prefijo, telefono_numero, telefono_tipo, nombre_usuario, clave, confirmar_clave))
 
         # Commit de los cambios
         conn.commit()
@@ -138,18 +124,17 @@ def register():
         return redirect(url_for('lista_clientes'))
 
     cur = connection().cursor()
-    cur.execute("SELECT lugar_codigo, lugar_nombre FROM lugar WHERE lugar_tipo = 'Estado'")
-    print("estados cargados desde la base de datos")
+    cur.execute("SELECT * FROM lista_estados()")
     estados = cur.fetchall()
     cur.close()
     connection().close()
 
-    return render_template('Crear_Usuario/crear_usuario.html', estados=estados)
+    return render_template('Seguridad/Usuarios/crear_usuario.html', estados=estados)
 
 @app.route('/get_municipios/<estado_id>')
 def get_municipios(estado_id: int):
     cursor = connection().cursor()
-    cursor.execute(f"SELECT lugar_codigo, lugar_nombre FROM lugar WHERE lugar_tipo = 'Municipio' AND fk_lugar = {estado_id}")
+    cursor.execute("SELECT * FROM lista_municipios(%s)", (estado_id,))
     municipios = cursor.fetchall()
     cursor.close()
     connection().close()
@@ -158,7 +143,7 @@ def get_municipios(estado_id: int):
 @app.route('/get_parroquias/<municipio_id>')
 def get_parroquias(municipio_id: int):
     cursor = connection().cursor()
-    cursor.execute(f"SELECT lugar_codigo, lugar_nombre FROM lugar WHERE lugar_tipo = 'Parroquia' AND fk_lugar = {municipio_id}")
+    cursor.execute("SELECT * FROM lista_parroquias(%s)", (municipio_id,))
     parroquias = cursor.fetchall()
     cursor.close()
     connection().close()
@@ -364,6 +349,22 @@ def lista_actividades():
     
     # Renderización de la plantilla HTML para 'lista_actividades', pasando los datos de actividades al template
     return render_template('Proyecto_Config/Actividad/lista_actividades.html', actividades=actividades)
+
+@app.route('/ver_solicitud_compra/<int:solicitud_id>', methods=['GET'])
+def ver_solicitud_compra(solicitud_id):
+    
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    cur.execute("SELECT * FROM ver_solicitud_compra(%s)", (solicitud_id,))
+    solicitud = cur.fetchone()
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()
+    connection().close()
+    
+    # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
+    return render_template('Alianzas/Solicitudes/ver_solicitud_compra.html', solicitud=solicitud)
+
 
 if __name__ == '__main__': 
     app.run(debug=True) 

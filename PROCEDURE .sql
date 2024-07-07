@@ -186,7 +186,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE PROCEDURE sp_crear_cliente(p_razon_social VARCHAR,p_rif VARCHAR,p_denominacion_comercial VARCHAR,capital NUMERIC,p_detalle_principal VARCHAR,p_detalle_fiscal VARCHAR,p_estado_principal VARCHAR,p_municipio_principal VARCHAR,p_parroquia_principal VARCHAR,p_estado_fiscal VARCHAR,p_municipio_fiscal VARCHAR,p_parroquia_fiscal VARCHAR,p_correo_electronico VARCHAR,p_telefono_prefijo VARCHAR,p_telefono_numero VARCHAR,p_nombre_usuario VARCHAR,p_clave VARCHAR,p_confirmar_clave VARCHAR)
+-- Creación de un procedimiento almacenado para crear un usuario cliente
+CREATE OR REPLACE PROCEDURE sp_crear_cliente(p_razon_social VARCHAR,p_rif VARCHAR,p_denominacion_comercial VARCHAR,capital NUMERIC,p_detalle_principal VARCHAR,p_detalle_fiscal VARCHAR,p_estado_principal SMALLINT,p_municipio_principal SMALLINT,p_parroquia_principal SMALLINT,p_estado_fiscal SMALLINT,p_municipio_fiscal SMALLINT,p_parroquia_fiscal SMALLINT,p_correo_electronico VARCHAR,p_telefono_prefijo VARCHAR,p_telefono_numero VARCHAR,p_telefono_tipo VARCHAR,p_nombre_usuario VARCHAR,p_clave VARCHAR,p_confirmar_clave VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -196,46 +197,69 @@ BEGIN
     END IF;
 
     -- Insertar los datos en la tabla de empresas
-    INSERT INTO Cliente (persona_jur_codigo,persona_jur_razon_social,persona_jur_RIF,persona_jur_denominacion_comercial,persona_jur_capital_total,persona_jur_direccion_fiscal,persona_jur_direccion_principal,fk_lugar_1,fk_lugar_2) VALUES 
-	((SELECT MAX(persona_jur_codigo) FROM Cliente)+1,p_razon_social,p_rif,p_denominacion_comercial,capital,p_detalle_fiscal,p_detalle_principal,(Select lugar_codigo 
-																																				 From Lugar 
-																																				 Where lugar_nombre = p_parroquia_principal 
-																																				 And lugar_tipo = 'Parroquia' 
-																																				 AND fk_lugar = (Select lugar_codigo 
-																																				 				 From Lugar 
-																																								 Where lugar_nombre = p_municipio_principal 
-																																				 				 And lugar_tipo = 'Municipio' 
-																																								 AND fk_lugar = (Select lugar_codigo 
-																																								 				 From Lugar 
-																																												 Where lugar_nombre = p_estado_principal 
-																																												 And lugar_tipo = 'Estado')))
-	 																																	 	   ,(Select lugar_codigo 
-																																				 From Lugar 
-																																				 Where lugar_nombre = p_parroquia_fiscal
-																																				 And lugar_tipo = 'Parroquia' 
-																																				 AND fk_lugar = (Select lugar_codigo 
-																																				 				 From Lugar 
-																																								 Where lugar_nombre = p_municipio_fiscal
-																																				 				 And lugar_tipo = 'Municipio' 
-																																								 AND fk_lugar = (Select lugar_codigo 
-																																								 				 From Lugar 
-																																												 Where lugar_nombre = p_estado_fiscal
-																																												 And lugar_tipo = 'Estado'))));
+    INSERT INTO Cliente (persona_jur_codigo,persona_jur_razon_social,persona_jur_RIF,persona_jur_denominacion_comercial,persona_jur_capital_total,persona_jur_direccion_fiscal,persona_jur_direccion_principal,fk_lugar_1,fk_lugar_2) VALUES
+	((SELECT MAX(persona_jur_codigo) FROM Cliente)+1,p_razon_social,p_rif,p_denominacion_comercial,capital,p_detalle_fiscal,p_detalle_principal,
+        (SELECT pa.lugar_codigo
+        From Lugar e, Lugar mu, Lugar pa
+        Where e.lugar_codigo = mu.fk_lugar and mu.lugar_codigo = pa.fk_lugar and e.lugar_codigo = p_estado_principal and mu.lugar_codigo = p_municipio_principal and pa.lugar_codigo = p_parroquia_principal),
+        (SELECT pa.lugar_codigo
+        From Lugar e, Lugar mu, Lugar pa
+        Where e.lugar_codigo = mu.fk_lugar and mu.lugar_codigo = pa.fk_lugar and e.lugar_codigo = p_estado_fiscal and mu.lugar_codigo = p_municipio_fiscal and pa.lugar_codigo = p_parroquia_fiscal));
+
+
 	If p_correo_electronico IS NOT NULL then
-		INSERT INTO Correo (correo_codigo,correo_nombre,fk_cliente) VALUES 
+		INSERT INTO Correo (correo_codigo,correo_nombre,fk_cliente) VALUES
 		((SELECT MAX(correo_codigo) FROM Correo)+1,p_correo_electronico,(SELECT MAX(persona_jur_codigo) FROM Cliente));
 	END IF;
-	
+
 	If p_telefono_prefijo IS NOT NULL AND p_telefono_numero IS NOT NULL then
-		INSERT INTO Telefono (telefono_codigo,telefono_prefijo,telefono_numero,telefono_tipo,fk_cliente) VALUES 
-		((SELECT MAX(telefono_codigo) FROM Telefono)+1,p_telefono_prefijo,p_telefono_numero,'Casa',(SELECT MAX(persona_jur_codigo) FROM Cliente));
+		INSERT INTO Telefono (telefono_codigo,telefono_prefijo,telefono_numero,telefono_tipo,fk_cliente) VALUES
+		((SELECT MAX(telefono_codigo) FROM Telefono)+1,p_telefono_prefijo,p_telefono_numero,p_telefono_tipo,(SELECT MAX(persona_jur_codigo) FROM Cliente));
 	END IF;
-	
+
     -- Insertar los datos en la tabla de usuarios
-    INSERT INTO Usuario (usuario_codigo,usuario_nombre,usuario_clave,fk_cliente,fk_rol) VALUES 
-	((SELECT MAX(usuario_codigo) FROM Usuario)+1,p_nombre_usuario,p_clave,(SELECT MAX(persona_jur_codigo) FROM Cliente),(Select rol_codigo 
-																			   From Rol 
+    INSERT INTO Usuario (usuario_codigo,usuario_nombre,usuario_clave,fk_cliente,fk_rol) VALUES
+	((SELECT MAX(usuario_codigo) FROM Usuario)+1,p_nombre_usuario,p_clave,(SELECT MAX(persona_jur_codigo) FROM Cliente),(Select rol_codigo
+																			   From Rol
 																			   Where rol_nombre = 'Cliente'));
+END;
+$$;
+
+-- Creación de un procedimiento almacenado para crear una solicitud de compra
+CREATE OR REPLACE PROCEDURE sp_crear_solicitud_compra(aliado_codigo SMALLINT, detalle_compra tipo_detalle_compra[])
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    fila tipo_detalle_compra;
+    pedido_monto_subtil NUMERIC(10,2) = 0;
+BEGIN
+    -- Insertar los datos en la tabla de solicitud de compra
+    INSERT INTO Pedido_Compra (pedido_compra_numero,fk_aliado,pedido_compra_fecha_emision,pedido_compra_monto_subtil,pedido_compra_monto_total) VALUES
+    ((SELECT MAX(pedido_compra_numero) FROM Pedido_Compra)+1,aliado_codigo,CURRENT_DATE,0,0);
+
+    -- Ciclo para recorrer cada fila de la tabla detalle_compra (pasada como parámetro)
+    FOREACH  fila IN ARRAY detalle_compra LOOP
+
+        -- Insertar los datos en la tabla Inventario Producto en base a los datos de la fila
+        INSERT INTO inventario_producto (inventario_producto_codigo, fk_mineral, inventario_producto_cantidad_total, inventario_producto_operacion, inventario_producto_tipo_operacion, inventario_producto_fecha_movimiento)
+        VALUES ((SELECT MAX(inventario_producto_codigo) FROM inventario_producto)+1,
+                (SELECT mineral_codigo FROM mineral WHERE mineral_codigo = fila.detalle_mineral),
+                (SELECT I.inventario_producto_cantidad_total FROM inventario_producto I WHERE I.inventario_producto_codigo = (SELECT MAX(IP.inventario_producto_codigo) FROM inventario_producto IP WHERE IP.fk_mineral = fila.detalle_mineral)),
+                NULL, NULL, NULL);
+
+        -- Insertar los datos en la tabla Detalle Pedido Compra en base a los datos de la fila
+        INSERT INTO detalle_pedido_compra (detalle_pedido_compra_codigo, fk_pedido_compra_1, fk_pedido_compra_2, fk_inventario_producto_1, fk_inventario_producto_2, detalle_compra_cantidad_mineral, detalle_compra_precio_unitario)
+        VALUES ((SELECT MAX(detalle_pedido_compra_codigo) FROM detalle_pedido_compra)+1,
+                (SELECT MAX(pedido_compra_numero) FROM Pedido_Compra),
+                aliado_codigo,
+                (SELECT MAX(inventario_producto_codigo) FROM inventario_producto),
+                fila.detalle_mineral, fila.detalle_cantidad, fila.detalle_precio);
+
+        -- Actualizar el monto total del pedido de compra (variable) en base al precio de la fila
+        pedido_monto_subtil = pedido_monto_subtil + fila.detalle_precio;
+    END LOOP;
+    -- Actualizar el monto subtil del pedido de compra en base al precio de la fila
+    UPDATE Pedido_Compra SET pedido_compra_monto_subtil = pedido_monto_subtil, pedido_compra_monto_total = (pedido_monto_subtil*1.16) WHERE pedido_compra_numero = (SELECT MAX(pedido_compra_numero) FROM Pedido_Compra);
 END;
 $$;
 
@@ -439,5 +463,126 @@ BEGIN
     -- La consulta selecciona los campos de la tabla actividad
     RETURN QUERY SELECT AC.actividad_config_codigo, AC.actividad_config_nombre
     FROM actividad_configuracion AC;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_estados()
+CREATE OR REPLACE FUNCTION lista_estados()
+RETURNS TABLE (lugar_codigo SMALLINT, lugar_nombre VARCHAR(100))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla Lugar
+    RETURN QUERY SELECT L.lugar_codigo, L.lugar_nombre
+    FROM lugar L
+    WHERE L.lugar_tipo = 'Estado';
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_municipios()
+CREATE OR REPLACE FUNCTION lista_municipios(estado_id SMALLINT)
+RETURNS TABLE (lugar_codigo SMALLINT, lugar_nombre VARCHAR(100))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla Lugar
+    RETURN QUERY SELECT L.lugar_codigo, L.lugar_nombre
+    FROM lugar L
+    WHERE L.lugar_tipo = 'Municipio' AND L.fk_lugar = estado_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_parroquias()
+CREATE OR REPLACE FUNCTION lista_parroquias(municipio_id SMALLINT)
+RETURNS TABLE (lugar_codigo SMALLINT, lugar_nombre VARCHAR(100))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla Lugar
+    RETURN QUERY SELECT L.lugar_codigo, L.lugar_nombre
+    FROM lugar L
+    WHERE L.lugar_tipo = 'Parroquia' AND L.fk_lugar = municipio_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_aliados_solicitud()
+CREATE OR REPLACE FUNCTION lista_aliados_solicitud()
+RETURNS TABLE (aliado_codigo SMALLINT, aliado_nombre VARCHAR(50))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla aliado
+    RETURN QUERY SELECT A.persona_jur_codigo, A.persona_jur_denominacion_comercial
+    FROM aliado A;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_minerales_solicitud()
+CREATE OR REPLACE FUNCTION lista_minerales_solicitud(aliado_id SMALLINT)
+RETURNS TABLE (mineral_codigo SMALLINT, mineral_nombre VARCHAR(30))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla mineral e inventario_yacim_mineral
+    RETURN QUERY SELECT IYM.fk_mineral, M.mineral_nombre
+    FROM inventario_yacim_mineral IYM, mineral M
+    WHERE IYM.fk_aliado = aliado_id AND M.mineral_codigo = IYM.fk_mineral;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función ver_solicitud_compra()
+CREATE OR REPLACE FUNCTION ver_solicitud_compra(pedido_compra_id SMALLINT)
+RETURNS TABLE (pedido_compra_fecha_emision DATE, estatus_pedido_nombre VARCHAR(15), aliado_nombre VARCHAR(45), aliado_rif VARCHAR(20), aliado_correo VARCHAR(50),
+               aliado_direccion VARCHAR(100), aliado_telefono VARCHAR(15), aliado_emp VARCHAR(35), fecha_pago DATE, venta_asociada SMALLINT, pedido_compra_monto_total NUMERIC(10,2))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla pedido_compra y tablas asociadas a ella
+    RETURN QUERY SELECT P.pedido_compra_fecha_emision, EP.estatus_pedido_nombre, A.persona_jur_razon_social, A.persona_jur_rif,
+                        -- Se utiliza COALESCE para manejar valores nulos en caso de que no existan registros asociados
+                        COALESCE(C.correo_nombre, NULL) AS correo, A.persona_jur_direccion_fiscal, COALESCE((T.telefono_prefijo||'-'||T.telefono_numero), NULL) AS aliado_telefono,
+                        COALESCE(E.empleado_primer_nombre||' '||E.empleado_primer_apellido, NULL) AS aliado_emp, COALESCE(PC.pago_compra_fecha_emision, NULL) AS fecha_pago,
+                        COALESCE(PCV.fk_pedido_venta_1, NULL) AS venta_asociada, P.pedido_compra_monto_total
+
+    FROM pedido_compra P INNER JOIN historico_estatus_pedido_compra HPC ON P.pedido_compra_numero = HPC.fk_pedido_compra_1,
+         historico_estatus_pedido_compra HPC INNER JOIN estatus_pedido EP ON HPC.fk_estatus_pedido = EP.estatus_pedido_codigo,
+         aliado A LEFT JOIN correo C ON A.persona_jur_codigo = C.fk_aliado, aliado A LEFT JOIN telefono T ON A.persona_jur_codigo = T.fk_aliado, aliado A LEFT JOIN empleado E ON A.persona_jur_codigo = E.fk_aliado_1,
+         pago_compra PC LEFT JOIN pedido_compra P ON (PC.fk_pedido_compra_1 = P.pedido_compra_numero AND PC.fk_pedido_compra_2 = P.fk_aliado),
+        pedido_compra P LEFT JOIN pedido_compra_venta PCV ON P.pedido_compra_numero = PCV.fk_pedido_compra_1
+
+    WHERE P.pedido_compra_numero = pedido_compra_id AND P.fk_aliado = A.persona_jur_codigo;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función obtener_metodos_pago()
+CREATE OR REPLACE FUNCTION obtener_metodos_pago(cliente_id SMALLINT)
+RETURNS TABLE (metodo_codigo_1 SMALLINT, metodo_codigo_2 SMALLINT, metodo_pago VARCHAR(30), tipo_metodo text)
+AS $$
+BEGIN
+    RETURN QUERY
+        -- La consulta selecciona los campos de las tablas tarjeta_debito, tarjeta_credito, efectivo y cheque
+        -- Se utiliza UNION para unir los resultados de las consultas en dos columnas
+        -- La primera columna es el identificador y la segunda es el tipo de método de pago
+        SELECT TD.metodo_pago_codigo, TD.fk_banco, TD.tdb_numero, 'Tarjeta de Débito'
+                FROM tarjeta_debito TD
+                WHERE TD.fk_cliente = cliente_id
+        UNION
+            SELECT TC.metodo_pago_codigo, TC.fk_banco, TC.tdc_numero, 'Tarjeta de Crédito'
+                FROM tarjeta_credito TC
+                WHERE TC.fk_cliente = cliente_id
+        UNION
+            SELECT E.metodo_pago_codigo,NULL,CAST(E.efectivo_denominacion AS varchar), 'Efectivo'
+                FROM efectivo E
+                WHERE E.fk_cliente = cliente_id
+        UNION
+            SELECT CH.metodo_pago_codigo,NULL,CAST(CH.cheque_numero AS varchar), 'Cheque'
+                FROM cheque CH
+                WHERE CH.fk_cliente = cliente_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función obtener_detalles_pedido_compra()
+CREATE OR REPLACE FUNCTION obtener_detalles_pedido_compra(pedido_compra_id SMALLINT)
+RETURNS TABLE (mineral_codigo SMALLINT, mineral_nombre VARCHAR(30), cantidad_mineral SMALLINT, precio_unitario NUMERIC(10,2))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla detalle_pedido_compra y tablas asociadas a ella
+    RETURN QUERY SELECT M.mineral_codigo, M.mineral_nombre, DPC.detalle_compra_cantidad_mineral, DPC.detalle_compra_precio_unitario
+    FROM detalle_pedido_compra DPC, mineral M
+    WHERE DPC.fk_pedido_compra_1 = pedido_compra_id AND DPC.fk_inventario_producto_2 = M.mineral_codigo;
 END;
 $$ LANGUAGE plpgsql;
