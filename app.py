@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify# Importación de Flask y render_template para renderizar plantillas HTML
 import psycopg2 # Importación de psycopg2 para la conexión a PostgreSQL
+import json # Importación de json para manejar datos JSON
 
 # Inicialización de la aplicación Flask, especificando la carpeta que contiene las plantillas HTML
 app = Flask(__name__, template_folder='frontend') 
@@ -283,13 +284,23 @@ def lista_inventario():
     return render_template('Almacen/Inventario/lista_operaciones.html', inventario=inventario)
 
 # Definición de la ruta '/lista_solicitudes'
-@app.route('/lista_solicitudes')
+@app.route('/lista_solicitudes', methods=['GET'])
 def lista_solicitudes():
+    sort = request.args.get('sort', 'pedido_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_solicitudes()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(pedido_codigo AS TEXT) LIKE '%{search}%' OR CAST(pedido_fecha_emision AS TEXT) LIKE '%{search}%' OR aliado LIKE '%{search}%' OR pedido_estatus LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"
+
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_solicitudes' que retorna una lista de solicitudes
-    cur.execute("SELECT * FROM lista_solicitudes()")
+    cur.execute(query)
     solicitudes = cur.fetchall()  
     
     # Cierre del cursor y de la conexión a la base de datos
@@ -298,6 +309,83 @@ def lista_solicitudes():
     
     # Renderización de la plantilla HTML para 'lista_solicitudes', pasando los datos de solicitudes al template
     return render_template('Alianzas/Solicitudes/lista_solicitudes.html', solicitudes=solicitudes)
+
+@app.route('/register_solicitud', methods=['GET','POST'])
+def register_solicitud(): 
+    if request.method == 'POST':	
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        cur = connection().cursor()
+    
+        aliado = request.form['aliado']
+        # Inicializar la lista de tuplas para 'tablaMinerales'
+        tablaMinerales = []
+        # Suponiendo que los campos del formulario vienen indexados (mineral[0], cantidad[0], precio[0], ...)
+        i = 0
+        while True:
+            try:
+                # Intentar obtener el conjunto de datos para cada mineral
+                mineral = request.form[f'mineral[{i}]']
+                cantidad = request.form[f'cantidad[{i}]']
+                precio = request.form[f'precio[{i}]']
+                tablaMinerales.append((mineral, int(cantidad), float(precio)))
+                i += 1
+            except KeyError:
+                # Si no hay más minerales, romper el ciclo
+                break
+        
+        # Construir la parte de la llamada que incluye 'tablaMinerales'
+        tablaMinerales_str = ", ".join([
+            f"CAST(ROW('{mineral}', {cantidad}, {precioUnit}) AS tipo_detalle_compra)" 
+            for mineral, cantidad, precioUnit in tablaMinerales
+        ])
+        # Formatear la llamada completa al procedimiento almacenado
+        query = f"""CALL sp_crear_solicitud_compra({aliado},ARRAY[{tablaMinerales_str}])"""
+                
+        # Ejecutar la consulta
+        cur.execute(query)
+        # Commit de los cambios
+        cur.connection.commit()
+        # Cerrar el cursor 
+        cur.connection.close()
+        cur.close()
+        
+        return redirect(url_for('lista_solicitudes'))
+    
+    cur = connection().cursor()
+    cur.execute("SELECT * FROM lista_aliados_solicitud()")
+    aliados = cur.fetchall()
+    cur.close()
+    connection().close()
+    return render_template('Alianzas/Solicitudes/crear_solicitud_compra.html', aliados=aliados)
+
+# Definición de la ruta '/get_minerales_aliados/<int:aliado_id>'
+@app.route('/get_minerales_aliados/<int:aliado_id>')
+def get_minerales_aliados(aliado_id: int):
+    cursor = connection().cursor()
+    # Ejecución de la función almacenada 'lista_minerales_solicitud' que retorna una lista de minerales de un aliado
+    cursor.execute("SELECT * FROM lista_minerales_solicitud(%s)", (aliado_id,))
+    minerales = cursor.fetchall()
+    cursor.close()
+    connection().close()
+    # Retorno de los minerales en formato JSON
+    return jsonify([{"mineral_codigo": m[0], "mineral_nombre": m[1]} for m in minerales])
+
+# Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>'
+@app.route('/ver_solicitud_compra/<int:pedido_codigo>', methods=['GET'])
+def ver_solicitud_compra(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    cur.execute("SELECT * FROM ver_solicitud_compra(%s)", (pedido_codigo,))
+    solicitud = cur.fetchone()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
+    return render_template('Alianzas/Solicitudes/ver_solicitud_compra.html', solicitud=solicitud)
 
 # Definición de la ruta '/lista_proyectos_config'
 @app.route('/lista_proyectos_config')

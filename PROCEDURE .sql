@@ -256,7 +256,7 @@ END;
 $$;
 
 -- Creación de un procedimiento almacenado para crear una solicitud de compra
-CREATE OR REPLACE PROCEDURE sp_crear_solicitud_compra(aliado_codigo SMALLINT, detalle_compra tipo_detalle_compra[])
+CREATE OR REPLACE PROCEDURE sp_crear_solicitud_compra(aliado_codigo INTEGER, detalle_compra tipo_detalle_compra[])
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -286,7 +286,7 @@ BEGIN
                 fila.detalle_mineral, fila.detalle_cantidad, fila.detalle_precio);
 
         -- Actualizar el monto total del pedido de compra (variable) en base al precio de la fila
-        pedido_monto_subtil = pedido_monto_subtil + fila.detalle_precio;
+        pedido_monto_subtil = pedido_monto_subtil + (fila.detalle_precio*fila.detalle_cantidad);
     END LOOP;
     -- Actualizar el monto subtil del pedido de compra en base al precio de la fila
     UPDATE Pedido_Compra SET pedido_compra_monto_subtil = pedido_monto_subtil, pedido_compra_monto_total = (pedido_monto_subtil*1.16) WHERE pedido_compra_numero = (SELECT MAX(pedido_compra_numero) FROM Pedido_Compra);
@@ -457,8 +457,10 @@ AS $$
 BEGIN
     -- La consulta selecciona los campos de la tabla solicitud
     RETURN QUERY SELECT PC.pedido_compra_numero, PC.pedido_compra_fecha_emision, A.persona_jur_denominacion_comercial, EP.estatus_pedido_nombre
-    FROM pedido_compra PC, aliado A, historico_estatus_pedido_compra HPC, estatus_pedido EP
-    WHERE PC.fk_aliado = A.persona_jur_codigo AND PC.pedido_compra_numero = HPC.fk_pedido_compra_1 AND HPC.hist_est_pedido_compra_codigo = EP.estatus_pedido_codigo;
+    FROM pedido_compra PC, aliado A, historico_estatus_pedido_compra HPC, estatus_pedido EP,
+              (SELECT HPC.fk_pedido_compra_1, MAX(HPC.hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra HPC GROUP BY HPC.fk_pedido_compra_1) AS Ultimo_Estatus
+    WHERE PC.fk_aliado = A.persona_jur_codigo AND PC.pedido_compra_numero = Ultimo_Estatus.fk_pedido_compra_1
+                AND HPC.hist_est_pedido_compra_codigo = Ultimo_Estatus.max AND HPC.fk_estatus_pedido = EP.estatus_pedido_codigo;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -544,7 +546,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Creación de una función lista_minerales_solicitud()
-CREATE OR REPLACE FUNCTION lista_minerales_solicitud(aliado_id SMALLINT)
+CREATE OR REPLACE FUNCTION lista_minerales_solicitud(aliado_id INTEGER)
 RETURNS TABLE (mineral_codigo SMALLINT, mineral_nombre VARCHAR(30))
 AS $$
 BEGIN
