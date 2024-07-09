@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Solicitud - MinerUCAB</title>
-    <link rel="stylesheet" href="/static/css/crear_solicitud_compra_styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/crear_solicitud_compra_styles.css') }}">
     <script>
         async function loadMinerales() {
             const aliado = document.getElementById("aliado").value;

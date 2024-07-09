@@ -315,7 +315,7 @@ def register_solicitud():
     if request.method == 'POST':	
         # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
         cur = connection().cursor()
-    
+
         aliado = request.form['aliado']
         # Inicializar la lista de tuplas para 'tablaMinerales'
         tablaMinerales = []
@@ -370,6 +370,33 @@ def get_minerales_aliados(aliado_id: int):
     # Retorno de los minerales en formato JSON
     return jsonify([{"mineral_codigo": m[0], "mineral_nombre": m[1]} for m in minerales])
 
+# Definición de la ruta '/chequear_estatus_pedido_compra/<int:pedido_codigo>'
+@app.route('/chequear_estatus_pedido_compra/<int:pedido_codigo>')
+def chequear_estatus_pedido_compra(pedido_codigo: int):
+    conn = connection()
+    cursor = conn.cursor()
+    # Ejecución de la función almacenada 'obtener_estatus_pedido_compra' que retorna el estatus de un pedido de compra
+    cursor.execute("SELECT * FROM obtener_estatus_pedido_compra(%s)", (pedido_codigo,))
+    estatus = cursor.fetchone()[0] 
+    cursor.close()
+    conn.close()
+
+    # Definir conjuntos de estatus
+    conjunto_en_espera = {'En proceso', 'En espera', 'En revisión'}
+    conjunto_por_pagar = {'Por pagar', 'Confirmado', 'Aprobado'}
+    conjunto_pagado = {'Pagado', 'Completado'}
+    
+    # Decidir a qué ruta redirigir basado en el resultado
+    if estatus in conjunto_en_espera:
+        return redirect(url_for('ver_solicitud_compra', pedido_codigo=pedido_codigo))
+    elif estatus in conjunto_por_pagar:
+        return redirect(url_for('ver_solicitud_compra_confirmada', pedido_codigo=pedido_codigo))
+    elif estatus in conjunto_pagado:    
+        return redirect(url_for('home'))
+    else:
+        return "Estatus desconocido o pedido no encontrado", 404    
+
+
 # Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>'
 @app.route('/ver_solicitud_compra/<int:pedido_codigo>', methods=['GET'])
 def ver_solicitud_compra(pedido_codigo):
@@ -378,14 +405,81 @@ def ver_solicitud_compra(pedido_codigo):
     
     # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
     cur.execute("SELECT * FROM ver_solicitud_compra(%s)", (pedido_codigo,))
-    solicitud = cur.fetchone()  
-    
-    # Cierre del cursor y de la conexión a la base de datos
+    solicitud = cur.fetchone() 
     cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_compra' que retorna los detalles de una solicitud de compra
+    cur.execute("SELECT * FROM obtener_detalles_pedido_compra(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
     connection().close()  
     
     # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
-    return render_template('Alianzas/Solicitudes/ver_solicitud_compra.html', solicitud=solicitud)
+    return render_template('Alianzas/Solicitudes/ver_solicitud_compra.html', solicitud=solicitud, detalles=detalles)
+
+# Definición de la ruta '/ver_solicitud_compra_confirmada/<int:pedido_codigo>'
+@app.route('/ver_solicitud_compra_confirmada/<int:pedido_codigo>', methods=['GET'])
+def ver_solicitud_compra_confirmada(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    cur.execute("SELECT * FROM ver_solicitud_compra(%s)", (pedido_codigo,))
+    solicitud = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_compra' que retorna los detalles de una solicitud de compra
+    cur.execute("SELECT * FROM obtener_detalles_pedido_compra(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_metodos_pago' que retorna los métodos de pago
+    cur.execute("SELECT * FROM obtener_metodos_pago()")
+    metodos = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
+    return render_template('Alianzas/Solicitudes/ver_solicitud_compra_confirmada.html', solicitud=solicitud, detalles=detalles, metodos=metodos)
+
+# Definición de la ruta '/register_pago'
+@app.route('/register_pago', methods=['POST'])
+def register_pago():
+    # Obtener los datos del formulario
+    pedido_codigo = request.form['numero-orden']
+    aliado_id = request.form['razon-social'] 
+    metodo_pago = request.form['metodo-pago']
+    metodo_codigo, tipo_metodo = metodo_pago.split('|', 1) 
+    monto_pedido = request.form['total']
+    fecha_pago = request.form['fecha-pago']
+    
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute("CALL sp_crear_pago_compra(%s, %s, %s, %s, %s, %s)", (pedido_codigo, aliado_id, metodo_codigo, tipo_metodo, monto_pedido, fecha_pago))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for('update_estatus', pedido_codigo=pedido_codigo, aliado_id=aliado_id))
+
+# Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>/update_estatus'
+@app.route('/ver_solicitud_compra/update_estatus/<int:pedido_codigo>/<int:aliado_id>')
+def update_estatus(pedido_codigo, aliado_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    cur.execute("CALL update_estatus_pedido_compra(%s,%s)", (pedido_codigo,aliado_id))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+    
+    return redirect(url_for('lista_solicitudes'))
 
 # Definición de la ruta '/lista_proyectos_config'
 @app.route('/lista_proyectos_config')
