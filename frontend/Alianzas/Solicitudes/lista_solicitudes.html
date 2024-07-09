@@ -178,7 +178,7 @@
                         <td>{{ solicitud[1] }}</td>
                         <td>{{ solicitud[2] }}</td>
                         <td>{{ solicitud[3] }}</td>
-                        <td><a href="{{ url_for('chequear_estatus_pedido_compra', pedido_codigo=solicitud[0]) }}"><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></a></td>
+                        <td><a href="{{ url_for('chequear_estatus_pedido_compra', pedido_codigo=solicitud[0], aliado_id=solicitud[4]) }}"><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

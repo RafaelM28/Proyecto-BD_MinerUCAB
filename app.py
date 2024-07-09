@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify# Importación de Flask y render_template para renderizar plantillas HTML
+from flask import flash, Flask, render_template, request, redirect, url_for, jsonify# Importación de Flask y render_template para renderizar plantillas HTML
 import psycopg2 # Importación de psycopg2 para la conexión a PostgreSQL
 import json # Importación de json para manejar datos JSON
+import os
 
 # Inicialización de la aplicación Flask, especificando la carpeta que contiene las plantillas HTML
 app = Flask(__name__, template_folder='frontend') 
+app.secret_key = os.urandom(16)
 
 # Función para establecer conexión con la base de datos PostgreSQL
 def connection():
@@ -371,8 +373,8 @@ def get_minerales_aliados(aliado_id: int):
     return jsonify([{"mineral_codigo": m[0], "mineral_nombre": m[1]} for m in minerales])
 
 # Definición de la ruta '/chequear_estatus_pedido_compra/<int:pedido_codigo>'
-@app.route('/chequear_estatus_pedido_compra/<int:pedido_codigo>')
-def chequear_estatus_pedido_compra(pedido_codigo: int):
+@app.route('/chequear_estatus_pedido_compra/<int:pedido_codigo>/<int:aliado_id>')
+def chequear_estatus_pedido_compra(pedido_codigo, aliado_id):
     conn = connection()
     cursor = conn.cursor()
     # Ejecución de la función almacenada 'obtener_estatus_pedido_compra' que retorna el estatus de un pedido de compra
@@ -392,7 +394,7 @@ def chequear_estatus_pedido_compra(pedido_codigo: int):
     elif estatus in conjunto_por_pagar:
         return redirect(url_for('ver_solicitud_compra_confirmada', pedido_codigo=pedido_codigo))
     elif estatus in conjunto_pagado:    
-        return redirect(url_for('home'))
+        return redirect(url_for('ver_solicitud_compra_pagada', pedido_codigo=pedido_codigo, aliado_id=aliado_id))
     else:
         return "Estatus desconocido o pedido no encontrado", 404    
 
@@ -445,26 +447,65 @@ def ver_solicitud_compra_confirmada(pedido_codigo):
     # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
     return render_template('Alianzas/Solicitudes/ver_solicitud_compra_confirmada.html', solicitud=solicitud, detalles=detalles, metodos=metodos)
 
-# Definición de la ruta '/register_pago'
 @app.route('/register_pago', methods=['POST'])
 def register_pago():
-    # Obtener los datos del formulario
-    pedido_codigo = request.form['numero-orden']
-    aliado_id = request.form['razon-social'] 
-    metodo_pago = request.form['metodo-pago']
-    metodo_codigo, tipo_metodo = metodo_pago.split('|', 1) 
-    monto_pedido = request.form['total']
-    fecha_pago = request.form['fecha-pago']
+    try:
+        # Obtener los datos del formulario
+        pedido_codigo = request.form['numero-orden']
+        aliado_id = request.form['razon-social']
+        metodo_pago = request.form['metodo-pago']
+        metodo_codigo, tipo_metodo = metodo_pago.split('|', 1)
+        monto_pedido = request.form['total']
+        fecha_pago = request.form['fecha-pago']
+        
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        conn = connection()
+        cursor = conn.cursor()
+        cursor.execute("CALL sp_crear_pago_compra(%s, %s, %s, %s, %s, %s)", (pedido_codigo, aliado_id, metodo_codigo, tipo_metodo, monto_pedido, fecha_pago))
+        conn.commit()
     
-    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
-    conn = connection()
-    cursor = conn.cursor()
-    cursor.execute("CALL sp_crear_pago_compra(%s, %s, %s, %s, %s, %s)", (pedido_codigo, aliado_id, metodo_codigo, tipo_metodo, monto_pedido, fecha_pago))
-    conn.commit()
-    cursor.close()
-    conn.close()
+    except psycopg2.errors.RaiseException as e:
+        # Manejo de excepciones en caso de fallo en la conexión
+        flash('El monto del efectivo no es suficiente para realizar el pago.')
+        return redirect(url_for('mostrar_error', pedido_codigo=pedido_codigo))
+    
+    finally:
+        # Asegúrate de cerrar el cursor y la conexión en el bloque finally para que se ejecuten sin importar si hubo una excepción o no
+        cursor.close()
+        conn.close()
 
+    # Si todo fue exitoso, rediriges al usuario a otra página
     return redirect(url_for('update_estatus', pedido_codigo=pedido_codigo, aliado_id=aliado_id))
+
+@app.route('/mostrar_error/<int:pedido_codigo>')
+def mostrar_error(pedido_codigo):
+        return redirect(url_for('ver_solicitud_compra_confirmada', pedido_codigo=pedido_codigo))
+
+@app.route('/ver_solicitud_compra_pagada/<int:pedido_codigo>/<int:aliado_id>', methods=['GET'])
+def ver_solicitud_compra_pagada(pedido_codigo, aliado_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    cur.execute("SELECT * FROM ver_solicitud_compra(%s)", (pedido_codigo,))
+    solicitud = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_compra' que retorna los detalles de una solicitud de compra
+    cur.execute("SELECT * FROM obtener_detalles_pedido_compra(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_metodos_pago' que retorna los métodos de pago
+    cur.execute("SELECT * FROM obtener_pago_compra(%s, %s)", (pedido_codigo,aliado_id))
+    pago = cur.fetchone()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
+    return render_template('Alianzas/Solicitudes/ver_solicitud_compra_pagada.html', solicitud=solicitud, detalles=detalles, pago=pago)
 
 # Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>/update_estatus'
 @app.route('/ver_solicitud_compra/update_estatus/<int:pedido_codigo>/<int:aliado_id>')
