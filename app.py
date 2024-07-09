@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify# Importación de Flask y render_template para renderizar plantillas HTML
+from flask import flash, Flask, render_template, request, redirect, url_for, jsonify# Importación de Flask y render_template para renderizar plantillas HTML
 import psycopg2 # Importación de psycopg2 para la conexión a PostgreSQL
+import json # Importación de json para manejar datos JSON
+import os
 
 # Inicialización de la aplicación Flask, especificando la carpeta que contiene las plantillas HTML
 app = Flask(__name__, template_folder='frontend') 
+app.secret_key = os.urandom(16)
 
 # Función para establecer conexión con la base de datos PostgreSQL
 def connection():
@@ -283,13 +286,23 @@ def lista_inventario():
     return render_template('Almacen/Inventario/lista_operaciones.html', inventario=inventario)
 
 # Definición de la ruta '/lista_solicitudes'
-@app.route('/lista_solicitudes')
+@app.route('/lista_solicitudes', methods=['GET'])
 def lista_solicitudes():
+    sort = request.args.get('sort', 'pedido_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_solicitudes()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(pedido_codigo AS TEXT) LIKE '%{search}%' OR CAST(pedido_fecha_emision AS TEXT) LIKE '%{search}%' OR aliado LIKE '%{search}%' OR pedido_estatus LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"
+
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_solicitudes' que retorna una lista de solicitudes
-    cur.execute("SELECT * FROM lista_solicitudes()")
+    cur.execute(query)
     solicitudes = cur.fetchall()  
     
     # Cierre del cursor y de la conexión a la base de datos
@@ -298,6 +311,216 @@ def lista_solicitudes():
     
     # Renderización de la plantilla HTML para 'lista_solicitudes', pasando los datos de solicitudes al template
     return render_template('Alianzas/Solicitudes/lista_solicitudes.html', solicitudes=solicitudes)
+
+@app.route('/register_solicitud', methods=['GET','POST'])
+def register_solicitud(): 
+    if request.method == 'POST':	
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        cur = connection().cursor()
+
+        aliado = request.form['aliado']
+        # Inicializar la lista de tuplas para 'tablaMinerales'
+        tablaMinerales = []
+        # Suponiendo que los campos del formulario vienen indexados (mineral[0], cantidad[0], precio[0], ...)
+        i = 0
+        while True:
+            try:
+                # Intentar obtener el conjunto de datos para cada mineral
+                mineral = request.form[f'mineral[{i}]']
+                cantidad = request.form[f'cantidad[{i}]']
+                precio = request.form[f'precio[{i}]']
+                tablaMinerales.append((mineral, int(cantidad), float(precio)))
+                i += 1
+            except KeyError:
+                # Si no hay más minerales, romper el ciclo
+                break
+        
+        # Construir la parte de la llamada que incluye 'tablaMinerales'
+        tablaMinerales_str = ", ".join([
+            f"CAST(ROW('{mineral}', {cantidad}, {precioUnit}) AS tipo_detalle_compra)" 
+            for mineral, cantidad, precioUnit in tablaMinerales
+        ])
+        # Formatear la llamada completa al procedimiento almacenado
+        query = f"""CALL sp_crear_solicitud_compra({aliado},ARRAY[{tablaMinerales_str}])"""
+                
+        # Ejecutar la consulta
+        cur.execute(query)
+        # Commit de los cambios
+        cur.connection.commit()
+        # Cerrar el cursor 
+        cur.connection.close()
+        cur.close()
+        
+        return redirect(url_for('lista_solicitudes'))
+    
+    cur = connection().cursor()
+    cur.execute("SELECT * FROM lista_aliados_solicitud()")
+    aliados = cur.fetchall()
+    cur.close()
+    connection().close()
+    return render_template('Alianzas/Solicitudes/crear_solicitud_compra.html', aliados=aliados)
+
+# Definición de la ruta '/get_minerales_aliados/<int:aliado_id>'
+@app.route('/get_minerales_aliados/<int:aliado_id>')
+def get_minerales_aliados(aliado_id: int):
+    cursor = connection().cursor()
+    # Ejecución de la función almacenada 'lista_minerales_solicitud' que retorna una lista de minerales de un aliado
+    cursor.execute("SELECT * FROM lista_minerales_solicitud(%s)", (aliado_id,))
+    minerales = cursor.fetchall()
+    cursor.close()
+    connection().close()
+    # Retorno de los minerales en formato JSON
+    return jsonify([{"mineral_codigo": m[0], "mineral_nombre": m[1]} for m in minerales])
+
+# Definición de la ruta '/chequear_estatus_pedido_compra/<int:pedido_codigo>'
+@app.route('/chequear_estatus_pedido_compra/<int:pedido_codigo>/<int:aliado_id>')
+def chequear_estatus_pedido_compra(pedido_codigo, aliado_id):
+    conn = connection()
+    cursor = conn.cursor()
+    # Ejecución de la función almacenada 'obtener_estatus_pedido_compra' que retorna el estatus de un pedido de compra
+    cursor.execute("SELECT * FROM obtener_estatus_pedido_compra(%s)", (pedido_codigo,))
+    estatus = cursor.fetchone()[0] 
+    cursor.close()
+    conn.close()
+
+    # Definir conjuntos de estatus
+    conjunto_en_espera = {'En proceso', 'En espera', 'En revisión'}
+    conjunto_por_pagar = {'Por pagar', 'Confirmado', 'Aprobado'}
+    conjunto_pagado = {'Pagado', 'Completado'}
+    
+    # Decidir a qué ruta redirigir basado en el resultado
+    if estatus in conjunto_en_espera:
+        return redirect(url_for('ver_solicitud_compra', pedido_codigo=pedido_codigo))
+    elif estatus in conjunto_por_pagar:
+        return redirect(url_for('ver_solicitud_compra_confirmada', pedido_codigo=pedido_codigo))
+    elif estatus in conjunto_pagado:    
+        return redirect(url_for('ver_solicitud_compra_pagada', pedido_codigo=pedido_codigo, aliado_id=aliado_id))
+    else:
+        return "Estatus desconocido o pedido no encontrado", 404    
+
+
+# Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>'
+@app.route('/ver_solicitud_compra/<int:pedido_codigo>', methods=['GET'])
+def ver_solicitud_compra(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    cur.execute("SELECT * FROM ver_solicitud_compra(%s)", (pedido_codigo,))
+    solicitud = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_compra' que retorna los detalles de una solicitud de compra
+    cur.execute("SELECT * FROM obtener_detalles_pedido_compra(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
+    return render_template('Alianzas/Solicitudes/ver_solicitud_compra.html', solicitud=solicitud, detalles=detalles)
+
+# Definición de la ruta '/ver_solicitud_compra_confirmada/<int:pedido_codigo>'
+@app.route('/ver_solicitud_compra_confirmada/<int:pedido_codigo>', methods=['GET'])
+def ver_solicitud_compra_confirmada(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    cur.execute("SELECT * FROM ver_solicitud_compra(%s)", (pedido_codigo,))
+    solicitud = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_compra' que retorna los detalles de una solicitud de compra
+    cur.execute("SELECT * FROM obtener_detalles_pedido_compra(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_metodos_pago' que retorna los métodos de pago
+    cur.execute("SELECT * FROM obtener_metodos_pago()")
+    metodos = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
+    return render_template('Alianzas/Solicitudes/ver_solicitud_compra_confirmada.html', solicitud=solicitud, detalles=detalles, metodos=metodos)
+
+@app.route('/register_pago', methods=['POST'])
+def register_pago():
+    try:
+        # Obtener los datos del formulario
+        pedido_codigo = request.form['numero-orden']
+        aliado_id = request.form['razon-social']
+        metodo_pago = request.form['metodo-pago']
+        metodo_codigo, tipo_metodo = metodo_pago.split('|', 1)
+        monto_pedido = request.form['total']
+        fecha_pago = request.form['fecha-pago']
+        
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        conn = connection()
+        cursor = conn.cursor()
+        cursor.execute("CALL sp_crear_pago_compra(%s, %s, %s, %s, %s, %s)", (pedido_codigo, aliado_id, metodo_codigo, tipo_metodo, monto_pedido, fecha_pago))
+        conn.commit()
+    
+    except psycopg2.errors.RaiseException as e:
+        # Manejo de excepciones en caso de fallo en la conexión
+        flash('El monto del efectivo no es suficiente para realizar el pago.')
+        return redirect(url_for('mostrar_error', pedido_codigo=pedido_codigo))
+    
+    finally:
+        # Asegúrate de cerrar el cursor y la conexión en el bloque finally para que se ejecuten sin importar si hubo una excepción o no
+        cursor.close()
+        conn.close()
+
+    # Si todo fue exitoso, rediriges al usuario a otra página
+    return redirect(url_for('update_estatus', pedido_codigo=pedido_codigo, aliado_id=aliado_id))
+
+@app.route('/mostrar_error/<int:pedido_codigo>')
+def mostrar_error(pedido_codigo):
+        return redirect(url_for('ver_solicitud_compra_confirmada', pedido_codigo=pedido_codigo))
+
+@app.route('/ver_solicitud_compra_pagada/<int:pedido_codigo>/<int:aliado_id>', methods=['GET'])
+def ver_solicitud_compra_pagada(pedido_codigo, aliado_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    cur.execute("SELECT * FROM ver_solicitud_compra(%s)", (pedido_codigo,))
+    solicitud = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_compra' que retorna los detalles de una solicitud de compra
+    cur.execute("SELECT * FROM obtener_detalles_pedido_compra(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_metodos_pago' que retorna los métodos de pago
+    cur.execute("SELECT * FROM obtener_pago_compra(%s, %s)", (pedido_codigo,aliado_id))
+    pago = cur.fetchone()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
+    return render_template('Alianzas/Solicitudes/ver_solicitud_compra_pagada.html', solicitud=solicitud, detalles=detalles, pago=pago)
+
+# Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>/update_estatus'
+@app.route('/ver_solicitud_compra/update_estatus/<int:pedido_codigo>/<int:aliado_id>')
+def update_estatus(pedido_codigo, aliado_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    cur.execute("CALL update_estatus_pedido_compra(%s,%s)", (pedido_codigo,aliado_id))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+    
+    return redirect(url_for('lista_solicitudes'))
 
 # Definición de la ruta '/lista_proyectos_config'
 @app.route('/lista_proyectos_config')

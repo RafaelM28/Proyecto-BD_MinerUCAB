@@ -135,7 +135,7 @@ RETURNS trigger AS $$
 BEGIN
     -- Verifica si el estatus del pedido de compra era 'En proceso'
     -- Si es así, se inserta un nuevo registro en la tabla Historico_Estatus_Pedido_Compra con estatus 'Por pagar'
-    IF OLD.fk_estatus_pedido = (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre = 'En proceso') THEN
+    IF OLD.fk_estatus_pedido IN (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre IN ('En proceso','En espera','En revisión')) THEN
             INSERT INTO historico_estatus_pedido_compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio, hist_est_pedido_compra_fecha_fin)
             VALUES
                 ((SELECT MAX(hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra)+1,
@@ -144,12 +144,12 @@ BEGIN
 
     -- Verifica si el estatus del pedido de compra era 'Por pagar'
     -- Si es así, se inserta un nuevo registro en la tabla Historico_Estatus_Pedido_Compra con estatus 'Pagado'
-    ELSIF OLD.fk_estatus_pedido = (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre = 'Por pagar') THEN
+    ELSIF OLD.fk_estatus_pedido IN (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre IN('Por pagar', 'Confirmado', 'Aprobado')) THEN
             INSERT INTO historico_estatus_pedido_compra (hist_est_pedido_compra_codigo, fk_estatus_pedido, fk_pedido_compra_1, fk_pedido_compra_2, hist_est_pedido_compra_fecha_inicio, hist_est_pedido_compra_fecha_fin)
             VALUES
                 ((SELECT MAX(hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra)+1,
                 (SELECT estatus_pedido_codigo FROM estatus_pedido WHERE estatus_pedido_nombre = 'Pagado'),
-                OLD.fk_pedido_compra_1, OLD.fk_pedido_compra_2, CURRENT_TIMESTAMP, NULL);
+                OLD.fk_pedido_compra_1, OLD.fk_pedido_compra_2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
     END IF;
     RETURN NEW;
 END;
@@ -256,7 +256,7 @@ END;
 $$;
 
 -- Creación de un procedimiento almacenado para crear una solicitud de compra
-CREATE OR REPLACE PROCEDURE sp_crear_solicitud_compra(aliado_codigo SMALLINT, detalle_compra tipo_detalle_compra[])
+CREATE OR REPLACE PROCEDURE sp_crear_solicitud_compra(aliado_codigo INTEGER, detalle_compra tipo_detalle_compra[])
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -286,7 +286,7 @@ BEGIN
                 fila.detalle_mineral, fila.detalle_cantidad, fila.detalle_precio);
 
         -- Actualizar el monto total del pedido de compra (variable) en base al precio de la fila
-        pedido_monto_subtil = pedido_monto_subtil + fila.detalle_precio;
+        pedido_monto_subtil = pedido_monto_subtil + (fila.detalle_precio*fila.detalle_cantidad);
     END LOOP;
     -- Actualizar el monto subtil del pedido de compra en base al precio de la fila
     UPDATE Pedido_Compra SET pedido_compra_monto_subtil = pedido_monto_subtil, pedido_compra_monto_total = (pedido_monto_subtil*1.16) WHERE pedido_compra_numero = (SELECT MAX(pedido_compra_numero) FROM Pedido_Compra);
@@ -452,13 +452,15 @@ $$ LANGUAGE plpgsql;
 
 -- Creación de una función lista_solicitudes()
 CREATE OR REPLACE FUNCTION lista_solicitudes()
-RETURNS TABLE (pedido_codigo SMALLINT, pedido_fecha_emision DATE, aliado VARCHAR(30), pedido_estatus VARCHAR(30))
+RETURNS TABLE (pedido_codigo SMALLINT, pedido_fecha_emision DATE, aliado VARCHAR(30), pedido_estatus VARCHAR(30), aliado_id SMALLINT)
 AS $$
 BEGIN
     -- La consulta selecciona los campos de la tabla solicitud
-    RETURN QUERY SELECT PC.pedido_compra_numero, PC.pedido_compra_fecha_emision, A.persona_jur_denominacion_comercial, EP.estatus_pedido_nombre
-    FROM pedido_compra PC, aliado A, historico_estatus_pedido_compra HPC, estatus_pedido EP
-    WHERE PC.fk_aliado = A.persona_jur_codigo AND PC.pedido_compra_numero = HPC.fk_pedido_compra_1 AND HPC.hist_est_pedido_compra_codigo = EP.estatus_pedido_codigo;
+    RETURN QUERY SELECT PC.pedido_compra_numero, PC.pedido_compra_fecha_emision, A.persona_jur_denominacion_comercial, EP.estatus_pedido_nombre, A.persona_jur_codigo
+    FROM pedido_compra PC, aliado A, historico_estatus_pedido_compra HPC, estatus_pedido EP,
+              (SELECT HPC.fk_pedido_compra_1, MAX(HPC.hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra HPC GROUP BY HPC.fk_pedido_compra_1) AS Ultimo_Estatus
+    WHERE PC.fk_aliado = A.persona_jur_codigo AND PC.pedido_compra_numero = Ultimo_Estatus.fk_pedido_compra_1
+                AND HPC.hist_est_pedido_compra_codigo = Ultimo_Estatus.max AND HPC.fk_estatus_pedido = EP.estatus_pedido_codigo;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -544,7 +546,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Creación de una función lista_minerales_solicitud()
-CREATE OR REPLACE FUNCTION lista_minerales_solicitud(aliado_id SMALLINT)
+CREATE OR REPLACE FUNCTION lista_minerales_solicitud(aliado_id INTEGER)
 RETURNS TABLE (mineral_codigo SMALLINT, mineral_nombre VARCHAR(30))
 AS $$
 BEGIN
@@ -556,31 +558,34 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Creación de una función ver_solicitud_compra()
-CREATE OR REPLACE FUNCTION ver_solicitud_compra(pedido_compra_id SMALLINT)
-RETURNS TABLE (pedido_compra_fecha_emision DATE, estatus_pedido_nombre VARCHAR(15), aliado_id SMALLINT, aliado_nombre VARCHAR(45), aliado_rif VARCHAR(20), aliado_correo VARCHAR(50),
-               aliado_direccion VARCHAR(100), aliado_telefono VARCHAR(15), ucab_emp VARCHAR(35), fecha_pago DATE, venta_asociada SMALLINT, pedido_compra_monto_total NUMERIC(10,2))
+CREATE OR REPLACE FUNCTION ver_solicitud_compra(pedido_compra_id INTEGER)
+RETURNS TABLE (pedido_compra_fecha_emision DATE, pedido_numero SMALLINT, estatus_pedido_nombre VARCHAR(15), aliado_id SMALLINT, aliado_nombre VARCHAR(45), aliado_rif VARCHAR(20), aliado_correo VARCHAR(50),
+               aliado_direccion VARCHAR(100), aliado_telefono TEXT, ucab_emp TEXT, fecha_pago DATE, venta_asociada TEXT, pedido_compra_monto_total NUMERIC(10,2))
 AS $$
 BEGIN
     -- La consulta selecciona los campos de la tabla pedido_compra y tablas asociadas a ella
-    RETURN QUERY SELECT P.pedido_compra_fecha_emision, EP.estatus_pedido_nombre, A.persona_jur_codigo, A.persona_jur_razon_social, A.persona_jur_rif,
+    RETURN QUERY SELECT P.pedido_compra_fecha_emision, P.pedido_compra_numero, EP.estatus_pedido_nombre, A.persona_jur_codigo, A.persona_jur_razon_social, A.persona_jur_rif,
                         -- Se utiliza COALESCE para manejar valores nulos en caso de que no existan registros asociados
-                        COALESCE(C.correo_nombre, NULL) AS correo, A.persona_jur_direccion_fiscal, COALESCE((T.telefono_prefijo||'-'||T.telefono_numero), NULL) AS aliado_telefono,
-                        COALESCE(E.empleado_primer_nombre||' '||E.empleado_primer_apellido, NULL) AS ucab_emp, COALESCE(PC.pago_compra_fecha_emision, NULL) AS fecha_pago,
-                        COALESCE(PCV.fk_pedido_venta_1, NULL) AS venta_asociada, P.pedido_compra_monto_total
+                        COALESCE(C.correo_nombre, 'No Posee Correo') AS correo, A.persona_jur_direccion_fiscal, COALESCE((T.telefono_prefijo||'-'||T.telefono_numero), 'No Posee Teléfono') AS aliado_telefono,
+                        COALESCE(E.empleado_primer_nombre||' '||E.empleado_primer_apellido, 'MinerUCAB No Posee Representante') AS ucab_emp, COALESCE(PC.pago_compra_fecha_emision, NULL) AS fecha_pago,
+                        COALESCE(CAST(PCV.fk_pedido_venta_1 AS TEXT), 'No hay Pedidos Asociados') AS venta_asociada, P.pedido_compra_monto_total
 
-    FROM pedido_compra P INNER JOIN historico_estatus_pedido_compra HPC ON P.pedido_compra_numero = HPC.fk_pedido_compra_1,
-         historico_estatus_pedido_compra HPC INNER JOIN estatus_pedido EP ON HPC.fk_estatus_pedido = EP.estatus_pedido_codigo,
-         aliado A LEFT JOIN correo C ON A.persona_jur_codigo = C.fk_aliado, aliado A LEFT JOIN telefono T ON A.persona_jur_codigo = T.fk_aliado,
+    FROM historico_estatus_pedido_compra HPC, estatus_pedido EP,
+         (SELECT HPC.fk_pedido_compra_1, MAX(HPC.hist_est_pedido_compra_codigo) FROM historico_estatus_pedido_compra HPC GROUP BY HPC.fk_pedido_compra_1) AS Ultimo_Estatus,
+         aliado A LEFT JOIN correo C ON A.persona_jur_codigo = C.fk_aliado, aliado A_2 LEFT JOIN telefono T ON A_2.persona_jur_codigo = T.fk_aliado,
          aliado AUCAB LEFT JOIN empleado E ON AUCAB.persona_jur_codigo = E.fk_aliado_1,
-         pago_compra PC LEFT JOIN pedido_compra P ON (PC.fk_pedido_compra_1 = P.pedido_compra_numero AND PC.fk_pedido_compra_2 = P.fk_aliado),
-        pedido_compra P LEFT JOIN pedido_compra_venta PCV ON P.pedido_compra_numero = PCV.fk_pedido_compra_1
+         pago_compra PC LEFT JOIN pedido_compra P_2 ON (PC.fk_pedido_compra_1 = P_2.pedido_compra_numero AND PC.fk_pedido_compra_2 = P_2.fk_aliado),
+        pedido_compra P LEFT JOIN pedido_compra_venta PCV ON PCV.fk_pedido_compra_1 = P.pedido_compra_numero
 
-    WHERE P.pedido_compra_numero = pedido_compra_id AND P.fk_aliado = A.persona_jur_codigo AND AUCAB.persona_jur_denominacion_comercial = 'MinerUCAB';
+    WHERE P.pedido_compra_numero = pedido_compra_id AND P.pedido_compra_numero = Ultimo_Estatus.fk_pedido_compra_1 AND HPC.hist_est_pedido_compra_codigo = Ultimo_Estatus.max
+        AND HPC.fk_estatus_pedido = EP.estatus_pedido_codigo AND P.fk_aliado = A.persona_jur_codigo AND AUCAB.persona_jur_denominacion_comercial = 'MinerUCAB'
+
+    LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Creación de una función update_estatus_pedido_compra()
-CREATE OR REPLACE PROCEDURE update_estatus_pedido_compra (IN pedido_compra_id SMALLINT, IN aliado_id SMALLINT)
+CREATE OR REPLACE PROCEDURE update_estatus_pedido_compra (IN pedido_compra_id INTEGER, IN aliado_id INTEGER)
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -593,11 +598,35 @@ BEGIN
 END;
 $$;
 
+-- Creación de una función obtener_estatus_pedido_compra()
+CREATE OR REPLACE FUNCTION obtener_estatus_pedido_compra(pedido_compra_id INTEGER)
+RETURNS VARCHAR(15)
+AS $$
+    DECLARE
+        estatus_pedido_nombre VARCHAR(15);
+BEGIN
+    -- La consulta selecciona el campo estatus_pedido_nombre de la tabla estatus_pedido
+    SELECT EP.estatus_pedido_nombre INTO estatus_pedido_nombre
+    FROM estatus_pedido EP, historico_estatus_pedido_compra HPC
+    WHERE HPC.fk_pedido_compra_1 = pedido_compra_id AND HPC.hist_est_pedido_compra_codigo = (SELECT MAX(HPC_2.hist_est_pedido_compra_codigo)
+                                                                                                                FROM historico_estatus_pedido_compra HPC_2
+                                                                                                                WHERE HPC_2.fk_pedido_compra_1 = pedido_compra_id)
+                AND HPC.fk_estatus_pedido = EP.estatus_pedido_codigo;
+    RETURN estatus_pedido_nombre;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Creación de una función obtener_metodos_pago()
-CREATE OR REPLACE FUNCTION obtener_metodos_pago(cliente_id SMALLINT)
+CREATE OR REPLACE FUNCTION obtener_metodos_pago()
 RETURNS TABLE (metodo_codigo SMALLINT, metodo_pago VARCHAR(30), tipo_metodo text)
 AS $$
+    DECLARE
+        cliente_id SMALLINT;
 BEGIN
+    SELECT C.persona_jur_codigo INTO cliente_id
+    FROM cliente C
+    WHERE C.persona_jur_denominacion_comercial = 'MinerUCAB';
+
     RETURN QUERY
         -- La consulta selecciona los campos de las tablas tarjeta_debito, tarjeta_credito, efectivo y cheque
         -- Se utiliza UNION para unir los resultados de las consultas en tres columnas
@@ -620,7 +649,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Creación de una función obtener_detalles_pedido_compra()
-CREATE OR REPLACE FUNCTION obtener_detalles_pedido_compra(pedido_compra_id SMALLINT)
+CREATE OR REPLACE FUNCTION obtener_detalles_pedido_compra(pedido_compra_id INTEGER)
 RETURNS TABLE (mineral_codigo SMALLINT, mineral_nombre VARCHAR(30), cantidad_mineral SMALLINT, precio_unitario NUMERIC(10,2))
 AS $$
 BEGIN
@@ -631,7 +660,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION obtener_pago_compra(pedido_compra_id SMALLINT, aliado_id SMALLINT)
+CREATE OR REPLACE FUNCTION obtener_pago_compra(pedido_compra_id INTEGER, aliado_id INTEGER)
 RETURNS TABLE (tipo_metodo text, fecha_pago DATE)
 AS $$
 BEGIN
@@ -649,7 +678,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Creación de un procedimiento almacenado sp_crear_pago_compra
-CREATE OR REPLACE PROCEDURE sp_crear_pago_compra (IN pedido_compra_id SMALLINT, IN aliado_id SMALLINT,  metodo_codigo SMALLINT, tipo_metodo text, IN monto_pedido NUMERIC(10,2), IN fecha_pago DATE)
+CREATE OR REPLACE PROCEDURE sp_crear_pago_compra (IN pedido_compra_id INTEGER, IN aliado_id INTEGER,  metodo_codigo INTEGER, tipo_metodo text, IN monto_pedido NUMERIC(10,2), IN fecha_pago DATE)
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -671,11 +700,15 @@ BEGIN
                         pedido_compra_id, aliado_id, monto_pedido, fecha_pago);
         -- Si el tipo de método de pago es 'Efectivo', se inserta el pago de compra con el método de pago correspondiente
         WHEN tipo_metodo = 'Efectivo' THEN
+                IF( (SELECT E.efectivo_denominacion FROM efectivo E WHERE E.metodo_pago_codigo = metodo_codigo) < monto_pedido) THEN
+                    RAISE EXCEPTION 'El monto del efectivo no es suficiente para realizar el pago';
+                ELSE
                 INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)
                 VALUES
                         ((SELECT MAX(pago_compra_codigo) FROM pago_compra)+1,
                         NULL, NULL, metodo_codigo, NULL,
                         pedido_compra_id, aliado_id, monto_pedido, fecha_pago);
+                END IF;
         -- Si el tipo de método de pago es 'Cheque', se inserta el pago de compra con el método de pago correspondiente
         WHEN tipo_metodo = 'Cheque' THEN
                 INSERT INTO pago_compra (pago_compra_codigo, fk_tarjeta_debito, fk_tarjeta_credito, fk_efectivo, fk_cheque, fk_pedido_compra_1, fk_pedido_compra_2, pago_compra_monto, pago_compra_fecha_emision)

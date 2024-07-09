@@ -6,6 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinerUCAB - Solicitudes</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_solicitudes_styles.css') }}">
+    <script>
+        function sortTable(column) {
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            let currentSort = searchParams.get('sort');
+            let currentOrder = searchParams.get('order');
+            let newOrder = 'asc';
+
+            if (currentSort === column && currentOrder === 'asc') {
+                newOrder = 'desc';
+            }
+
+            searchParams.set('sort', column);
+            searchParams.set('order', newOrder);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+
+        function searchSolicitudes() {
+            const searchValue = document.getElementById('searchInput').value;
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            searchParams.set('search', searchValue);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+    </script>
 </head>
 
 <body>
@@ -127,18 +160,18 @@
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Solicitud">
-                    <button class="search-button">🔍</button>
+                    <input type="text" id="searchInput" placeholder="Buscar Solicitud">
+                    <button class="search-button" onclick="searchSolicitudes()">🔍</button>
                 </div>
-                <button class="add-button-container" onclick="location.href='#'";>Agregar Solicitud</button>
+                <button class="add-button-container" onclick="location.href='register_solicitud'";>Agregar Solicitud</button>
             </div>
             <table class="activity-table">
                 <thead>
                     <tr>
-                        <th>Número</th>
-                        <th>Fecha Emisión</th>
-                        <th>Aliado</th>
-                        <th>Estatus</th>
+                        <th><a href="#" onclick="sortTable('pedido_codigo')">Número</a></th>
+                        <th><a href="#" onclick="sortTable('pedido_fecha_emision')">Fecha Emisión</a></th>
+                        <th><a href="#" onclick="sortTable('aliado')">Aliado</a></th>
+                        <th><a href="#" onclick="sortTable('pedido_estatus')">Estatus</a></th>
                         <th>Opción</th>
                     </tr>
                 </thead>
@@ -149,7 +182,7 @@
                         <td>{{ solicitud[1] }}</td>
                         <td>{{ solicitud[2] }}</td>
                         <td>{{ solicitud[3] }}</td>
-                        <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
+                        <td><a href="{{ url_for('chequear_estatus_pedido_compra', pedido_codigo=solicitud[0], aliado_id=solicitud[4]) }}"><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

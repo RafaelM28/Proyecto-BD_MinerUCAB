@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ver Detalle Solicitud de Compra - MinerUCAB</title>
-    <link rel="stylesheet" href="/static/css/ver_solicitud_compra_styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ver_solicitud_compra_styles.css') }}">
 </head>
 <body>
     <header class="header">
@@ -119,50 +119,57 @@
             <header>
                 <h2>Solicitud de Compra</h2>
             </header>
-            <form class="solicitud-form" method="POST" action="/send-solicitud"> <!-- Adjust action to your backend endpoint -->
+            <form class="solicitud-form" action="{{ url_for('update_estatus', pedido_codigo=solicitud[1], aliado_id=solicitud[3]) }}"> <!-- Adjust action to your backend endpoint -->
                 <div class="form-group">
                     <label for="fecha-emision">Fecha Emisión:</label>
-                    <input type="date" id="fecha-emision" name="fecha-emision" value="2023-04-16" readonly>
+                    <input type="date" id="fecha-emision" name="fecha-emision" value="{{ solicitud[0] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="numero-orden">Número de orden:</label>
-                    <input type="text" id="numero-orden" name="numero-orden" value="0017389" readonly>
+                    <input type="text" id="numero-orden" name="numero-orden" value="{{ solicitud[1] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="estatus">Estatus:</label>
-                    <input type="text" id="estatus" name="estatus" value="Por Enviar" readonly>
+                    <input type="text" id="estatus" name="estatus" value="{{ solicitud[2] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="razon-social">Razón Social:</label>
-                    <input type="text" id="razon-social" name="razon-social" value="CVG Industria Venezolana de Aluminio C.A." readonly>
+                    <!-- Input visible para el usuario, mostrando solicitud[4] -->
+                    <input type="text" id="razon-social-display" value="{{ solicitud[4] }}" readonly>
+                    <!-- Input oculto que realmente se enviará al servidor, conteniendo solicitud[3] -->
+                    <input type="hidden" id="razon-social" name="razon-social" value="{{ solicitud[3] }}">
                 </div>
                 <div class="form-group">
                     <label for="rif">RIF:</label>
-                    <input type="text" id="rif" name="rif" value="943267875" readonly>
+                    <input type="text" id="rif" name="rif" value="{{ solicitud[5] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="correo">Correo:</label>
-                    <input type="email" id="correo" name="correo" value="cvgvenalum@gmail.com" readonly>
+                    <input type="email" id="correo" name="correo" value="{{ solicitud[6] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="direccion">Dirección:</label>
-                    <input type="text" id="direccion" name="direccion" value="Sabana Grande 3" readonly>
+                    <input type="text" id="direccion" name="direccion" value="{{ solicitud[7] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="telefono">Teléfono:</label>
-                    <input type="text" id="telefono" name="telefono" value="0412-7462948" readonly>
+                    <input type="text" id="telefono" name="telefono" value="{{ solicitud[8] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="representante">Representante:</label>
-                    <input type="text" id="representante" name="representante" value="Leandro Andrade" readonly>
+                    <input type="text" id="representante" name="representante" value="{{ solicitud[9] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="metodo-pago">Método de Pago:</label>
-                    <input type="text" id="metodo-pago" name="metodo-pago">
+                    <input type="text" id="metodo-pago" name="metodo-pago" disabled>
                 </div>
                 <div class="form-group">
                     <label for="fecha-pago">Fecha Pago:</label>
-                    <input type="date" id="fecha-pago" name="fecha-pago">
+                    <input type="date" id="fecha-pago" name="fecha-pago" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="pedido-asociado">Pedido Asociado:</label>
+                    <input type="text" id="pedido-asociado" name="pedido-asociado" value="{{ solicitud[11] }}" readonly>
                 </div>
                 <div class="table-container">
                     <table>
@@ -176,18 +183,20 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% for detalle in detalles %}
                             <tr>
-                                <td>A097837</td>
-                                <td>Aluminio</td>
-                                <td>10</td>
-                                <td>US$ 7.72</td>
-                                <td>US$ 77.24</td>
+                                <td>{{ detalle[0] }}</td>
+                                <td>{{ detalle[1] }}</td>
+                                <td>{{ detalle[2] }}</td>
+                                <td>{{ detalle[3] }}</td>
+                                <td>{{ detalle[3] }}</td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr class="total-row">
                                 <td colspan="4" class="total">TOTAL</td>
-                                <td>US$ 77.24</td>
+                                <td>{{ solicitud[12] }}</td>
                             </tr>
                         </tfoot>
                     </table>
