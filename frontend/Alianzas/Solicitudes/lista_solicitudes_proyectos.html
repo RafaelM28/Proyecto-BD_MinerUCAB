@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinerUCAB -  Proyectos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_proyectos_styles.css') }}">
+    <title>MinerUCAB - Solicitudes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_solicitudes_styles.css') }}">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
         </div>
     </header>
 
-       <div class="main-container">
+    <div class="main-container">
         <div class="sidebar">
             <ul>
                 <div class="list-item">
@@ -119,39 +119,36 @@
 
         <main class="main-content">
             <div class="content-header">
-                <h1>Proyectos</h1>
+                <h1>Solicitudes</h1>
             </div>
             <div class="tabs">
-                <div class="tab active">Configuración</div>
-                <div class="tab">Ejecución</div>
-            </div>
-            <div class="tabs">
-                <a href="{{ url_for('lista_proyectos')}}"><div class="tab active">Proyectos</div></a>
-                <a href="{{ url_for('lista_etapas')}}"><div class="tab">Etapas</div></a>
-                <a href="{{ url_for('lista_actividades')}}"><div class="tab">Actividades</div></a>
+                <div class="tab">Compras</div>
+                <div class="tab active">Proyectos</div>
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Proyecto">
+                    <input type="text" placeholder="Buscar Solicitud">
                     <button class="search-button">🔍</button>
                 </div>
-                <button class="add-button-container" onclick="location.href='#'";>Agregar Proyecto</button>
+                <button class="add-button-container" onclick="location.href='#'";>Agregar Solicitud</button>
             </div>
             <table class="activity-table">
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Mineral</th>
+                        <th>Número</th>
+                        <th>Fecha Emisión</th>
+                        <th>Aliado</th>
+                        <th>Estatus</th>
                         <th>Opción</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for proyecto in proyectos %}
+                    {% for solicitud in solicitudes %}
                     <tr>
-                        <td>{{ proyecto[0] }}</td>
-                        <td>{{ proyecto[1] }}</td>
-                        <td>{{ proyecto[2] }}</td>
+                        <td>{{ solicitud[0] }}</td>
+                        <td>{{ solicitud[1] }}</td>
+                        <td>{{ solicitud[2] }}</td>
+                        <td>{{ solicitud[3] }}</td>
                         <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
                     </tr>
                     {% endfor %}

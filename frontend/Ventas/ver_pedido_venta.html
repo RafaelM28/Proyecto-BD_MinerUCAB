@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinerUCAB - Solicitudes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_solicitudes_styles.css') }}">
+    <title>Ver Detalle Solicitud de Compra - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/ver_pedido_venta_styles.css">
 </head>
-
 <body>
     <header class="header">
         <div class="logo">MINERUCAB</div>
@@ -118,43 +116,95 @@
         </div>
 
         <main class="main-content">
-            <div class="content-header">
-                <h1>Solicitudes</h1>
-            </div>
-            <div class="content-header">
-                <div class="search-container">
-                    <input type="text" placeholder="Buscar Solicitud">
-                    <button class="search-button">🔍</button>
+            <header>
+                <h2>Pedido de Venta</h2>
+            </header>
+            <form class="solicitud-form" method="POST" action="/ver_detalle_pedido"> <!-- Adjust action to your backend endpoint -->
+                <div class="form-group">
+                    <label for="fecha-emision">Fecha Emisión:</label>
+                    <input type="date" id="fecha-emision" name="fecha-emision" value="2023-04-16" readonly>
                 </div>
-                <button class="add-button-container" onclick="location.href='#'";>Agregar Solicitud</button>
-            </div>
-            <table class="activity-table">
-                <thead>
-                    <tr>
-                        <th>Número</th>
-                        <th>Fecha Emisión</th>
-                        <th>Aliado</th>
-                        <th>Estatus</th>
-                        <th>Opción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for solicitud in solicitudes %}
-                    <tr>
-                        <td>{{ solicitud[0] }}</td>
-                        <td>{{ solicitud[1] }}</td>
-                        <td>{{ solicitud[2] }}</td>
-                        <td>{{ solicitud[3] }}</td>
-                        <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="pagination">
-                <!-- Add pagination if needed -->
-            </div>
+                <div class="form-group">
+                    <label for="numero-orden">Número de orden:</label>
+                    <input type="text" id="numero-orden" name="numero-orden" value="0017389" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="estatus">Estatus:</label>
+                    <input type="text" id="estatus" name="estatus" value="Por Enviar" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="razon-social">Razón Social:</label>
+                    <input type="text" id="razon-social" name="razon-social" value="CVG Industria Venezolana de Aluminio C.A.">
+                </div>
+                <div class="form-group">
+                    <label for="rif">RIF:</label>
+                    <input type="text" id="rif" name="rif" value="943267875">
+                </div>
+                <div class="form-group">
+                    <label for="correo">Correo:</label>
+                    <input type="email" id="correo" name="correo" value="cvgvenalum@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección:</label>
+                    <input type="text" id="direccion" name="direccion" value="Sabana Grande 3">
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" id="telefono" name="telefono" value="0412-7462948">
+                </div>
+                <div class="form-group">
+                    <label for="representante">Representante:</label>
+                    <input type="text" id="representante" name="representante" value="Leandro Andrade">
+                </div>
+                <div class="form-group">
+                    <label for="metodo-pago">Método de Pago:</label>
+                    <input type="text" id="metodo-pago" name="metodo-pago" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="fecha-pago">Fecha Pago:</label>
+                    <input type="date" id="fecha-pago" name="fecha-pago" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Proyecto Asociado:</label>
+                    <input type="text" id="telefono" name="telefono" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Solicitud Asociada:</label>
+                    <input type="text" id="telefono" name="telefono" value="" readonly>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unit.</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>A097837</td>
+                                <td>Aluminio</td>
+                                <td>10</td>
+                                <td>US$ 7.72</td>
+                                <td>US$ 77.24</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="4" class="total">TOTAL</td>
+                                <td>US$ 77.24</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Enviar</button>
+                </div>
+            </form>
         </main>
     </div>
 </body>
-
 </html>

@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinerUCAB -  Proyectos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_proyectos_styles.css') }}">
+    <title>Crear Solicitud - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/crear_solicitud_compra_styles.css">
 </head>
-
 <body>
     <header class="header">
         <div class="logo">MINERUCAB</div>
@@ -20,7 +18,7 @@
         </div>
     </header>
 
-       <div class="main-container">
+    <div class="main-container">
         <div class="sidebar">
             <ul>
                 <div class="list-item">
@@ -116,52 +114,38 @@
 
             </ul>
         </div>
-
+        
         <main class="main-content">
-            <div class="content-header">
-                <h1>Proyectos</h1>
-            </div>
-            <div class="tabs">
-                <div class="tab active">Configuración</div>
-                <div class="tab">Ejecución</div>
-            </div>
-            <div class="tabs">
-                <a href="{{ url_for('lista_proyectos')}}"><div class="tab active">Proyectos</div></a>
-                <a href="{{ url_for('lista_etapas')}}"><div class="tab">Etapas</div></a>
-                <a href="{{ url_for('lista_actividades')}}"><div class="tab">Actividades</div></a>
-            </div>
-            <div class="content-header">
-                <div class="search-container">
-                    <input type="text" placeholder="Buscar Proyecto">
-                    <button class="search-button">🔍</button>
+            <header>
+                <h2>Solicitud</h2>
+            </header>
+            <form class="solicitud-form" method="POST" action="/create-solicitud"> <!-- Adjust action to your backend endpoint -->
+                <div class="form-group">
+                    <label for="aliado">Aliado: *</label>
+                    <select id="aliado" name="aliado" readonly>
+                        <option value="CVG VENALUM">CVG VENALUM</option>
+                    </select>
                 </div>
-                <button class="add-button-container" onclick="location.href='#'";>Agregar Proyecto</button>
-            </div>
-            <table class="activity-table">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Mineral</th>
-                        <th>Opción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for proyecto in proyectos %}
-                    <tr>
-                        <td>{{ proyecto[0] }}</td>
-                        <td>{{ proyecto[1] }}</td>
-                        <td>{{ proyecto[2] }}</td>
-                        <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="pagination">
-                <!-- Add pagination if needed -->
-            </div>
+                <div class="form-group">
+                    <label for="minerales">Minerales: *</label>
+                    <div class="minerales-input-group">
+                        <select id="minerales" name="minerales" readonly>
+                            <option value="Carbon">Carbon</option>
+                            <option value="Cobre">Cobre</option>
+                        </select>
+                        <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad" required>
+                        <input type="number" id="precio-unit" name="precio-unit" placeholder="Precio Unit." required>
+                        <button type="button" onclick="addMineral()">Cargar</button>
+                    </div>
+                </div>
+                <div class="selected-minerales" id="selected-minerales">
+                    <!-- Dynamically added minerals will appear here -->
+                </div>
+                <div class="form-group">
+                    <button type="submit">Crear</button>
+                </div>
+            </form>
         </main>
     </div>
 </body>
-
 </html>

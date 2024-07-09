@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinerUCAB -  Proyectos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_proyectos_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_proyectos_ejecucion_styles.css') }}">
 </head>
 
 <body>
@@ -14,13 +14,13 @@
         <div class="nav-buttons">
             <img class="img-proyectos" src="/static/images/image 4.svg" />
             <div class="botones">
-                <button class="botones1" onclick="location.href='lista_proyectos_config';">Proyectos</button>
+                <button class="botones1">Proyectos</button>
             </div>
             <button class="botones2">Perfil</button>
         </div>
     </header>
 
-       <div class="main-container">
+    <div class="main-container">
         <div class="sidebar">
             <ul>
                 <div class="list-item">
@@ -53,7 +53,7 @@
                     <img width="32px" class="icon" src="/static/images/image 16.svg" alt="" />
                     <span class="text2">Alianzas</span>
                 </div>
-                
+
                 <ul class="sub-listas">
                     <a href="{{ url_for('lista_aliados') }}">
                         <li class="li" href="#">Aliados</li>
@@ -65,6 +65,13 @@
                         <li class="li2" href="#">Pagos Compra</li>
                     </a>
                 </ul>
+
+                <a href="#">
+                    <div class="list-item2">
+                        <img width="35px" class="icon" src="../catalogo/imagenes/image 15.svg" alt="" />
+                        <span class="text">Compras</span>
+                    </div>
+                </a>
                 
                 <div class="list-item2">
                     <img width="30px" class="icon" src="/static/images/image 14.svg" alt="" />
@@ -113,7 +120,6 @@
                         <li class="li2" href="#">Privilegios</li>
                     </a>
                 </ul>
-
             </ul>
         </div>
 
@@ -122,20 +128,17 @@
                 <h1>Proyectos</h1>
             </div>
             <div class="tabs">
-                <div class="tab active">Configuración</div>
-                <div class="tab">Ejecución</div>
-            </div>
-            <div class="tabs">
-                <a href="{{ url_for('lista_proyectos')}}"><div class="tab active">Proyectos</div></a>
-                <a href="{{ url_for('lista_etapas')}}"><div class="tab">Etapas</div></a>
-                <a href="{{ url_for('lista_actividades')}}"><div class="tab">Actividades</div></a>
+                <div class="tab">Configuración</div>
+                <div class="tab active">Ejecución</div>
             </div>
             <div class="content-header">
                 <div class="search-container">
                     <input type="text" placeholder="Buscar Proyecto">
                     <button class="search-button">🔍</button>
                 </div>
-                <button class="add-button-container" onclick="location.href='#'";>Agregar Proyecto</button>
+                <div class="add-button-container">
+                    <button class="add-button">Agregar Proyecto</button>
+                </div>
             </div>
             <table class="activity-table">
                 <thead>
@@ -143,6 +146,7 @@
                         <th>Código</th>
                         <th>Nombre</th>
                         <th>Mineral</th>
+                        <th>Estatus</th>
                         <th>Opción</th>
                     </tr>
                 </thead>
@@ -152,13 +156,23 @@
                         <td>{{ proyecto[0] }}</td>
                         <td>{{ proyecto[1] }}</td>
                         <td>{{ proyecto[2] }}</td>
-                        <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
+                        <td>{{ proyecto[3] }}</td>
+                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">
-                <!-- Add pagination if needed -->
+                <button class="page-button">1</button>
+                <button class="page-button">2</button>
+                <button class="page-button">3</button>
+                <button class="page-button">4</button>
+                <button class="page-button">5</button>
+                <button class="page-button">6</button>
+                <button class="page-button">7</button>
+                <button class="page-button">8</button>
+                <button class="page-button">9</button>
+                <button class="page-button">10</button>
             </div>
         </main>
     </div>

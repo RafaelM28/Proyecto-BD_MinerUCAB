@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinerUCAB -  Proyectos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_proyectos_styles.css') }}">
+    <title>MinerUCAB - Minerales</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_pedidos_venta_styles.css') }}">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
         </div>
     </header>
 
-       <div class="main-container">
+    <div class="main-container">
         <div class="sidebar">
             <ul>
                 <div class="list-item">
@@ -119,46 +119,50 @@
 
         <main class="main-content">
             <div class="content-header">
-                <h1>Proyectos</h1>
-            </div>
-            <div class="tabs">
-                <div class="tab active">Configuración</div>
-                <div class="tab">Ejecución</div>
-            </div>
-            <div class="tabs">
-                <a href="{{ url_for('lista_proyectos')}}"><div class="tab active">Proyectos</div></a>
-                <a href="{{ url_for('lista_etapas')}}"><div class="tab">Etapas</div></a>
-                <a href="{{ url_for('lista_actividades')}}"><div class="tab">Actividades</div></a>
+                <h1>Pedidos Venta</h1>
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Proyecto">
+                    <input type="text" placeholder="Buscar Pedido">
                     <button class="search-button">🔍</button>
                 </div>
-                <button class="add-button-container" onclick="location.href='#'";>Agregar Proyecto</button>
+                <div class="add-button-container">
+                    <a href="#" class="add-button">Agregar Pedido</a>
+                </div>
             </div>
             <table class="activity-table">
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Mineral</th>
+                        <th>Número</th>
+                        <th>Fecha Emisión</th>
+                        <th>Cliente</th>
+                        <th>Estatus</th>
                         <th>Opción</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for proyecto in proyectos %}
+                    {% for pedido in pedidos %}
                     <tr>
-                        <td>{{ proyecto[0] }}</td>
-                        <td>{{ proyecto[1] }}</td>
-                        <td>{{ proyecto[2] }}</td>
-                        <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
+                        <td>{{ pedido[0] }}</td>
+                        <td>{{ pedido[1] }}</td>
+                        <td>{{ pedido[2] }}</td>
+                        <td>{{ pedido[3] }}</td>
+                        <td><button class="action-button"><img src="settings-icon.png" alt="Settings"></button></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
             <div class="pagination">
-                <!-- Add pagination if needed -->
+                <button class="page-button">1</button>
+                <button class="page-button">2</button>
+                <button class="page-button">3</button>
+                <button class="page-button">4</button>
+                <button class="page-button">5</button>
+                <button class="page-button">6</button>
+                <button class="page-button">7</button>
+                <button class="page-button">8</button>
+                <button class="page-button">9</button>
+                <button class="page-button">10</button>
             </div>
         </main>
     </div>
