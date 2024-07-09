@@ -31,7 +31,12 @@ def connection():
         print("Ocurrió un error al conectar a la base de datos:", e)
         return None  
     
+@app.route('/lista_reportes')
+def lista_reportes():
 
+    return render_template('Proyecto_Ejecucion/reportes_proyecto_ejecucion.html')
+    
+    
 @app.route('/')
 def inicio():
     return redirect(url_for('home'))
