@@ -124,7 +124,7 @@
                     <label for="cliente">Cliente: *</label>
                     <select id="cliente" name="cliente" required>
                         <option value="">Cliente</option>
-                        {% for cliente in cliente %}
+                        {% for cliente in clientes %}
                         <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
                         {% endfor %}
                     </select>
@@ -136,7 +136,7 @@
 
                         <select id="minerales" name="minerales">
                             {% for mineral in minerales %}
-                            <option value="{{ mineral[0] }}">{{ minerales[1] }}</option>
+                            <option value="{{ mineral[0] }}">{{ mineral[1] }}</option>
                             {% endfor %}
                         </select>
                         <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad">
@@ -173,8 +173,22 @@
             // Validar que los campos no estén vacíos
             if (mineral && cantidad && precioUnit) {
                 var tbody = document.getElementById('tablaMinerales').getElementsByTagName('tbody')[0];
+                var existeMineral = false;
+            
+                // Verificar si el mineral ya fue agregado a la tabla
+                for (var i = 0; i < tbody.rows.length; i++) {
+                    if (tbody.rows[i].cells[0].textContent.includes(mineral)) {
+                        existeMineral = true;
+                        break;
+                    }
+                }
+
+                if (existeMineral) {
+                alert('El mineral seleccionado ya ha sido agregado.');
+                return; // Detener la ejecución para no agregar la fila
+                }
+
                 var rowIndex = tbody.rows.length; // Índice basado en la cantidad de filas existentes
-                // Crear una nueva fila
                 // Crear una nueva fila con inputs ocultos para enviar los datos
                 var fila = `<tr>
                                 <td>${mineral}<input type="hidden" name="mineral[${rowIndex}]" value="${mineral}"></td>

@@ -190,6 +190,11 @@ BEGIN
                 ((SELECT MAX(hist_est_pedido_venta_codigo) FROM historico_estatus_pedido_venta)+1,
                 (SELECT estatus_pedido_codigo FROM estatus_pedido WHERE estatus_pedido_nombre = 'Pagado'),
                 OLD.fk_pedido_venta_1, OLD.fk_pedido_venta_2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+    -- Cuando no existe suficiente inventario para el pedido de venta y se confirma su reposición
+    -- No se hace nada porque el historico_estatus ya esta actualiado
+    ELSIF OLD.fk_estatus_pedido IN (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre IN ('Por iniciar', 'Por reponer')) THEN
+            -- No se realiza ninguna acción cuando el estatus del pedido de venta es 'Por iniciar' o 'Por reponer'
     END IF;
     RETURN NEW;
 END;
@@ -201,8 +206,18 @@ RETURNS TRIGGER AS $$
 BEGIN
 	--Borra el registro correspondiente en la tabla Inventario_Producto
     DELETE FROM Inventario_Producto
-    WHERE inventario_producto_codigo = OLD.fk_inventario_producto_1
-    AND fk_mineral = OLD.fk_inventario_producto_2;
+    WHERE inventario_producto_codigo = OLD.fk_inventario_producto_1;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+--Creacion de una funcion borrar_detalle_pedido_venta
+CREATE OR REPLACE FUNCTION borrar_detalle_pedido_venta()
+RETURNS TRIGGER AS $$
+BEGIN
+	--Borra el registro correspondiente en la tabla Inventario_Producto
+    DELETE FROM Inventario_Producto
+    WHERE inventario_producto_codigo = OLD.fk_inventario_producto_1;
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
@@ -377,6 +392,20 @@ BEGIN
     END LOOP;
     -- Actualizar el monto subtil del pedido de compra en base al precio de la fila
     UPDATE Pedido_Compra SET pedido_compra_monto_subtil = pedido_monto_subtil, pedido_compra_monto_total = (pedido_monto_subtil*1.16) WHERE pedido_compra_numero = (SELECT MAX(pedido_compra_numero) FROM Pedido_Compra);
+END;
+$$;
+
+-- Creación de un procedimiento almacenado sp_crear_relacion_solicitud_pedido
+CREATE OR REPLACE PROCEDURE sp_crear_relacion_solicitud_pedido(pedido_venta_codigo INTEGER, aliado_codigo INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Insertar los datos en la tabla de pedido_compra_venta
+    INSERT INTO pedido_compra_venta (fk_pedido_venta_1, fk_pedido_venta_2, fk_pedido_compra_1, fk_pedido_compra_2) VALUES
+    (pedido_venta_codigo,
+    (SELECT PV.fk_cliente FROM pedido_venta PV ORDER BY PV.pedido_venta_numero DESC LIMIT 1),
+     (SELECT PC.pedido_compra_numero FROM pedido_compra PC ORDER BY PC.pedido_compra_numero DESC LIMIT 1),
+     aliado_codigo);
 END;
 $$;
 
@@ -672,6 +701,20 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Creación de una función lista_minerales_solicitud_pedido()
+CREATE OR REPLACE FUNCTION lista_aliados_solicitud_pedido(mineral_codigo INTEGER)
+RETURNS TABLE (aliado_codigo SMALLINT, aliado_nombre VARCHAR(50))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla aliado
+    RETURN QUERY SELECT A.persona_jur_codigo, A.persona_jur_razon_social
+    FROM aliado A, inventario_yacim_mineral IYM
+    WHERE A.persona_jur_codigo = IYM.fk_aliado AND mineral_codigo = IYM.fk_mineral;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM lista_aliados_solicitud_pedido(1);
+
 -- Creación de una función lista_minerales_solicitud()
 CREATE OR REPLACE FUNCTION lista_minerales_solicitud(aliado_id INTEGER)
 RETURNS TABLE (mineral_codigo SMALLINT, mineral_nombre VARCHAR(30))
@@ -722,7 +765,7 @@ BEGIN
                         -- Se utiliza COALESCE para manejar valores nulos en caso de que no existan registros asociados
                         COALESCE(CR.correo_nombre, 'No Posee Correo') AS cliente_correo, C.persona_jur_direccion_fiscal, COALESCE((T.telefono_prefijo||'-'||T.telefono_numero), 'No Posee Teléfono') AS cliente_telefono,
                         COALESCE(E.empleado_primer_nombre||' '||E.empleado_primer_apellido, 'MinerUCAB No Posee Representante') AS ucab_emp, COALESCE(PV.pago_venta_fecha_emision, NULL) AS fecha_pago,
-                        COALESCE(CAST(PCV.fk_pedido_venta_1 AS TEXT), 'No hay Pedidos Asociados') AS solicitud_asociada,
+                        COALESCE(CAST(PCV.fk_pedido_compra_1 AS TEXT), 'No hay Solicitudes Asociadas') AS solicitud_asociada,
                         COALESCE(CAST(PVP.fk_proyecto_ejecucion AS TEXT), 'No hay Proyectos Asociados') AS proyecto_asociado,
                             P.pedido_venta_monto_total
 
@@ -766,6 +809,50 @@ BEGIN
     WHERE HPV.hist_est_pedido_venta_codigo = (SELECT MAX(HPV_2.hist_est_pedido_venta_codigo)
                                                                                 FROM historico_estatus_pedido_venta HPV_2
                                                                                 WHERE HPV_2.fk_pedido_venta_1 = pedido_venta_id AND HPV_2.fk_pedido_venta_2 = cliente_id);
+END;
+$$;
+
+-- Creación de una función update_estatus_pedido_reposicion_venta()
+CREATE OR REPLACE PROCEDURE update_estatus_pedido_reposicion_venta (IN pedido_venta_id INTEGER, IN cliente_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Actualiza el registro de Historico_Estatus_Pedido_Venta con la fecha de fin
+    UPDATE historico_estatus_pedido_venta HPV
+    SET hist_est_pedido_venta_fecha_fin = CURRENT_TIMESTAMP
+    WHERE HPV.hist_est_pedido_venta_codigo = (SELECT MAX(HPV_2.hist_est_pedido_venta_codigo)
+                                                                                FROM historico_estatus_pedido_venta HPV_2
+                                                                                WHERE HPV_2.fk_pedido_venta_1 = pedido_venta_id AND HPV_2.fk_pedido_venta_2 = cliente_id);
+
+    -- Actualiza el registro de Historico_Estatus_Pedido_Venta con el nuevo estatus
+    INSERT INTO historico_estatus_pedido_venta (hist_est_pedido_venta_codigo, fk_estatus_pedido, fk_pedido_venta_1, fk_pedido_venta_2, hist_est_pedido_venta_fecha_inicio, hist_est_pedido_venta_fecha_fin)
+            VALUES
+                ((SELECT MAX(hist_est_pedido_venta_codigo) FROM historico_estatus_pedido_venta)+1,
+                (SELECT estatus_pedido_codigo FROM estatus_pedido WHERE estatus_pedido_nombre = 'Por iniciar'),
+                pedido_venta_id, cliente_id, CURRENT_TIMESTAMP, NULL);
+
+    DELETE FROM historico_estatus_pedido_venta WHERE fk_pedido_venta_1 = pedido_venta_id AND fk_estatus_pedido = (SELECT estatus_pedido_codigo FROM estatus_pedido WHERE estatus_pedido_nombre = 'Por pagar');
+END;
+$$;
+
+-- Creación de una función update_estatus_pedido_confirmar_reposicion_venta()
+CREATE OR REPLACE PROCEDURE update_estatus_pedido_confirmar_reposicion_venta (IN pedido_venta_id INTEGER, IN cliente_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Actualiza el registro de Historico_Estatus_Pedido_Venta con la fecha de fin
+    UPDATE historico_estatus_pedido_venta HPV
+    SET hist_est_pedido_venta_fecha_fin = CURRENT_TIMESTAMP
+    WHERE HPV.hist_est_pedido_venta_codigo = (SELECT MAX(HPV_2.hist_est_pedido_venta_codigo)
+                                                                                FROM historico_estatus_pedido_venta HPV_2
+                                                                                WHERE HPV_2.fk_pedido_venta_1 = pedido_venta_id AND HPV_2.fk_pedido_venta_2 = cliente_id);
+
+    -- Actualiza el registro de Historico_Estatus_Pedido_Venta con el nuevo estatus
+    INSERT INTO historico_estatus_pedido_venta (hist_est_pedido_venta_codigo, fk_estatus_pedido, fk_pedido_venta_1, fk_pedido_venta_2, hist_est_pedido_venta_fecha_inicio, hist_est_pedido_venta_fecha_fin)
+            VALUES
+                ((SELECT MAX(hist_est_pedido_venta_codigo) FROM historico_estatus_pedido_venta)+1,
+                (SELECT estatus_pedido_codigo FROM estatus_pedido WHERE estatus_pedido_nombre = 'Por reponer'),
+                pedido_venta_id, cliente_id, CURRENT_TIMESTAMP, NULL);
 END;
 $$;
 
@@ -846,7 +933,7 @@ AS $$
 BEGIN
     SELECT C.persona_jur_codigo INTO cliente_id
     FROM cliente C
-    WHERE C.persona_jur_denominacion_comercial = pedido_cliente_id;
+    WHERE C.persona_jur_codigo = pedido_cliente_id;
 
     RETURN QUERY
         -- La consulta selecciona los campos de las tablas tarjeta_debito, tarjeta_credito, efectivo y cheque
@@ -888,6 +975,18 @@ AS $$
 BEGIN
     -- La consulta selecciona los campos de la tabla detalle_pedido_venta y tablas asociadas a ella
     RETURN QUERY SELECT M.mineral_codigo, M.mineral_nombre, DPV.detalle_venta_cantidad_mineral, DPV.detalle_venta_precio_unitario
+    FROM detalle_pedido_venta DPV, mineral M
+    WHERE DPV.fk_pedido_venta_1 = pedido_venta_id AND DPV.fk_inventario_producto_2 = M.mineral_codigo;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función obtener_detalles_pedido_venta_solicitud()
+CREATE OR REPLACE FUNCTION obtener_detalles_pedido_venta_solicitud(pedido_venta_id INTEGER)
+RETURNS TABLE (mineral_codigo SMALLINT, cantidad_mineral SMALLINT, precio_unitario NUMERIC(10,2))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla detalle_pedido_venta y tablas asociadas a ella
+    RETURN QUERY SELECT M.mineral_codigo, DPV.detalle_venta_cantidad_mineral, DPV.detalle_venta_precio_unitario
     FROM detalle_pedido_venta DPV, mineral M
     WHERE DPV.fk_pedido_venta_1 = pedido_venta_id AND DPV.fk_inventario_producto_2 = M.mineral_codigo;
 END;
@@ -1053,3 +1152,58 @@ BEGIN
           );
 END;
 $$ LANGUAGE plpgsql;
+
+-- Creación de una función obtener_pedido_venta_cliente()
+CREATE OR REPLACE FUNCTION obtener_pedido_venta_cliente(cliente_id INTEGER)
+RETURNS SMALLINT
+AS $$
+DECLARE
+    pedido_venta_numero SMALLINT;
+BEGIN
+    -- Se obtiene el último pedido de venta asociado al cliente
+    SELECT PV.pedido_venta_numero INTO pedido_venta_numero
+    FROM pedido_venta PV
+    WHERE PV.pedido_venta_numero = (SELECT MAX(PV2.pedido_venta_numero) FROM pedido_venta PV2 WHERE PV2.fk_cliente = cliente_id);
+
+    RETURN pedido_venta_numero;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función chequear_inventario()
+CREATE OR REPLACE FUNCTION chequear_inventario(detalle_venta tipo_detalle_venta[])
+RETURNS BOOLEAN
+AS $$
+DECLARE
+    fila tipo_detalle_venta;
+    cantidad_disponible INTEGER;
+BEGIN
+    -- Se recorre el arreglo de detalle_venta
+    FOREACH fila IN ARRAY detalle_venta LOOP
+        -- Se obtiene la cantidad total disponible del mineral en el inventario
+        SELECT inventario_producto_cantidad_total INTO cantidad_disponible
+        FROM inventario_producto
+        WHERE inventario_producto_codigo = (
+            SELECT MAX(inventario_producto_codigo)
+            FROM inventario_producto
+            WHERE fk_mineral = fila.detalle_mineral
+        );
+
+        -- Si la cantidad disponible es menor a la cantidad solicitada, se retorna FALSE
+        IF cantidad_disponible < fila.detalle_cantidad THEN
+            RETURN FALSE;
+        END IF;
+    END LOOP;
+    -- Si la cantidad disponible es mayor o igual a la cantidad solicitada, se retorna TRUE
+    RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de un procedimiento almacenado sp_borrar_pedido_venta
+CREATE OR REPLACE PROCEDURE sp_borrar_pedido_venta (IN pedido_venta_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Se borra el pedido de venta
+    DELETE FROM pedido_venta WHERE pedido_venta_numero = pedido_venta_id;
+END;
+$$;

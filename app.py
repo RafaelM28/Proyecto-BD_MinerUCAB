@@ -583,10 +583,21 @@ def lista_actividades():
 # Definición de la ruta '/lista_pedidos_venta'
 @app.route('/lista_pedidos_venta')
 def lista_pedidos_venta():
+    sort = request.args.get('sort', 'pedido_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_pedidos_venta()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(pedido_codigo AS TEXT) LIKE '%{search}%' OR CAST(pedido_fecha_emision AS TEXT) LIKE '%{search}%' OR cliente LIKE '%{search}%' OR pedido_estatus LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    # Ejecución de la función almacenada 'lista_pedidos_venta' que retorna una lista de pedidos de venta
-    cur.execute("SELECT * FROM lista_pedidos_venta()")
+    cur.execute(query)
     pedidos = cur.fetchall()  
     
     # Cierre del cursor y de la conexión a la base de datos
@@ -633,12 +644,38 @@ def register_pedido():
         cur.execute(query)
         # Commit de los cambios
         cur.connection.commit()
+        
+        tablaMinerales_arg = f"ARRAY[{tablaMinerales_str}]::tipo_detalle_venta[]"
+        cur.execute(f"SELECT chequear_inventario({tablaMinerales_arg})")
+        resultado = cur.fetchone()[0]  # Asume que la función retorna un solo valor    
         # Cerrar el cursor 
         cur.connection.close()
         cur.close()
         
-        return redirect(url_for('lista_pedidos_venta'))
-    
+        # Redirigir basado en el resultado de la función
+        if resultado:
+            return redirect(url_for('lista_pedidos_venta'))
+        else:
+            # Ejecución de la función almacenada 'obtener_pedido_venta_cliente' que retorna el código de un pedido de venta
+            cur = connection().cursor()
+            cur.execute("SELECT * FROM obtener_pedido_venta_cliente(%s)", (cliente,))
+            pedido_codigo = cur.fetchone()[0]
+            cur.close()
+            cur = connection().cursor()
+            
+            # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de pedido de venta
+            cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+            pedido = cur.fetchone() 
+            cur.close()  
+            cur = connection().cursor()
+            
+            # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+            cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+            detalles = cur.fetchall()
+            cur.close()
+            connection().close()  
+            return render_template('Ventas/ver_pedido_error_inventario.html', pedido=pedido, detalles=detalles)
+        
     cur = connection().cursor()
     cur.execute("SELECT * FROM lista_clientes_venta()")
     clientes = cur.fetchall()
@@ -674,6 +711,10 @@ def chequear_estatus_pedido_venta(pedido_codigo, cliente_id):
         return redirect(url_for('ver_pedido_venta_confirmada', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
     elif estatus in conjunto_pagado:    
         return redirect(url_for('ver_pedido_venta_pagada', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+    elif estatus == 'Por iniciar':
+        return redirect(url_for('ver_pedido_venta_seleccion_reponer', pedido_codigo=pedido_codigo,))
+    elif estatus == 'Por reponer': 
+        return redirect(url_for('ver_pedido_venta_en_reposicion', pedido_codigo=pedido_codigo,))
     else:
         return "Estatus desconocido o pedido no encontrado", 404   
     
@@ -698,6 +739,48 @@ def ver_pedido_venta(pedido_codigo):
     # Renderización de la plantilla HTML para 'ver_pedido_venta', pasando los datos del pedido al template
     return render_template('Ventas/ver_pedido_venta.html', pedido=pedido, detalles=detalles) 
 
+# Definición de la ruta '/ver_pedido_venta_seleccion_reponer/<int:pedido_codigo>'
+@app.route('/ver_pedido_venta_seleccion_reponer/<int:pedido_codigo>', methods=['GET'])
+def ver_pedido_venta_seleccion_reponer(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta_seleccion_reponer', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta_seleccion_reponer.html', pedido=pedido, detalles=detalles) 
+
+# Definición de la ruta '/ver_pedido_venta_en_reposicion/<int:pedido_codigo>'
+@app.route('/ver_pedido_venta_en_reposicion/<int:pedido_codigo>', methods=['GET'])
+def ver_pedido_venta_en_reposicion(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta_en_reposicion', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta_en_reposicion.html', pedido=pedido, detalles=detalles) 
+
 # Definición de la ruta '/ver_pedido_venta_confirmada/<int:pedido_codigo>/<int:cliente_id>'
 @app.route('/ver_pedido_venta_confirmada/<int:pedido_codigo>/<int:cliente_id>', methods=['GET'])
 def ver_pedido_venta_confirmada(pedido_codigo, cliente_id):
@@ -714,7 +797,7 @@ def ver_pedido_venta_confirmada(pedido_codigo, cliente_id):
     cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
     detalles = cur.fetchall()
     cur.close()
-    connection().close()  
+    cur = connection().cursor()  
     
     # Ejecución de la función almacenada 'obtener_metodos_pago_cliente' que retorna los métodos de pago del cliente
     cur.execute("SELECT * FROM obtener_metodos_pago_cliente(%s)", (cliente_id,))
@@ -754,7 +837,7 @@ def register_pago_venta():
         conn.close()
 
     # Si todo fue exitoso, rediriges al usuario a otra página
-    return redirect(url_for('update_estatus', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+    return redirect(url_for('update_estatus_venta', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
 
 # Definición de la ruta '/ver_pedido_venta_pagada/<int:pedido_codigo>/<int:cliente_id>'
 @app.route('/ver_pedido_venta_pagada/<int:pedido_codigo>/<int:cliente_id>', methods=['GET'])
@@ -772,7 +855,7 @@ def ver_pedido_venta_pagada(pedido_codigo, cliente_id):
     cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
     detalles = cur.fetchall()
     cur.close()
-    connection().close()  
+    cur = connection().cursor()
     
     # Ejecución de la función almacenada 'obtener_metodos_pago_venta' que retorna los métodos de pago de la venta
     cur.execute("SELECT * FROM obtener_pago_venta(%s, %s)", (pedido_codigo,cliente_id))
@@ -791,6 +874,102 @@ def update_estatus_venta(pedido_codigo, cliente_id):
 
     # Ejecución de la función almacenada 'update_estatus_pedido_venta' que actualiza el estatus de un pedido de venta
     cur.execute("CALL update_estatus_pedido_venta(%s,%s)", (pedido_codigo,cliente_id))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+    
+    return redirect(url_for('lista_pedidos_venta'))
+
+# Definición de la ruta '/ver_pedido_venta/update_estatus_reposicion/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta/update_estatus_reposicion/<int:pedido_codigo>/<int:cliente_id>')
+def update_estatus_venta_reposicion(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+
+    # Ejecución de la función almacenada 'update_estatus_pedido_reposicion_venta' que actualiza el estatus de un pedido de venta
+    cur.execute("CALL update_estatus_pedido_reposicion_venta(%s,%s)", (pedido_codigo,cliente_id))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+    
+    return redirect(url_for('lista_pedidos_venta'))
+
+# Definición de la ruta '/ver_pedido_venta/update_estatus_confirmar_reposicion/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta/update_estatus_confirmar_reposicion/<int:pedido_codigo>/<int:cliente_id>')
+def update_estatus_venta_confirmar_reposicion(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+
+    # Ejecución de la función almacenada 'update_estatus_pedido_confirmar_reposicion_venta' que actualiza el estatus de un pedido de venta
+    cur.execute("CALL update_estatus_pedido_confirmar_reposicion_venta(%s,%s)", (pedido_codigo,cliente_id))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+
+    return redirect(url_for('register_solicitud_compra_pedido', pedido_codigo=pedido_codigo))
+
+
+@app.route('/register_solicitud_compra_pedido/<int:pedido_codigo>', methods=['GET','POST'])	
+def register_solicitud_compra_pedido(pedido_codigo):
+    if request.method == 'POST':	
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        cur = connection().cursor()
+
+        aliado = request.form['aliado']
+        cur.execute("SELECT * FROM obtener_detalles_pedido_venta_solicitud(%s)", (pedido_codigo,))
+        minerales = cur.fetchall()
+        # Convertir 'minerales' a una lista de diccionarios para facilitar la manipulación (opcional)
+        minerales_como_diccionarios = [{"detalle_mineral": m[0], "detalle_cantidad": m[1], "detalle_precio": m[2]} for m in minerales]
+        # Convertir 'minerales_como_diccionarios' a una lista de tuplas
+        minerales_como_tuplas = [(m["detalle_mineral"], m["detalle_cantidad"], m["detalle_precio"]) for m in minerales_como_diccionarios]
+        
+        # Ejecución del procedimiento almacenado sp_crear_solicitud_compra
+        cur.execute("CALL sp_crear_solicitud_compra(%s,ARRAY[%s]::tipo_detalle_compra[])", (aliado,minerales_como_tuplas))
+        # Commit de los cambios
+        cur.connection.commit()
+        # Ejecución del procedimiento almacenado sp_crear_relacion_solicitud_pedido
+        cur.execute("CALL sp_crear_relacion_solicitud_pedido(%s,%s)", (pedido_codigo,aliado))
+        cur.connection.commit()
+        # Cerrar el cursor 
+        cur.connection.close()
+        cur.close()
+        
+        return redirect(url_for('lista_solicitudes'))
+    
+    cur = connection().cursor()
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta_solicitud' que retorna los detalles de un pedido de venta para una solicitud de compra
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta_solicitud(%s)", (pedido_codigo,))
+    minerales = cur.fetchall()
+    # Convertir 'minerales' a una lista de diccionarios para facilitar la manipulación (opcional)
+    minerales_como_diccionarios = [{"detalle_mineral": m[0], "detalle_cantidad": m[1], "detalle_precio": m[2]} for m in minerales]
+    # Convertir 'minerales_como_diccionarios' a una lista de tuplas
+    minerales_como_tuplas = [(m["detalle_mineral"], m["detalle_cantidad"], m["detalle_precio"]) for m in minerales_como_diccionarios]
+    cur.close()
+    cur = connection().cursor()
+    
+    # Asumiendo que 'cur' es tu cursor de conexión a la base de datos
+    cur.execute("SELECT * FROM lista_aliados_solicitud_pedido(%s)", (minerales_como_tuplas[0][0],))
+    aliados = cur.fetchall()
+
+    cur.execute("SELECT * FROM lista_aliados_solicitud_pedido(%s)", (minerales_como_tuplas[0][0],))
+    cur.close()
+    connection().close()
+    return render_template('Alianzas/Solicitudes/crear_solicitud_compra_pedido.html', aliados=aliados, minerales=minerales, pedido_codigo=pedido_codigo)
+
+# Definición de la ruta '/delete_pedido_venta/<int:pedido_codigo>'
+@app.route('/delete_pedido_venta/<int:pedido_codigo>')
+def delete_pedido_venta(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+
+    # Ejecución de la función almacenada 'delete_pedido_venta' que elimina un pedido de venta
+    cur.execute("CALL sp_borrar_pedido_venta(%s)", (pedido_codigo,))
     # Commit de los cambios
     cur.connection.commit()
     
