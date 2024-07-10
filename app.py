@@ -309,8 +309,8 @@ def lista_solicitudes():
     cur.close()  
     connection().close()  
     
-    # Renderización de la plantilla HTML para 'lista_solicitudes', pasando los datos de solicitudes al template
-    return render_template('Alianzas/Solicitudes/lista_solicitudes.html', solicitudes=solicitudes)
+    # Renderización de la plantilla HTML para 'lista_solicitudes_compras', pasando los datos de solicitudes al template
+    return render_template('Alianzas/Solicitudes/lista_solicitudes_compras.html', solicitudes=solicitudes)
 
 @app.route('/register_solicitud', methods=['GET','POST'])
 def register_solicitud(): 
@@ -397,8 +397,7 @@ def chequear_estatus_pedido_compra(pedido_codigo, aliado_id):
         return redirect(url_for('ver_solicitud_compra_pagada', pedido_codigo=pedido_codigo, aliado_id=aliado_id))
     else:
         return "Estatus desconocido o pedido no encontrado", 404    
-
-
+    
 # Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>'
 @app.route('/ver_solicitud_compra/<int:pedido_codigo>', methods=['GET'])
 def ver_solicitud_compra(pedido_codigo):
@@ -477,10 +476,17 @@ def register_pago():
     # Si todo fue exitoso, rediriges al usuario a otra página
     return redirect(url_for('update_estatus', pedido_codigo=pedido_codigo, aliado_id=aliado_id))
 
+# Definición de la ruta '/mostrar_error/<int:pedido_codigo>'
 @app.route('/mostrar_error/<int:pedido_codigo>')
 def mostrar_error(pedido_codigo):
         return redirect(url_for('ver_solicitud_compra_confirmada', pedido_codigo=pedido_codigo))
+    
+# Definición de la ruta '/mostrar_error/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/mostrar_error_venta/<int:pedido_codigo>/<int:cliente_id>')
+def mostrar_error_venta(pedido_codigo, cliente_id):
+        return redirect(url_for('ver_pedido_venta_confirmada', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
 
+# Definición de la ruta '/ver_solicitud_compra_pagada/<int:pedido_codigo>/<int:aliado_id>'
 @app.route('/ver_solicitud_compra_pagada/<int:pedido_codigo>/<int:aliado_id>', methods=['GET'])
 def ver_solicitud_compra_pagada(pedido_codigo, aliado_id):
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
@@ -507,12 +513,13 @@ def ver_solicitud_compra_pagada(pedido_codigo, aliado_id):
     # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
     return render_template('Alianzas/Solicitudes/ver_solicitud_compra_pagada.html', solicitud=solicitud, detalles=detalles, pago=pago)
 
-# Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>/update_estatus'
+# Definición de la ruta '/ver_solicitud_compra/update_estatus/<int:pedido_codigo>/<int:aliado_id>'
 @app.route('/ver_solicitud_compra/update_estatus/<int:pedido_codigo>/<int:aliado_id>')
 def update_estatus(pedido_codigo, aliado_id):
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    
+    # Ejecución de la función almacenada 'update_estatus_pedido_compra' que actualiza el estatus de un pedido de compra
     cur.execute("CALL update_estatus_pedido_compra(%s,%s)", (pedido_codigo,aliado_id))
     # Commit de los cambios
     cur.connection.commit()
@@ -572,6 +579,225 @@ def lista_actividades():
     
     # Renderización de la plantilla HTML para 'lista_actividades', pasando los datos de actividades al template
     return render_template('Proyecto_Config/Actividad/lista_actividades.html', actividades=actividades)
+
+# Definición de la ruta '/lista_pedidos_venta'
+@app.route('/lista_pedidos_venta')
+def lista_pedidos_venta():
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    # Ejecución de la función almacenada 'lista_pedidos_venta' que retorna una lista de pedidos de venta
+    cur.execute("SELECT * FROM lista_pedidos_venta()")
+    pedidos = cur.fetchall()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'lista_pedidos_venta', pasando los datos de pedidos al template
+    return render_template('Ventas/lista_pedidos_venta.html', pedidos=pedidos)
+
+
+# Definición de la ruta '/register_pedido'
+@app.route('/register_pedido', methods=['GET','POST'])
+def register_pedido(): 
+    if request.method == 'POST':	
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        cur = connection().cursor()
+
+        cliente = request.form['cliente']
+        # Inicializar la lista de tuplas para 'tablaMinerales'
+        tablaMinerales = []
+        # Suponiendo que los campos del formulario vienen indexados (mineral[0], cantidad[0], precio[0], ...)
+        i = 0
+        while True:
+            try:
+                # Intentar obtener el conjunto de datos para cada mineral
+                mineral = request.form[f'mineral[{i}]']
+                cantidad = request.form[f'cantidad[{i}]']
+                precio = request.form[f'precio[{i}]']
+                tablaMinerales.append((mineral, int(cantidad), float(precio)))
+                i += 1
+            except KeyError:
+                # Si no hay más minerales, romper el ciclo
+                break
+        
+        # Construir la parte de la llamada que incluye 'tablaMinerales'
+        tablaMinerales_str = ", ".join([
+            f"CAST(ROW('{mineral}', {cantidad}, {precioUnit}) AS tipo_detalle_venta)" 
+            for mineral, cantidad, precioUnit in tablaMinerales
+        ])
+        # Formatear la llamada completa al procedimiento almacenado
+        query = f"""CALL sp_crear_pedido_venta({cliente},ARRAY[{tablaMinerales_str}])"""
+                
+        # Ejecutar la consulta
+        cur.execute(query)
+        # Commit de los cambios
+        cur.connection.commit()
+        # Cerrar el cursor 
+        cur.connection.close()
+        cur.close()
+        
+        return redirect(url_for('lista_pedidos_venta'))
+    
+    cur = connection().cursor()
+    cur.execute("SELECT * FROM lista_clientes_venta()")
+    clientes = cur.fetchall()
+    cur.close()
+    cur = connection().cursor()
+    cur.execute("SELECT * FROM lista_minerales_venta()")
+    minerales = cur.fetchall()
+    cur.close()
+    
+    connection().close()
+    return render_template('Ventas/crear_pedido_venta.html', clientes=clientes, minerales=minerales)
+
+# Definición de la ruta '/chequear_estatus_pedido_venta/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/chequear_estatus_pedido_venta/<int:pedido_codigo>/<int:cliente_id>')
+def chequear_estatus_pedido_venta(pedido_codigo, cliente_id):
+    conn = connection()
+    cursor = conn.cursor()
+    # Ejecución de la función almacenada 'obtener_estatus_pedido_venta' que retorna el estatus de un pedido de venta
+    cursor.execute("SELECT * FROM obtener_estatus_pedido_venta(%s)", (pedido_codigo,))
+    estatus = cursor.fetchone()[0] 
+    cursor.close()
+    conn.close()
+
+    # Definir conjuntos de estatus
+    conjunto_en_espera = {'En proceso', 'En espera', 'En revisión'}
+    conjunto_por_pagar = {'Por pagar', 'Confirmado', 'Aprobado'}
+    conjunto_pagado = {'Pagado', 'Completado'}
+    
+    # Decidir a qué ruta redirigir basado en el resultado
+    if estatus in conjunto_en_espera:
+        return redirect(url_for('ver_pedido_venta', pedido_codigo=pedido_codigo))
+    elif estatus in conjunto_por_pagar:
+        return redirect(url_for('ver_pedido_venta_confirmada', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+    elif estatus in conjunto_pagado:    
+        return redirect(url_for('ver_pedido_venta_pagada', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+    else:
+        return "Estatus desconocido o pedido no encontrado", 404   
+    
+# Definición de la ruta '/ver_pedido_venta/<int:pedido_codigo>'
+@app.route('/ver_pedido_venta/<int:pedido_codigo>', methods=['GET'])
+def ver_pedido_venta(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta.html', pedido=pedido, detalles=detalles) 
+
+# Definición de la ruta '/ver_pedido_venta_confirmada/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta_confirmada/<int:pedido_codigo>/<int:cliente_id>', methods=['GET'])
+def ver_pedido_venta_confirmada(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de un pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Ejecución de la función almacenada 'obtener_metodos_pago_cliente' que retorna los métodos de pago del cliente
+    cur.execute("SELECT * FROM obtener_metodos_pago_cliente(%s)", (cliente_id,))
+    metodos = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta_confirmada.html', pedido=pedido, detalles=detalles, metodos=metodos)
+
+# Definición de la ruta '/register_pago_venta'
+@app.route('/register_pago_venta', methods=['POST'])
+def register_pago_venta():
+    try:
+        # Obtener los datos del formulario
+        pedido_codigo = request.form['numero-orden']
+        cliente_id = request.form['razon-social']
+        metodo_pago = request.form['metodo-pago']
+        metodo_codigo, tipo_metodo = metodo_pago.split('|', 1)
+        monto_pedido = request.form['total']
+        fecha_pago = request.form['fecha-pago']
+        
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        conn = connection()
+        cursor = conn.cursor()
+        cursor.execute("CALL sp_crear_pago_venta(%s, %s, %s, %s, %s, %s)", (pedido_codigo, cliente_id, metodo_codigo, tipo_metodo, monto_pedido, fecha_pago))
+        conn.commit()
+    
+    except psycopg2.errors.RaiseException as e:
+        # Manejo de excepciones en caso de fallo en la conexión
+        flash('El monto del efectivo no es suficiente para realizar el pago.')
+        return redirect(url_for('mostrar_error_venta', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+    
+    finally:
+        # Asegúrate de cerrar el cursor y la conexión en el bloque finally para que se ejecuten sin importar si hubo una excepción o no
+        cursor.close()
+        conn.close()
+
+    # Si todo fue exitoso, rediriges al usuario a otra página
+    return redirect(url_for('update_estatus', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+
+# Definición de la ruta '/ver_pedido_venta_pagada/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta_pagada/<int:pedido_codigo>/<int:cliente_id>', methods=['GET'])
+def ver_pedido_venta_pagada(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de un pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Ejecución de la función almacenada 'obtener_metodos_pago_venta' que retorna los métodos de pago de la venta
+    cur.execute("SELECT * FROM obtener_pago_venta(%s, %s)", (pedido_codigo,cliente_id))
+    pago = cur.fetchone()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta_pagada.html', pedido=pedido, detalles=detalles, pago=pago)
+
+# Definición de la ruta '/ver_pedido_venta/update_estatus/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta/update_estatus/<int:pedido_codigo>/<int:cliente_id>')
+def update_estatus_venta(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+
+    # Ejecución de la función almacenada 'update_estatus_pedido_venta' que actualiza el estatus de un pedido de venta
+    cur.execute("CALL update_estatus_pedido_venta(%s,%s)", (pedido_codigo,cliente_id))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+    
+    return redirect(url_for('lista_pedidos_venta'))
 
 if __name__ == '__main__': 
     app.run(debug=True) 

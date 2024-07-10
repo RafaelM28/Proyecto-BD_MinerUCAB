@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Solicitud - MinerUCAB</title>
-    <link rel="stylesheet" href="/static/css/crear_pedido_venta_styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/crear_pedido_venta_styles.css') }}">
 </head>
 <body>
     <header class="header">
@@ -87,7 +87,7 @@
                     <a href="{{ url_for('lista_clientes')}}">
                         <li class="li" href="#">Clientes</li>
                     </a>
-                    <a href="#">
+                    <a href="{{ url_for('lista_pedidos_venta')}}">
                         <li class="li" href="#">Pedidos</li>
                     </a>
                     <a href="#">
@@ -117,35 +117,94 @@
         
         <main class="main-content">
             <header>
-                <h2>Solicitud</h2>
+                <h2>Pedido Venta</h2>
             </header>
-            <form class="solicitud-form" method="POST" action="/create-solicitud"> <!-- Adjust action to your backend endpoint -->
+            <form class="solicitud-form" method="POST" action="{{ url_for('register_pedido') }}"> <!-- Adjust action to your backend endpoint -->
                 <div class="form-group">
-                    <label for="aliado">Aliado: *</label>
-                    <select id="aliado" name="aliado" required>
-                        <option value="CVG VENALUM">CVG VENALUM</option>
+                    <label for="cliente">Cliente: *</label>
+                    <select id="cliente" name="cliente" required>
+                        <option value="">Cliente</option>
+                        {% for cliente in cliente %}
+                        <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
+                        {% endfor %}
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="minerales">Minerales: *</label>
                     <div class="minerales-input-group">
+
                         <select id="minerales" name="minerales">
-                            <option value="Carbon">Carbon</option>
-                            <option value="Cobre">Cobre</option>
+                            {% for mineral in minerales %}
+                            <option value="{{ mineral[0] }}">{{ minerales[1] }}</option>
+                            {% endfor %}
                         </select>
-                        <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad" required>
-                        <input type="number" id="precio-unit" name="precio-unit" placeholder="Precio Unit." required>
-                        <button type="button" onclick="addMineral()">Cargar</button>
+                        <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad">
+                        <input type="number" id="precio-unit" name="precio-unit" placeholder="Precio Unit.">
+
+                        <button type="button" id="cargarBtn">Cargar</button>
                     </div>
+
+                    <!-- Tabla para mostrar los datos cargados -->
+                    <table id="tablaMinerales">
+                        <thead>
+                            <tr>
+                                <th>Mineral</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unit.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas se agregarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
                 </div>
-                <div class="selected-minerales" id="selected-minerales">
-                    <!-- Dynamically added minerals will appear here -->
-                </div>
-                <div class="form-group">
-                    <button type="submit">Crear</button>
-                </div>
+                <button type="submit" class="form-group">Crear</button>
             </form>
         </main>
     </div>
+    <script>
+        document.getElementById('cargarBtn').addEventListener('click', function() {
+            // Obtener los valores de los inputs
+            var mineral = document.getElementById('minerales').value;
+            var cantidad = document.getElementById('cantidad').value;
+            var precioUnit = document.getElementById('precio-unit').value;
+        
+            // Validar que los campos no estén vacíos
+            if (mineral && cantidad && precioUnit) {
+                var tbody = document.getElementById('tablaMinerales').getElementsByTagName('tbody')[0];
+                var rowIndex = tbody.rows.length; // Índice basado en la cantidad de filas existentes
+                // Crear una nueva fila
+                // Crear una nueva fila con inputs ocultos para enviar los datos
+                var fila = `<tr>
+                                <td>${mineral}<input type="hidden" name="mineral[${rowIndex}]" value="${mineral}"></td>
+                                <td>${cantidad}<input type="hidden" name="cantidad[${rowIndex}]" value="${cantidad}"></td>
+                                <td>${precioUnit}<input type="hidden" name="precio[${rowIndex}]" value="${precioUnit}"></td>
+                            </tr>`;
+            
+                // Agregar la fila a la tabla
+                tbody.innerHTML += fila;
+        
+                // Opcional: Limpiar los campos después de agregar
+                document.getElementById('minerales').value = '';
+                document.getElementById('cantidad').value = '';
+                document.getElementById('precio-unit').value = '';
+            } else {
+                alert('Por favor, complete todos los campos.');
+            }
+        });
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('cantidad').addEventListener('input', function(e) {
+            var value = e.target.value;
+            if (value.includes('.') || value.includes(',')) {
+                // Si el valor contiene un punto o una coma, muestra un error y limpia el campo
+                alert('Por favor, introduce un número entero para la cantidad.');
+                e.target.value = ''; // Limpia el campo
+            }
+        });
+    });
+    </script>
 </body>
 </html>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ver Detalle Solicitud de Compra - MinerUCAB</title>
-    <link rel="stylesheet" href="/static/css/ver_pedido_venta_styles.css">
+    <title>Ver Detalle Pedido de Venta - MinerUCAB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ver_pedido_venta_styles.css') }}">
 </head>
 <body>
     <header class="header">
@@ -87,7 +87,7 @@
                     <a href="{{ url_for('lista_clientes')}}">
                         <li class="li" href="#">Clientes</li>
                     </a>
-                    <a href="#">
+                    <a href="{{ url_for('lista_pedidos_venta')}}">
                         <li class="li" href="#">Pedidos</li>
                     </a>
                     <a href="#">
@@ -119,58 +119,61 @@
             <header>
                 <h2>Pedido de Venta</h2>
             </header>
-            <form class="solicitud-form" method="POST" action="/ver_detalle_pedido"> <!-- Adjust action to your backend endpoint -->
+            <form class="solicitud-form" method="POST" action="{{ url_for('update_estatus_venta', pedido_codigo=pedido[1],cliente_id=pedido[3]) }}"> <!-- Adjust action to your backend endpoint -->
                 <div class="form-group">
                     <label for="fecha-emision">Fecha Emisión:</label>
-                    <input type="date" id="fecha-emision" name="fecha-emision" value="2023-04-16" readonly>
+                    <input type="date" id="fecha-emision" name="fecha-emision" value="{{ pedido[0] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="numero-orden">Número de orden:</label>
-                    <input type="text" id="numero-orden" name="numero-orden" value="0017389" readonly>
+                    <input type="text" id="numero-orden" name="numero-orden" value="{{ pedido[1] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="estatus">Estatus:</label>
-                    <input type="text" id="estatus" name="estatus" value="Por Enviar" readonly>
+                    <input type="text" id="estatus" name="estatus" value="{{ pedido[2] }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="razon-social">Razón Social:</label>
-                    <input type="text" id="razon-social" name="razon-social" value="CVG Industria Venezolana de Aluminio C.A.">
+                    <!-- Input visible para el usuario, mostrando pedido[4] -->
+                    <input type="text" id="razon-social-display" value="{{ pedido[4] }}" readonly>
+                    <!-- Input oculto que realmente se enviará al servidor, conteniendo pedido[3] -->
+                    <input type="hidden" id="razon-social" name="razon-social" value="{{ pedido[3] }}">
                 </div>
                 <div class="form-group">
                     <label for="rif">RIF:</label>
-                    <input type="text" id="rif" name="rif" value="943267875">
+                    <input type="text" id="rif" name="rif" value="{{ pedido[5] }}">
                 </div>
                 <div class="form-group">
                     <label for="correo">Correo:</label>
-                    <input type="email" id="correo" name="correo" value="cvgvenalum@gmail.com">
+                    <input type="email" id="correo" name="correo" value="{{ pedido[6] }}">
                 </div>
                 <div class="form-group">
                     <label for="direccion">Dirección:</label>
-                    <input type="text" id="direccion" name="direccion" value="Sabana Grande 3">
+                    <input type="text" id="direccion" name="direccion" value="{{ pedido[7] }}">
                 </div>
                 <div class="form-group">
                     <label for="telefono">Teléfono:</label>
-                    <input type="text" id="telefono" name="telefono" value="0412-7462948">
+                    <input type="text" id="telefono" name="telefono" value="{{ pedido[8] }}">
                 </div>
                 <div class="form-group">
                     <label for="representante">Representante:</label>
-                    <input type="text" id="representante" name="representante" value="Leandro Andrade">
+                    <input type="text" id="representante" name="representante" value="{{ pedido[9] }}">
                 </div>
                 <div class="form-group">
                     <label for="metodo-pago">Método de Pago:</label>
-                    <input type="text" id="metodo-pago" name="metodo-pago" readonly>
+                    <input type="text" id="metodo-pago" name="metodo-pago" disabled>
                 </div>
                 <div class="form-group">
                     <label for="fecha-pago">Fecha Pago:</label>
-                    <input type="date" id="fecha-pago" name="fecha-pago" readonly>
+                    <input type="date" id="fecha-pago" name="fecha-pago" disabled>
                 </div>
                 <div class="form-group">
-                    <label for="telefono">Proyecto Asociado:</label>
-                    <input type="text" id="telefono" name="telefono" value="" readonly>
+                    <label for="proyecto-asociado">Proyecto Asociado:</label>
+                    <input type="text" id="proyecto-asociado" name="proyecto-asociado" value="{{ pedido[12] }}" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="telefono">Solicitud Asociada:</label>
-                    <input type="text" id="telefono" name="telefono" value="" readonly>
+                    <label for="solicitud-asociada">Solicitud Asociada:</label>
+                    <input type="text" id="solicitud-asociada" name="solicitud-asociada" value="{{ pedido[11] }}" readonly>
                 </div>
                 <div class="table-container">
                     <table>
@@ -184,18 +187,20 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% for detalle in detalles %}
                             <tr>
-                                <td>A097837</td>
-                                <td>Aluminio</td>
-                                <td>10</td>
-                                <td>US$ 7.72</td>
-                                <td>US$ 77.24</td>
+                                <td>{{ detalle[0] }}</td>
+                                <td>{{ detalle[1] }}</td>
+                                <td>{{ detalle[2] }}</td>
+                                <td>{{ detalle[3] }}</td>
+                                <td>{{ detalle[3] }}</td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr class="total-row">
                                 <td colspan="4" class="total">TOTAL</td>
-                                <td>US$ 77.24</td>
+                                <td>{{ pedido[13] }}</td>
                             </tr>
                         </tfoot>
                     </table>

@@ -1465,10 +1465,6 @@ CREATE TABLE Pedido_Venta (
 
     -- Restricción de clave primaria
     CONSTRAINT pk_pedido_venta PRIMARY KEY (pedido_venta_numero, fk_cliente),
-    -- Restricción para verificar que el monto subtil sea mayor a 0
-    CONSTRAINT check_pedido_venta_monto_subtil CHECK (pedido_venta_monto_subtil > 0),
-    -- Restricción para verificar que el costo total sea mayor a 0
-    CONSTRAINT check_pedido_venta_monto_total CHECK (pedido_venta_monto_total > 0),
     -- Restricción de clave foránea que referencia a la tabla CLIENTE
     CONSTRAINT fk_cliente_pedido_venta FOREIGN KEY (fk_cliente) REFERENCES Cliente (persona_jur_codigo),
     -- Restricción para verificar que la fecha de emisión sea menor o igual a la fecha actual
@@ -1754,3 +1750,10 @@ CREATE TYPE tipo_detalle_compra AS (
     detalle_cantidad SMALLINT,
     detalle_precio NUMERIC(10,2)
 );
+
+CREATE TYPE tipo_detalle_venta AS (
+    detalle_mineral SMALLINT,
+    detalle_cantidad SMALLINT,
+    detalle_precio NUMERIC(10,2)
+);
+

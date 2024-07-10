@@ -79,3 +79,22 @@ CREATE OR REPLACE TRIGGER trigger_check_update_hist_est_pedido_compra
 AFTER UPDATE ON historico_estatus_pedido_compra
 FOR EACH ROW
 EXECUTE FUNCTION check_update_hist_est_pedido_compra();
+
+-- Creación de un disparador llamado 'trigger_insertar_historico_estatus_pedido_venta'
+CREATE OR REPLACE TRIGGER trigger_insertar_historico_estatus_pedido_venta
+AFTER INSERT ON pedido_venta
+FOR EACH ROW
+-- Se llama a la función 'insertar_historico_estatus_pedido_venta' para cada fila
+EXECUTE PROCEDURE insertar_historico_estatus_pedido_venta();
+
+
+CREATE OR REPLACE TRIGGER trigger_pago_venta_insert
+AFTER INSERT ON pago_venta
+FOR EACH ROW
+-- Se llama a la función 'pago_venta_insert' para cada fila
+EXECUTE FUNCTION pago_venta_insert();
+
+CREATE OR REPLACE TRIGGER trigger_check_update_hist_est_pedido_venta
+AFTER UPDATE ON historico_estatus_pedido_venta
+FOR EACH ROW
+EXECUTE FUNCTION check_update_hist_est_pedido_venta();
