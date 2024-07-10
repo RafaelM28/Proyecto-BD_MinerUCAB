@@ -193,8 +193,18 @@ BEGIN
 
     -- Cuando no existe suficiente inventario para el pedido de venta y se confirma su reposición
     -- No se hace nada porque el historico_estatus ya esta actualiado
-    ELSIF OLD.fk_estatus_pedido IN (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre IN ('Por iniciar', 'Por reponer')) THEN
+    ELSIF OLD.fk_estatus_pedido IN (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre = 'Por iniciar') THEN
             -- No se realiza ninguna acción cuando el estatus del pedido de venta es 'Por iniciar' o 'Por reponer'
+
+    -- Cuando finaliza una solicitud de compra relacionada al pedido de venta
+    -- Se actualiza el estatus del pedido de venta a 'Por pagar'
+    ELSIF OLD.fk_estatus_pedido IN (SELECT EP.estatus_pedido_codigo FROM estatus_pedido EP WHERE EP.estatus_pedido_nombre = 'Por reponer') THEN
+            INSERT INTO historico_estatus_pedido_venta (hist_est_pedido_venta_codigo, fk_estatus_pedido, fk_pedido_venta_1, fk_pedido_venta_2, hist_est_pedido_venta_fecha_inicio, hist_est_pedido_venta_fecha_fin)
+            VALUES
+                ((SELECT MAX(hist_est_pedido_venta_codigo) FROM historico_estatus_pedido_venta)+1,
+                (SELECT estatus_pedido_codigo FROM estatus_pedido WHERE estatus_pedido_nombre = 'Por pagar'),
+                OLD.fk_pedido_venta_1, OLD.fk_pedido_venta_2, CURRENT_TIMESTAMP, NULL);
+
     END IF;
     RETURN NEW;
 END;
@@ -811,6 +821,23 @@ BEGIN
                                                                                 WHERE HPV_2.fk_pedido_venta_1 = pedido_venta_id AND HPV_2.fk_pedido_venta_2 = cliente_id);
 END;
 $$;
+
+-- Creación de una función update_estatus_pedido_compra_fin_solicitud()
+CREATE OR REPLACE PROCEDURE update_estatus_pedido_venta_fin_solicitud (IN pedido_compra_id INTEGER, IN aliado_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Actualiza el registro de Historico_Estatus_Pedido_Venta con la fecha de fin
+    UPDATE historico_estatus_pedido_venta HPV
+    SET hist_est_pedido_venta_fecha_fin = CURRENT_TIMESTAMP
+    WHERE HPV.hist_est_pedido_venta_codigo = (SELECT MAX(HPV_2.hist_est_pedido_venta_codigo)
+                                                                                FROM historico_estatus_pedido_venta HPV_2
+                                                                                WHERE HPV_2.fk_pedido_venta_1 = (SELECT PCV.fk_pedido_venta_1 FROM pedido_compra_venta PCV
+                                                                                                                                              WHERE PCV.fk_pedido_compra_1 = pedido_compra_id AND PCV.fk_pedido_compra_2 = aliado_id ));
+END;
+$$;
+
+CALL update_estatus_pedido_venta_fin_solicitud(55, 1);
 
 -- Creación de una función update_estatus_pedido_reposicion_venta()
 CREATE OR REPLACE PROCEDURE update_estatus_pedido_reposicion_venta (IN pedido_venta_id INTEGER, IN cliente_id INTEGER)

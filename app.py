@@ -462,6 +462,10 @@ def register_pago():
         cursor = conn.cursor()
         cursor.execute("CALL sp_crear_pago_compra(%s, %s, %s, %s, %s, %s)", (pedido_codigo, aliado_id, metodo_codigo, tipo_metodo, monto_pedido, fecha_pago))
         conn.commit()
+        cursor.close()
+        cursor = conn.cursor()
+        cursor.execute("CALL update_estatus_pedido_venta_fin_solicitud(%s, %s)", (pedido_codigo, aliado_id))
+        conn.commit()
     
     except psycopg2.errors.RaiseException as e:
         # Manejo de excepciones en caso de fallo en la conexión
