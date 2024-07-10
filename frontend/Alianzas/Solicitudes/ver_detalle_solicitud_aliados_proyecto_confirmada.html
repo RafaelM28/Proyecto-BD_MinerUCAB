@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Detalle Solicitud de Compra - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/ver_pedido_venta_styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">MINERUCAB</div>
+        <div class="nav-buttons">
+            <img class="img-proyectos" src="/static/images/image 4.svg" />
+            <div class="botones">
+                <button class="botones1" onclick="location.href='lista_proyectos_config';">Proyectos</button>
+            </div>
+            <button class="botones2">Perfil</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <ul>
+                <div class="list-item">
+                    <img width="24px" class="icon" src="/static/images/image 2.svg" alt="" />
+                    <span class="text1">Crear perfil</span>
+                </div>
+
+                <div class="list-item">
+                    <a href="{{ url_for('home')}}">
+                        <img width="45px" class="icon1" src="/static/images/image 5.svg" alt="" />
+                    </a>
+                    <span class="text">Inicio</span>
+                </div>
+
+                <div class="list-item">
+                    <img width="35px" class="icon" src="/static/images/image 7.svg" alt="" />
+                    <span class="text">Personal</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_empleados')}}">
+                        <li class="li" href="#">Empleados</li>
+                    </a>
+                    <a href="{{ url_for('lista_recursos')}}">
+                        <li class="li2" href="#">Recursos</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="32px" class="icon" src="/static/images/image 16.svg" alt="" />
+                    <span class="text2">Alianzas</span>
+                </div>
+                
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_aliados') }}">
+                        <li class="li" href="#">Aliados</li>
+                    </a>
+                    <a href="{{ url_for('lista_solicitudes') }}">
+                        <li class="li" href="#">Solicitudes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos Compra</li>
+                    </a>
+                </ul>
+                
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 14.svg" alt="" />
+                    <span class="text">Almacen</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_minerales')}}">
+                        <li class="li" href="#">Minerales</li>
+                    </a>
+                    <a href="{{ url_for('lista_inventario')}}">
+                        <li class="li2" href="#">Inventario</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 18.svg" alt="" />
+                    <span class="text">Ventas</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_clientes')}}">
+                        <li class="li" href="#">Clientes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li" href="#">Pedidos</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos de Venta</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 20.svg" alt="" />
+                    <span class="text">Seguridad</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_usuarios')}}">
+                        <li class="li" href="#">Usuarios</li>
+                    </a>
+                    <a href="{{ url_for('lista_roles')}}">
+                        <li class="li" href="#">Roles</li>
+                    </a>
+                    <a href="{{ url_for('lista_privilegios')}}">
+                        <li class="li2" href="#">Privilegios</li>
+                    </a>
+                </ul>
+
+            </ul>
+        </div>
+
+        <main class="main-content">
+            <header>
+                <h2>Pedido de Venta</h2>
+            </header>
+            <form class="solicitud-form" method="GET" action="/ver_detalle_solicitud_aliados_proyecto"> <!-- Adjust action to your backend endpoint -->
+                <div class="form-group">
+                    <label for="fecha-emision">Fecha Emisión:</label>
+                    <input type="date" id="fecha-emision" name="fecha-emision" value="2023-04-16" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="numero-orden">Número de orden:</label>
+                    <input type="text" id="numero-orden" name="numero-orden" value="0017389" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="estatus">Estatus:</label>
+                    <input type="text" id="estatus" name="estatus" value="Por Enviar" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="razon-social">Razón Social:</label>
+                    <input type="text" id="razon-social" name="razon-social" value="CVG Industria Venezolana de Aluminio C.A.">
+                </div>
+                <div class="form-group">
+                    <label for="rif">RIF:</label>
+                    <input type="text" id="rif" name="rif" value="943267875">
+                </div>
+                <div class="form-group">
+                    <label for="correo">Correo:</label>
+                    <input type="email" id="correo" name="correo" value="cvgvenalum@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección:</label>
+                    <input type="text" id="direccion" name="direccion" value="Sabana Grande 3">
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" id="telefono" name="telefono" value="0412-7462948">
+                </div>
+                <div class="form-group">
+                    <label for="representante">Representante:</label>
+                    <input type="text" id="representante" name="representante" value="Leandro Andrade">
+                </div>
+                <div class="form-group">
+                    <label for="proyecto-asociado">Proyecto Asociado:</label>
+                    <input type="text" id="proyecto-asociado" name="proyecto-asociado" value="Proyecto 202425" readonly>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Cargo</th>
+                                <th>Cantidad</th>
+                                <th>Salario</th>
+                                <th>Viático</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Juan Gonzalez</td>
+                                <td>Geólogo</td>
+                                <td></td>
+                                <td>US$ 7.72</td>
+                                <td>US$ 77.24</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Recurso</th>
+                                <th>Tipo</th>
+                                <th>Cantidad</th>
+                                <th>Costo</th>
+                                <th>Mantenimiento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="4" class="total">TOTAL</td>
+                                <td>US$ 77.24</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

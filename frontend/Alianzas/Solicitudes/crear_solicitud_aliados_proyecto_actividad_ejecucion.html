@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Solicitud - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/crear_solicitud_aliados_proyecto_actividad_ejecucion_styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">MINERUCAB</div>
+        <div class="nav-buttons">
+            <img class="img-proyectos" src="/static/images/image 4.svg" />
+            <div class="botones">
+                <button class="botones1" onclick="location.href='lista_proyectos_config';">Proyectos</button>
+            </div>
+            <button class="botones2">Perfil</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <ul>
+                <div class="list-item">
+                    <img width="24px" class="icon" src="/static/images/image 2.svg" alt="" />
+                    <span class="text1">Crear perfil</span>
+                </div>
+
+                <div class="list-item">
+                    <a href="{{ url_for('home')}}">
+                        <img width="45px" class="icon1" src="/static/images/image 5.svg" alt="" />
+                    </a>
+                    <span class="text">Inicio</span>
+                </div>
+
+                <div class="list-item">
+                    <img width="35px" class="icon" src="/static/images/image 7.svg" alt="" />
+                    <span class="text">Personal</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_empleados')}}">
+                        <li class="li" href="#">Empleados</li>
+                    </a>
+                    <a href="{{ url_for('lista_recursos')}}">
+                        <li class="li2" href="#">Recursos</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="32px" class="icon" src="/static/images/image 16.svg" alt="" />
+                    <span class="text2">Alianzas</span>
+                </div>
+                
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_aliados') }}">
+                        <li class="li" href="#">Aliados</li>
+                    </a>
+                    <a href="{{ url_for('lista_solicitudes') }}">
+                        <li class="li" href="#">Solicitudes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos Compra</li>
+                    </a>
+                </ul>
+                
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 14.svg" alt="" />
+                    <span class="text">Almacen</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_minerales')}}">
+                        <li class="li" href="#">Minerales</li>
+                    </a>
+                    <a href="{{ url_for('lista_inventario')}}">
+                        <li class="li2" href="#">Inventario</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 18.svg" alt="" />
+                    <span class="text">Ventas</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_clientes')}}">
+                        <li class="li" href="#">Clientes</li>
+                    </a>
+                    <a href="#">
+                        <li class="li" href="#">Pedidos</li>
+                    </a>
+                    <a href="#">
+                        <li class="li2" href="#">Pagos de Venta</li>
+                    </a>
+                </ul>
+
+                <div class="list-item2">
+                    <img width="30px" class="icon" src="/static/images/image 20.svg" alt="" />
+                    <span class="text">Seguridad</span>
+                </div>
+
+                <ul class="sub-listas">
+                    <a href="{{ url_for('lista_usuarios')}}">
+                        <li class="li" href="#">Usuarios</li>
+                    </a>
+                    <a href="{{ url_for('lista_roles')}}">
+                        <li class="li" href="#">Roles</li>
+                    </a>
+                    <a href="{{ url_for('lista_privilegios')}}">
+                        <li class="li2" href="#">Privilegios</li>
+                    </a>
+                </ul>
+
+            </ul>
+        </div>
+        
+        <main class="main-content">
+            <header>
+                <h2>Solicitud Aliado Proyecto</h2>
+            </header>
+            <form class="solicitud-form" method="POST" action="/crear_solicitud_aliado_proyecto"> <!-- Adjust action to your backend endpoint -->
+                <div class="form-group">
+                    <label for="cargo/recurso">Cargo/Recurso de Actividad: *</label>
+                    <select id="cargo/recurso" name="cargo/recurso" required>
+                        <option value="Geologo">Geologo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="aliado">Aliado: *</label>
+                    <select id="aliado" name="aliado" required>
+                        <option value="CVG Venalum">CVG Venalum</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="empleados">Empleados: *</label>
+                    <div class="minerales-input-group">
+                        <select id="empleados" name="empleados">
+                            <option value="Juan Gonzalez">Juan Gonzalez</option>
+                            <option value="Maria Perez">Maria Perez</option>
+                        </select>
+                        <input type="number" id="salario" name="salario" placeholder="Salario" required>
+                        <input type="number" id="viaticos" name="viaticos" placeholder="Viáticos" required>
+                        <button type="button" onclick="addMineral()">Cargar</button>
+                    </div>
+                </div>
+                <div class="selected-minerales" id="selected-minerales">
+                    <!-- Dynamically added minerals will appear here -->
+                </div>
+                <div class="form-group">
+                    <button type="submit">Crear</button>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>
