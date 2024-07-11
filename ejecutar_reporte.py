@@ -15,9 +15,9 @@ def mostrar_reporte(nombre_reporte,nombre_reporte_pdf,nombre_reporte_extension_p
             'jdbc_dir':'/venv/py3.8.18/lib/python3.8/site-packages/pyreportjasper/libs/jdbc', 
             'driver': 'postgres',
             'username': 'postgres',
-            'password': 'admin1234*',
+            'password': '0000',
             'host': 'localhost',
-            'database': 'minerucab',
+            'database': 'db_minerucab',
             'schema': 'public',
             'port': '5432'
             }
