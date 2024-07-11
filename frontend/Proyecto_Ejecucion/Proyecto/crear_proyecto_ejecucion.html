@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Solicitud - MinerUCAB</title>
+    <title>MinerUCAB - Crear Proyecto Ejecución</title>
     <link rel="stylesheet" href="/static/css/crear_proyecto_ejecucion_styles.css">
+    <script>
+        async function loadPozos() {
+            const mineral = document.getElementById("mineral").value;
+            const response = await fetch(`/get_pozos_de_mineral/${mineral}`);
+            const pozos = await response.json();
+            const pozosSelect = document.getElementById("pozos");
+            pozosSelect.innerHTML = '<option value="">Seleccione Pozo</option>';
+            pozos.forEach(pozo => {
+                pozoSelect.innerHTML += `<option value="${pozo.pozo_id}">${pozo.pozo_nombre}</option>`;
+            });
+        }
+    </script>
 </head>
 <body>
     <header class="header">
@@ -120,38 +132,39 @@
                 <h2>Proyecto a Ejecutar</h2>
             </header>
             <form class="solicitud-form" method="POST" action="/create-solicitud"> <!-- Adjust action to your backend endpoint -->
+                
                 <div class="form-group">
                     <label for="mineral">Mineral: *</label>
-                    <select id="mineral" name="mineral" readonly>
-                        <option value="Aluminio">Aluminio</option>
+                    <select id="mineral" onchange="loadPozos()" name="mineral" readonly>
+                        <option value="">Mineral</option>
+                        {% for mineral in minerales %}
+                        <option value="{{ mineral[0] }}">{{ mineral[1] }}</option>
+                        {% endfor %}
                     </select>
                 </div>
+                
                 <div class="form-group">
-                    <label for="minerales">Pozo: *</label>
+                    <label for="lista_pozos">Pozo: *</label>
                     <div class="minerales-input-group">
-                        <select id="pozo" name="pozo">
-                            <option value="Pozo1">Pozo 1</option>
-                            <option value="Pozo2">Pozo 2</option>
+                        <select id="pozos" name="pozos">
+                            <option value="">Pozo</option>
                         </select>
-                        <input type="number" id="capacidad" name="capacidad" placeholder="Capacidad" required>
-                        <input type="number" id="cant-mts" name="cant-mts" placeholder="Cant. Mts" required>
-                        <button type="button" onclick="addMineral()">Cargar</button>
+                        <input type="number" id="capacidad" name="capacidad" placeholder="Capacidad" disabled>
+                        <input type="number" id="cant-mts" name="cant-mts" placeholder="Cant. Mts" disabled>
                     </div>
                 </div>
-                <div class="selected-minerales" id="selected-minerales">
-                    <!-- Dynamically added minerals will appear here -->
-                </div>
+
                 <div class="form-group">
                     <label for="NombreProyecto">Nombre de Proyecto: *</label>
-                    <input type="text" id="nombreProyecto" name="nombreProyecto" required>
+                    <input type="text" id="nombreProyecto" name="nombreProyecto" disabled>
                 </div>
                 <div class="form-group">
                     <label for="FechaInicio">Fecha Inicio Estimada: *</label>
-                    <input type="text" id="fechaInicioEst" name="fechaInicioEst" required>
+                    <input type="date" id="fechaInicioEst" name="fechaInicioEst" required>
                 </div>
                 <div class="form-group">
                     <label for="descripcion">Descripción:</label>
-                    <input type="text" id="descripcion" name="descripcion">
+                    <input type="text" id="descripcion" name="descripcion" value="">
                 </div>
                 <div class="form-group">
                     <button type="submit">Crear</button>

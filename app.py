@@ -1110,7 +1110,46 @@ def lista_actividades_ejecucion():
     
     # Renderización de la plantilla HTML para 'lista_actividades_ejecucion', pasando los datos de proyectos al template
     return render_template('Proyecto_Ejecucion/Actividad/lista_actividades_ejecucion.html', actividades=actividades)
+
+# Definición de la ruta '/get_pozos_de_mineral/<int:mineral_id>'
+@app.route('/get_pozos_de_mineral/<int:mineral_id>')
+def get_pozos_de_mineral(mineral_id: int):
+    cursor = connection().cursor()
+
+    cursor.execute("SELECT * FROM lista_pozos_de_mineral(%s)", (mineral_id,))
+    pozos = cursor.fetchall()
+    cursor.close()
+    connection().close()
+    # Retorno de los minerales en formato JSON
+    return jsonify([{"mineral_codigo": m[0], "mineral_nombre": m[1]} for m in minerales])
+
+
+@app.route('/crear_proyecto_ejecucion', methods=['GET','POST'])
+def crear_proyecto_ejecucion():
+    if request.method == 'POST':	
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        cur = connection().cursor()
+
+        proyecto_nombre = request.form['proyecto-nombre']
+        proyecto_descripcion = request.form['proyecto-descripcion']
+        proyecto_fecha_inicio = request.form['proyecto-fecha-inicio']
+        proyecto_fecha_fin = request.form['proyecto-fecha-fin']
+        cur.execute("CALL sp_crear_proyecto_ejecucion(%s,%s,%s,%s)", (proyecto_nombre, proyecto_descripcion, proyecto_fecha_inicio, proyecto_fecha_fin))
+        # Commit de los cambios
+        cur.connection.commit()
+        # Cerrar el cursor 
+        cur.connection.close()
+        cur.close()
+        
+        return redirect(url_for('lista_proyectos_ejecucion'))
     
+    cur = connection().cursor()
+    cur.execute("SELECT * FROM lista_minerales_proyecto_ejecucion()")
+    minerales = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    return render_template('Proyecto_Ejecucion/Proyecto/crear_proyecto_ejecucion.html', minerales=minerales)
 
 if __name__ == '__main__': 
     app.run(debug=True) 

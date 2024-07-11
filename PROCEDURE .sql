@@ -723,8 +723,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT * FROM lista_aliados_solicitud_pedido(1);
-
 -- Creación de una función lista_minerales_solicitud()
 CREATE OR REPLACE FUNCTION lista_minerales_solicitud(aliado_id INTEGER)
 RETURNS TABLE (mineral_codigo SMALLINT, mineral_nombre VARCHAR(30))
@@ -1272,5 +1270,28 @@ BEGIN
          (SELECT  HEA.fk_actividad_ejecucion, MAX(HEA.hist_est_actividad_codigo) FROM historico_estatus_actividad HEA GROUP BY HEA.fk_actividad_ejecucion) AS Ultimo_Estatus
     WHERE EE.etapa_ejec_codigo = AE.fk_etapa_ejecucion AND PE.proyecto_ejec_codigo = EE.fk_proyecto_ejecucion AND AE.actividad_ejec_codigo = Ultimo_Estatus.fk_actividad_ejecucion
                 AND HEA.hist_est_actividad_codigo = Ultimo_Estatus.max AND HEA.fk_estatus_ejecucion = EJ.estatus_ejecucion_codigo;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_pozos_de_mineral()
+CREATE OR REPLACE FUNCTION lista_pozos_de_mineral(mineral_id INTEGER)
+RETURNS TABLE (pozo_id SMALLINT, pozo_nombre VARCHAR(30), pozo_capacidad_mineral INTEGER, pozo_cantidad_mts NUMERIC(10,2))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla pozo
+    RETURN QUERY SELECT P.pozo_id, P.pozo_nombre, P.pozo_capacidad_mineral, P.pozo_cantidad_mts
+    FROM pozo P
+    WHERE P.fk_mineral = mineral_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_minerales_proyecto_ejecucion()
+CREATE OR REPLACE FUNCTION lista_minerales_proyecto_ejecucion()
+RETURNS TABLE (mineral_codigo SMALLINT, mineral_nombre VARCHAR(30))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla mineral
+    RETURN QUERY SELECT M.mineral_codigo, M.mineral_nombre
+    FROM mineral M;
 END;
 $$ LANGUAGE plpgsql;
