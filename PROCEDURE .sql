@@ -1192,16 +1192,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Creación de una función chequear_inventario()
 CREATE OR REPLACE FUNCTION chequear_inventario(detalle_venta tipo_detalle_venta[])
 RETURNS BOOLEAN
 AS $$
 DECLARE
     fila tipo_detalle_venta;
     cantidad_disponible INTEGER;
+    cur CURSOR FOR SELECT * FROM unnest(detalle_venta);
 BEGIN
-    -- Se recorre el arreglo de detalle_venta
-    FOREACH fila IN ARRAY detalle_venta LOOP
+    -- Abrir el cursor
+    OPEN cur;
+    LOOP
+        -- Obtener la siguiente fila del cursor
+        FETCH cur INTO fila;
+        EXIT WHEN NOT FOUND; -- Salir del bucle si no hay más filas
+
         -- Se obtiene la cantidad total disponible del mineral en el inventario
         SELECT inventario_producto_cantidad_total INTO cantidad_disponible
         FROM inventario_producto
@@ -1213,9 +1218,12 @@ BEGIN
 
         -- Si la cantidad disponible es menor a la cantidad solicitada, se retorna FALSE
         IF cantidad_disponible < fila.detalle_cantidad THEN
+            CLOSE cur; -- Cerrar el cursor antes de retornar
             RETURN FALSE;
         END IF;
     END LOOP;
+
+    CLOSE cur; -- Asegurarse de cerrar el cursor
     -- Si la cantidad disponible es mayor o igual a la cantidad solicitada, se retorna TRUE
     RETURN TRUE;
 END;
@@ -1282,6 +1290,18 @@ BEGIN
     RETURN QUERY SELECT P.pozo_id, P.pozo_nombre, P.pozo_capacidad_mineral, P.pozo_cantidad_mts
     FROM pozo P
     WHERE P.fk_mineral = mineral_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_datos_pozo()
+CREATE OR REPLACE FUNCTION lista_datos_pozo(pozo_codigo INTEGER)
+RETURNS TABLE (pozo_capacidad_mineral INTEGER, pozo_cantidad_mts NUMERIC(10,2))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla pozo según el código de pozo
+    RETURN QUERY SELECT P.pozo_capacidad_mineral, P.pozo_cantidad_mts
+    FROM pozo P
+    WHERE P.pozo_id = pozo_codigo;
 END;
 $$ LANGUAGE plpgsql;
 

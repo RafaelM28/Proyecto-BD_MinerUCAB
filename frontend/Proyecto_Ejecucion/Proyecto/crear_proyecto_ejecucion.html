@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinerUCAB - Crear Proyecto Ejecución</title>
-    <link rel="stylesheet" href="/static/css/crear_proyecto_ejecucion_styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/crear_proyecto_ejecucion_styles.css') }}">
     <script>
         async function loadPozos() {
             const mineral = document.getElementById("mineral").value;
@@ -13,8 +13,31 @@
             const pozosSelect = document.getElementById("pozos");
             pozosSelect.innerHTML = '<option value="">Seleccione Pozo</option>';
             pozos.forEach(pozo => {
-                pozoSelect.innerHTML += `<option value="${pozo.pozo_id}">${pozo.pozo_nombre}</option>`;
+                pozosSelect.innerHTML += `<option value="${pozo.pozo_codigo}">${pozo.pozo_nombre}</option>`;
             });
+            // Añadir un evento 'change' al select de pozos para actualizar los inputs
+            pozosSelect.onchange = async () => {
+                const selectedPozoId = pozosSelect.value;
+                const capacidadInput = document.getElementById("capacidad");
+                const cantMtsInput = document.getElementById("cant-mts");
+                if (selectedPozoId) {
+                    // Suponiendo que la API devuelve los datos necesarios para estos campos
+                    const response = await fetch(`/get_datos_pozo/${selectedPozoId}`);
+                    const pozoDetalle = await response.json();
+
+                    // Actualizar los campos con los datos del pozo seleccionado
+                    document.getElementById("capacidad").value = pozoDetalle.pozo_capacidad_mineral || '';
+                    document.getElementById("cant-mts").value = pozoDetalle.pozo_cantidad_mts || '';
+                    capacidadInput.disabled = false; // Habilitar el input
+                    cantMtsInput.disabled = false; // Habilitar el input
+                } else {
+                    // Limpiar los campos si no se selecciona un pozo
+                    document.getElementById("capacidad").value = '';
+                    document.getElementById("cant-mts").value = '';
+                    capacidadInput.disabled = true; // Deshabilitar el input
+                    cantMtsInput.disabled = true; // Deshabilitar el input
+                }
+            };
         }
     </script>
 </head>
@@ -131,7 +154,7 @@
             <header>
                 <h2>Proyecto a Ejecutar</h2>
             </header>
-            <form class="solicitud-form" method="POST" action="/create-solicitud"> <!-- Adjust action to your backend endpoint -->
+            <form class="solicitud-form" method="POST" action="{{ url_for('register_proyecto_ejecucion') }}"> <!-- Adjust action to your backend endpoint -->
                 
                 <div class="form-group">
                     <label for="mineral">Mineral: *</label>
@@ -149,8 +172,8 @@
                         <select id="pozos" name="pozos">
                             <option value="">Pozo</option>
                         </select>
-                        <input type="number" id="capacidad" name="capacidad" placeholder="Capacidad" disabled>
-                        <input type="number" id="cant-mts" name="cant-mts" placeholder="Cant. Mts" disabled>
+                        <input type="number" id="capacidad" name="capacidad" placeholder="Capacidad" value="">
+                        <input type="number" id="cant-mts" name="cant-mts" placeholder="Cant. Mts" value="">
                     </div>
                 </div>
 

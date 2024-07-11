@@ -13,9 +13,9 @@ app.secret_key = os.urandom(16)
 # Función para establecer conexión con la base de datos PostgreSQL
 def connection():
     # Creación de variables con los datos de conexión a la base de datos
-    db_name = "db_minerucab"
+    db_name = "minerucab"
     db_user = "postgres"
-    db_pass = "0000"
+    db_pass = "admin1234*"
     db_host = "localhost"
     db_port = "5432"
 
@@ -1134,38 +1134,34 @@ def lista_actividades_ejecucion():
     # Renderización de la plantilla HTML para 'lista_actividades_ejecucion', pasando los datos de proyectos al template
     return render_template('Proyecto_Ejecucion/Actividad/lista_actividades_ejecucion.html', actividades=actividades)
 
-# Definición de la ruta '/get_pozos_de_mineral/<int:mineral_id>'
-#@app.route('/get_pozos_de_mineral/<int:mineral_id>')
-#def get_pozos_de_mineral(mineral_id: int):
-   #cursor = connection().cursor()
+#Definición de la ruta '/get_pozos_de_mineral/<int:mineral_id>'
+@app.route('/get_pozos_de_mineral/<int:mineral_id>')
+def get_pozos_de_mineral(mineral_id: int):
+    cursor = connection().cursor()
 
     cursor.execute("SELECT * FROM lista_pozos_de_mineral(%s)", (mineral_id,))
     pozos = cursor.fetchall()
     cursor.close()
     connection().close()
     # Retorno de los minerales en formato JSON
-    return jsonify([{"mineral_codigo": m[0], "mineral_nombre": m[1]} for m in minerales])
+    return jsonify([{"pozo_codigo": p[0], "pozo_nombre": p[1]} for p in pozos])
 
+# Definición de la ruta '/get_datos_pozo/<int:pozo_id>'
+@app.route('/get_datos_pozo/<int:pozo_id>')
+def get_datos_pozo(pozo_id: int):
+    cursor = connection().cursor()
 
-#@app.route('/crear_proyecto_ejecucion', methods=['GET','POST'])
-#def crear_proyecto_ejecucion():
-    if request.method == 'POST':	
-        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
-        cur = connection().cursor()
+    cursor.execute("SELECT * FROM lista_datos_pozo(%s)", (pozo_id,))
+    pozos = cursor.fetchall()
+    cursor.close()
+    connection().close()
+    # Retorno de los minerales en formato JSON
+    return jsonify([{"pozo_capacidad_mineral": p[0], "pozo_cantidad_mts": p[1]} for p in pozos])
 
-        proyecto_nombre = request.form['proyecto-nombre']
-        proyecto_descripcion = request.form['proyecto-descripcion']
-        proyecto_fecha_inicio = request.form['proyecto-fecha-inicio']
-        proyecto_fecha_fin = request.form['proyecto-fecha-fin']
-        cur.execute("CALL sp_crear_proyecto_ejecucion(%s,%s,%s,%s)", (proyecto_nombre, proyecto_descripcion, proyecto_fecha_inicio, proyecto_fecha_fin))
-        # Commit de los cambios
-        cur.connection.commit()
-        # Cerrar el cursor 
-        cur.connection.close()
-        cur.close()
+# Definición de la ruta '/register_proyecto_config'
+@app.route('/register_proyecto_ejecucion', methods=['GET','POST'])
+def register_proyecto_ejecucion():
         
-        return redirect(url_for('lista_proyectos_ejecucion'))
-    
     cur = connection().cursor()
     cur.execute("SELECT * FROM lista_minerales_proyecto_ejecucion()")
     minerales = cur.fetchall()
