@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ver Detalle Pedido de Venta - MinerUCAB</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/ver_pedido_venta_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ver_pedido_venta_seleccion_reponer.css') }}">
 </head>
 <body>
     <header class="header">
@@ -119,7 +119,7 @@
             <header>
                 <h2>Pedido de Venta</h2>
             </header>
-            <form class="solicitud-form" action="{{ url_for('update_estatus_venta', pedido_codigo=pedido[1],cliente_id=pedido[3]) }}"> <!-- Adjust action to your backend endpoint -->
+            <form class="solicitud-form">  <!-- Adjust action to your backend endpoint -->
                 <div class="form-group">
                     <label for="fecha-emision">Fecha Emisión:</label>
                     <input type="date" id="fecha-emision" name="fecha-emision" value="{{ pedido[0] }}" readonly>
@@ -201,13 +201,13 @@
                             <tr class="total-row">
                                 <td colspan="4" class="total">TOTAL</td>
                                 <td>{{ pedido[13] }}</td>
+                                <input type="hidden" name="total" value="{{ pedido[13] }}" />
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-                <div class="form-group">
-                    <button type="submit">Enviar</button>
-                </div>
+                <a href="/ver_pedido_venta/update_estatus_confirmar_reposicion/{{pedido[1]}}/{{pedido[3]}}" class="add-button-container">Compra</a>
+                <button class="add-button-container" onclick="location.href='#'";>Proyecto</button>
             </form>
         </main>
     </div>

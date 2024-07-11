@@ -4,8 +4,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol - MinerUCAB</title>
-    <link rel="stylesheet" href="/static/css/crear_rol_styles.css">
+    <title>MinerUCAB - Proyectos Ejecución</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_proyectos_ejecucion_styles.css') }}">
+    <script>
+        function sortTable(column) {
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            let currentSort = searchParams.get('sort');
+            let currentOrder = searchParams.get('order');
+            let newOrder = 'asc';
+
+            if (currentSort === column && currentOrder === 'asc') {
+                newOrder = 'desc';
+            }
+
+            searchParams.set('sort', column);
+            searchParams.set('order', newOrder);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+
+        function searchProyectos() {
+            const searchValue = document.getElementById('searchInput').value;
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            searchParams.set('search', searchValue);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+    </script>
 </head>
 
 <body>
@@ -117,71 +150,53 @@
             </ul>
         </div>
 
-        <div class="login-container">
-            <div class="container2">
-                <form>
-                    <div class="text4">
-                        <h2 class="text5">Rol</h2>
-                    </div>
-
-                    <div class="form-group1">
-                        <label class="label1">Nombre: *</label>
-                        <input class="input1" id="nombre-rol" name="nombre-rol" required>
-                    </div>
-
-                    <div class="form-group1">
-                        <label class="label2">Privilegios: *</label>
-                        <div class="privilegios-input-group">
-                            <select class="input1" id="privilegios" name="privilegios">
-                                <option value="Consultar lista de aliados">Consultar lista de aliados</option>
-                                <option value="Registrar aliado">Registrar aliado</option>
-                            </select>
-                            <button type="button" onclick="addPrivilegio()">Agregar Privilegio</button>
-                        </div>
-                    </div>
-
-                    <div class="selected-privilegios" id="selected-privilegios">
-                        <!-- Dynamically added privileges will appear here -->
-                    </div>
-
-                    <div class="form-group1">
-                        <label class="label2">Descripción:</label>
-                        <textarea class="input1" id="descripcion-rol" name="descripcion-rol" rows="4" required></textarea>
-                    </div>
-
-                    <div class="form-group3">
-                        <button class="submit" type="submit">Agregar</button>
-                    </div>
-                </form>
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Proyectos</h1>
             </div>
-        </div>
+            <div class="tabs">
+                <a href="{{ url_for('lista_proyectos')}}"><div class="tab">Configuración</div></a>
+                <a href="{{ url_for('lista_proyectos_ejecucion')}}"><div class="tab active">Ejecución</div></a>
+            </div>
+            <div class="tabs">
+                <a href="{{ url_for('lista_proyectos_ejecucion')}}"><div class="tab active">Proyectos</div></a>
+                <a href="{{ url_for('lista_etapas_ejecucion')}}"><div class="tab">Etapas</div></a>
+                <a href="{{ url_for('lista_actividades_ejecucion')}}"><div class="tab">Actividades</div></a>
+            </div>
+            <div class="content-header">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Buscar Proyecto">
+                    <button class="search-button" onclick="searchProyectos()">🔍</button>
+                </div>
+                <button class="add-button-container" onclick="location.href='#'";>Agregar Proyecto</button>
+            </div>
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th><a href="#" onclick="sortTable('proyecto_codigo')">Código</a></th>
+                        <th><a href="#" onclick="sortTable('proyecto_nombre')">Nombre</a></th>
+                        <th><a href="#" onclick="sortTable('mineral_nombre')">Mineral</a></th>
+                        <th><a href="#" onclick="sortTable('estatus_ejecucion')">Estatus</a></th>
+                        <th>Opción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proyecto in proyectos %}
+                    <tr>
+                        <td>{{ proyecto[0] }}</td>
+                        <td>{{ proyecto[1] }}</td>
+                        <td>{{ proyecto[2] }}</td>
+                        <td>{{ proyecto[3] }}</td>
+                        <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination">
+                <!-- Add pagination if needed -->
+            </div>
+        </main>
     </div>
-    <script>
-        function addPrivilegio() {
-            const privilegiosSelect = document.getElementById('privilegios');
-            const privilegio = privilegiosSelect.value;
-
-            if (privilegio) {
-                const privilegioRow = document.createElement('div');
-                privilegioRow.classList.add('privilegio-row');
-                privilegioRow.innerHTML = `
-                    <span>${privilegio}</span>
-                    <button type="button" onclick="removePrivilegio(this)">x</button>
-                    <input type="hidden" name="privilegios[]" value="${privilegio}">
-                `;
-
-                document.getElementById('selected-privilegios').appendChild(privilegioRow);
-
-                // Clear select
-                privilegiosSelect.value = '';
-            }
-        }
-
-        function removePrivilegio(button) {
-            const privilegioRow = button.parentElement;
-            privilegioRow.remove();
-        }
-    </script>
 </body>
 
 </html>

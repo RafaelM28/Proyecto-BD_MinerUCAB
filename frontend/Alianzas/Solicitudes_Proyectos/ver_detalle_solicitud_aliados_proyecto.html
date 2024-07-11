@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Solicitud - MinerUCAB</title>
-    <link rel="stylesheet" href="/static/css/crear_proyecto_ejecucion_styles.css">
+    <title>Ver Detalle Solicitud de Compra - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/ver_pedido_venta_styles.css">
 </head>
 <body>
     <header class="header">
@@ -114,47 +114,106 @@
 
             </ul>
         </div>
-        
+
         <main class="main-content">
             <header>
-                <h2>Proyecto a Ejecutar</h2>
+                <h2>Pedido de Venta</h2>
             </header>
-            <form class="solicitud-form" method="POST" action="/create-solicitud"> <!-- Adjust action to your backend endpoint -->
+            <form class="solicitud-form" method="POST" action="/ver_detalle_pedido"> <!-- Adjust action to your backend endpoint -->
                 <div class="form-group">
-                    <label for="mineral">Mineral: *</label>
-                    <select id="mineral" name="mineral" readonly>
-                        <option value="Aluminio">Aluminio</option>
-                    </select>
+                    <label for="fecha-emision">Fecha Emisión:</label>
+                    <input type="date" id="fecha-emision" name="fecha-emision" value="2023-04-16" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="minerales">Pozo: *</label>
-                    <div class="minerales-input-group">
-                        <select id="pozo" name="pozo">
-                            <option value="Pozo1">Pozo 1</option>
-                            <option value="Pozo2">Pozo 2</option>
-                        </select>
-                        <input type="number" id="capacidad" name="capacidad" placeholder="Capacidad" required>
-                        <input type="number" id="cant-mts" name="cant-mts" placeholder="Cant. Mts" required>
-                        <button type="button" onclick="addMineral()">Cargar</button>
-                    </div>
-                </div>
-                <div class="selected-minerales" id="selected-minerales">
-                    <!-- Dynamically added minerals will appear here -->
+                    <label for="numero-orden">Número de orden:</label>
+                    <input type="text" id="numero-orden" name="numero-orden" value="0017389" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="NombreProyecto">Nombre de Proyecto: *</label>
-                    <input type="text" id="nombreProyecto" name="nombreProyecto" required>
+                    <label for="estatus">Estatus:</label>
+                    <input type="text" id="estatus" name="estatus" value="Por Enviar" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="FechaInicio">Fecha Inicio Estimada: *</label>
-                    <input type="text" id="fechaInicioEst" name="fechaInicioEst" required>
+                    <label for="razon-social">Razón Social:</label>
+                    <input type="text" id="razon-social" name="razon-social" value="CVG Industria Venezolana de Aluminio C.A.">
                 </div>
                 <div class="form-group">
-                    <label for="descripcion">Descripción:</label>
-                    <input type="text" id="descripcion" name="descripcion">
+                    <label for="rif">RIF:</label>
+                    <input type="text" id="rif" name="rif" value="943267875">
                 </div>
                 <div class="form-group">
-                    <button type="submit">Crear</button>
+                    <label for="correo">Correo:</label>
+                    <input type="email" id="correo" name="correo" value="cvgvenalum@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección:</label>
+                    <input type="text" id="direccion" name="direccion" value="Sabana Grande 3">
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" id="telefono" name="telefono" value="0412-7462948">
+                </div>
+                <div class="form-group">
+                    <label for="representante">Representante:</label>
+                    <input type="text" id="representante" name="representante" value="Leandro Andrade">
+                </div>
+                <div class="form-group">
+                    <label for="proyecto-asociado">Proyecto Asociado:</label>
+                    <input type="text" id="proyecto-asociado" name="proyecto-asociado" value="Proyecto 202425" readonly>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Cargo</th>
+                                <th>Cantidad</th>
+                                <th>Salario</th>
+                                <th>Viático</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Juan Gonzalez</td>
+                                <td>Geólogo</td>
+                                <td></td>
+                                <td>US$ 7.72</td>
+                                <td>US$ 77.24</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Recurso</th>
+                                <th>Tipo</th>
+                                <th>Cantidad</th>
+                                <th>Costo</th>
+                                <th>Mantenimiento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="4" class="total">TOTAL</td>
+                                <td>US$ 77.24</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Enviar</button>
                 </div>
             </form>
         </main>

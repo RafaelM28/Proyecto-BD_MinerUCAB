@@ -1465,10 +1465,6 @@ CREATE TABLE Pedido_Venta (
 
     -- Restricción de clave primaria
     CONSTRAINT pk_pedido_venta PRIMARY KEY (pedido_venta_numero, fk_cliente),
-    -- Restricción para verificar que el monto subtil sea mayor a 0
-    CONSTRAINT check_pedido_venta_monto_subtil CHECK (pedido_venta_monto_subtil > 0),
-    -- Restricción para verificar que el costo total sea mayor a 0
-    CONSTRAINT check_pedido_venta_monto_total CHECK (pedido_venta_monto_total > 0),
     -- Restricción de clave foránea que referencia a la tabla CLIENTE
     CONSTRAINT fk_cliente_pedido_venta FOREIGN KEY (fk_cliente) REFERENCES Cliente (persona_jur_codigo),
     -- Restricción para verificar que la fecha de emisión sea menor o igual a la fecha actual
@@ -1500,7 +1496,7 @@ CREATE TABLE Detalle_Pedido_Venta (
     -- Restricción para verificar que el precio unitario sea mayor a 0
     CONSTRAINT check_detalle_pedido_venta_precio_unitario CHECK (detalle_venta_precio_unitario > 0),
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
-    CONSTRAINT fk_pedido_venta_detalle_pedido_venta FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
+    CONSTRAINT fk_pedido_venta_detalle_pedido_venta FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla INVENTARIO_PRODUCTO
     CONSTRAINT fk_inventario_producto_detalle_pedido_venta FOREIGN KEY (fk_inventario_producto_1, fk_inventario_producto_2) REFERENCES Inventario_Producto (inventario_producto_codigo, fk_mineral) ON DELETE CASCADE
 );
@@ -1524,7 +1520,7 @@ CREATE TABLE Historico_Estatus_Pedido_Venta (
     -- Restricción de clave foránea que referencia a la tabla ESTATUS_PEDIDO
     CONSTRAINT fk_estatus_historico_estatus_pedido_venta FOREIGN KEY (fk_estatus_pedido) REFERENCES Estatus_Pedido (estatus_pedido_codigo),
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
-    CONSTRAINT fk_pedido_historico_estatus_pedido_venta FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
+    CONSTRAINT fk_pedido_historico_estatus_pedido_venta FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente) ON DELETE CASCADE,
     -- Restricción para verificar que la fecha de inicio sea menor o igual a la fecha actual
     CONSTRAINT check_hist_est_pedido_venta_fecha_inicio CHECK (hist_est_pedido_venta_fecha_inicio <= CURRENT_TIMESTAMP),
     -- Restricción para verificar que la fecha de fin sea mayor o igual a la fecha de inicio
@@ -1544,9 +1540,9 @@ CREATE TABLE Pedido_Compra_Venta (
     -- Restricción de clave primaria
     CONSTRAINT pk_pedido_compra_venta PRIMARY KEY (fk_pedido_venta_1, fk_pedido_venta_2, fk_pedido_compra_1, fk_pedido_compra_2),
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
-    CONSTRAINT fk_pedido_venta_pedido_compra FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
+    CONSTRAINT fk_pedido_venta_pedido_compra FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_COMPRA
-    CONSTRAINT fk_pedido_compra_pedido_compra FOREIGN KEY (fk_pedido_compra_1, fk_pedido_compra_2) REFERENCES Pedido_Compra (pedido_compra_numero, fk_aliado)
+    CONSTRAINT fk_pedido_compra_pedido_compra FOREIGN KEY (fk_pedido_compra_1, fk_pedido_compra_2) REFERENCES Pedido_Compra (pedido_compra_numero, fk_aliado) ON DELETE CASCADE
 );
 
 CREATE TABLE Pedido_Venta_Proyecto (
@@ -1560,9 +1556,9 @@ CREATE TABLE Pedido_Venta_Proyecto (
     -- Restricción de clave primaria
     CONSTRAINT pk_pedido_venta_proyecto PRIMARY KEY (fk_proyecto_ejecucion, fk_pedido_venta_1, fk_pedido_venta_2),
     -- Restricción de clave foránea que referencia a la tabla PEDIDO_VENTA
-    CONSTRAINT fk_pedido_venta_pedido_venta_proyecto FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente),
+    CONSTRAINT fk_pedido_venta_pedido_venta_proyecto FOREIGN KEY (fk_pedido_venta_1, fk_pedido_venta_2) REFERENCES Pedido_Venta (pedido_venta_numero, fk_cliente) ON DELETE CASCADE,
     -- Restricción de clave foránea que referencia a la tabla PROYECTO_EJECUCION
-    CONSTRAINT fk_proyecto_pedido_venta_proyecto FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo) ON DELETE CASCADE
+    CONSTRAINT fk_proyecto_pedido_venta_proyecto FOREIGN KEY (fk_proyecto_ejecucion) REFERENCES Proyecto_Ejecucion (proyecto_ejec_codigo)
 );
 
 CREATE TABLE Banco (
@@ -1727,7 +1723,7 @@ CREATE TABLE Pago_Venta (
     -- Clave foránea del pedido venta 1
     fk_pedido_venta_1 SMALLINT NOT NULL UNIQUE,
     -- Clave foránea del pedido venta 2
-    fk_pedido_venta_2 SMALLINT NOT NULL UNIQUE,
+    fk_pedido_venta_2 SMALLINT NOT NULL,
     -- Monto del pago
     pago_venta_monto NUMERIC(10,2) NOT NULL,
     -- Fecha de emisión del pago
@@ -1754,3 +1750,10 @@ CREATE TYPE tipo_detalle_compra AS (
     detalle_cantidad SMALLINT,
     detalle_precio NUMERIC(10,2)
 );
+
+CREATE TYPE tipo_detalle_venta AS (
+    detalle_mineral SMALLINT,
+    detalle_cantidad SMALLINT,
+    detalle_precio NUMERIC(10,2)
+);
+

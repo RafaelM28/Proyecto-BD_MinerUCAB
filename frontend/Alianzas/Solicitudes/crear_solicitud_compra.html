@@ -99,7 +99,7 @@
                     <a href="{{ url_for('lista_clientes')}}">
                         <li class="li" href="#">Clientes</li>
                     </a>
-                    <a href="#">
+                    <a href="{{ url_for('lista_pedidos_venta')}}">
                         <li class="li" href="#">Pedidos</li>
                     </a>
                     <a href="#">
@@ -133,7 +133,6 @@
             </header>
             <form class="solicitud-form" action="{{ url_for('register_solicitud') }}" method="POST">
                 <div class="form-group">
-                
                     <label for="aliado">Aliado: *</label>
                     <select id="aliado" onchange="loadMinerales()" name="aliado" required>
                         <option value="">Aliado</option>
@@ -184,8 +183,22 @@
             // Validar que los campos no estén vacíos
             if (mineral && cantidad && precioUnit) {
                 var tbody = document.getElementById('tablaMinerales').getElementsByTagName('tbody')[0];
+                var existeMineral = false;
+
+                // Verificar si el mineral ya fue agregado a la tabla
+                for (var i = 0; i < tbody.rows.length; i++) {
+                    if (tbody.rows[i].cells[0].textContent.includes(mineral)) {
+                        existeMineral = true;
+                        break;
+                    }
+                }
+
+                if (existeMineral) {
+                alert('El mineral seleccionado ya ha sido agregado.');
+                return; // Detener la ejecución para no agregar la fila
+                }
+
                 var rowIndex = tbody.rows.length; // Índice basado en la cantidad de filas existentes
-                // Crear una nueva fila
                 // Crear una nueva fila con inputs ocultos para enviar los datos
                 var fila = `<tr>
                                 <td>${mineral}<input type="hidden" name="mineral[${rowIndex}]" value="${mineral}"></td>

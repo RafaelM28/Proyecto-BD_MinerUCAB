@@ -12017,8 +12017,9 @@ VALUES
 (7, 'En espera', NULL),
 (8, 'Completado', NULL),
 (9, 'En revisión', NULL),
-(10, 'Confirmado ', NULL);
-
+(10, 'Confirmado ', NULL),
+(11, 'Por reponer', NULL),
+(12, 'Por iniciar', NULL);
 
 -- Insertando datos en la tabla 'pedido_venta'
 INSERT INTO pedido_venta (pedido_venta_numero, fk_cliente, pedido_venta_fecha_emision, pedido_venta_monto_subtil, pedido_venta_monto_total)

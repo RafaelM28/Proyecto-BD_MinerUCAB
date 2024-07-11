@@ -397,3 +397,31 @@ textarea {
     height: 100%;
     width: 100%;
 }
+
+.add-button-container {
+    font-size: 14px;
+    background: #D9D9D9;
+    border: 1px solid black;
+    height: 36px;
+    width: 150px;
+    border-radius: 10px;
+    margin-top: 29px;
+    margin-right: 18px;
+}
+
+.action-button {
+    background:  #D9D9D9;
+    border: 1px solid black;
+    cursor: pointer;
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-button img {
+    width: 18px;
+    height: 18px;
+}

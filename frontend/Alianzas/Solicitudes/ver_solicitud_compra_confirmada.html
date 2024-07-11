@@ -87,7 +87,7 @@
                     <a href="{{ url_for('lista_clientes')}}">
                         <li class="li" href="#">Clientes</li>
                     </a>
-                    <a href="#">
+                    <a href="{{ url_for('lista_pedidos_venta')}}">
                         <li class="li" href="#">Pedidos</li>
                     </a>
                     <a href="#">
@@ -173,7 +173,7 @@
                     <input type="date" id="fecha-pago" name="fecha-pago" required>
                 </div>
                 <div class="form-group">
-                    <label for="pedido-asociado">Pedido Asociado:</label>
+                    <label for="pedido-asociado">Código de Pedido Asociado:</label>
                     <input type="text" id="pedido-asociado" name="pedido-asociado" value="{{ solicitud[11] }}" readonly>
                 </div>
                 <div class="table-container">

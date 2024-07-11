@@ -6,6 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinerUCAB -  Proyectos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_proyectos_styles.css') }}">
+    <script>
+        function sortTable(column) {
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            let currentSort = searchParams.get('sort');
+            let currentOrder = searchParams.get('order');
+            let newOrder = 'asc';
+
+            if (currentSort === column && currentOrder === 'asc') {
+                newOrder = 'desc';
+            }
+
+            searchParams.set('sort', column);
+            searchParams.set('order', newOrder);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+
+        function searchProyectos() {
+            const searchValue = document.getElementById('searchInput').value;
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            searchParams.set('search', searchValue);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+    </script>
 </head>
 
 <body>
@@ -89,7 +122,7 @@
                     <a href="{{ url_for('lista_clientes')}}">
                         <li class="li" href="#">Clientes</li>
                     </a>
-                    <a href="#">
+                    <a href="{{ url_for('lista_pedidos_venta')}}">
                         <li class="li" href="#">Pedidos</li>
                     </a>
                     <a href="#">
@@ -122,8 +155,8 @@
                 <h1>Proyectos</h1>
             </div>
             <div class="tabs">
-                <div class="tab active">Configuración</div>
-                <div class="tab">Ejecución</div>
+                <a href="{{ url_for('lista_proyectos')}}"><div class="tab active">Configuración</div></a>
+                <a href="{{ url_for('lista_proyectos_ejecucion')}}"><div class="tab">Ejecución</div></a>
             </div>
             <div class="tabs">
                 <a href="{{ url_for('lista_proyectos')}}"><div class="tab active">Proyectos</div></a>
@@ -132,17 +165,17 @@
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Proyecto">
-                    <button class="search-button">🔍</button>
+                    <input type="text" id="searchInput" placeholder="Buscar Proyecto">
+                    <button class="search-button" onclick="searchProyectos()">🔍</button>
                 </div>
                 <button class="add-button-container" onclick="location.href='#'";>Agregar Proyecto</button>
             </div>
             <table class="activity-table">
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Mineral</th>
+                        <th><a href="#" onclick="sortTable('proyecto_codigo')">Código</a></th>
+                        <th><a href="#" onclick="sortTable('proyecto_nombre')">Nombre</a></th>
+                        <th><a href="#" onclick="sortTable('mineral_nombre')">Mineral</a></th>
                         <th>Opción</th>
                     </tr>
                 </thead>

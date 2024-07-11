@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol - MinerUCAB</title>
-    <link rel="stylesheet" href="/static/css/crear_rol_styles.css">
+    <title>Proyecto a Ejecutar - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/crear_proyecto_ejecucion_styles.css">
 </head>
-
 <body>
     <header class="header">
         <div class="logo">MINERUCAB</div>
@@ -89,7 +87,7 @@
                     <a href="{{ url_for('lista_clientes')}}">
                         <li class="li" href="#">Clientes</li>
                     </a>
-                    <a href="{{ url_for('lista_pedidos_venta')}}">
+                    <a href="#">
                         <li class="li" href="#">Pedidos</li>
                     </a>
                     <a href="#">
@@ -116,72 +114,23 @@
 
             </ul>
         </div>
-
-        <div class="login-container">
-            <div class="container2">
-                <form>
-                    <div class="text4">
-                        <h2 class="text5">Rol</h2>
-                    </div>
-
-                    <div class="form-group1">
-                        <label class="label1">Nombre: *</label>
-                        <input class="input1" id="nombre-rol" name="nombre-rol" required>
-                    </div>
-
-                    <div class="form-group1">
-                        <label class="label2">Privilegios: *</label>
-                        <div class="privilegios-input-group">
-                            <select class="input1" id="privilegios" name="privilegios">
-                                <option value="Consultar lista de aliados">Consultar lista de aliados</option>
-                                <option value="Registrar aliado">Registrar aliado</option>
-                            </select>
-                            <button type="button" onclick="addPrivilegio()">Agregar Privilegio</button>
+        
+        <main class="main-content">
+            <header>
+                <h2>Proyecto a Ejecutar</h2>
+            </header>
+            {% for etapa_id, etapa in etapas.items() %}
+                <div class="etapa">
+                    <h3>{{ etapa['nombre'] }}</h3>
+                    {% for actividad in etapa['actividades'] %}
+                        <div class="actividad">
+                            Actividad: {{ actividad }}
                         </div>
-                    </div>
-
-                    <div class="selected-privilegios" id="selected-privilegios">
-                        <!-- Dynamically added privileges will appear here -->
-                    </div>
-
-                    <div class="form-group1">
-                        <label class="label2">Descripción:</label>
-                        <textarea class="input1" id="descripcion-rol" name="descripcion-rol" rows="4" required></textarea>
-                    </div>
-
-                    <div class="form-group3">
-                        <button class="submit" type="submit">Agregar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button>Agregar</button>
+        </main>
     </div>
-    <script>
-        function addPrivilegio() {
-            const privilegiosSelect = document.getElementById('privilegios');
-            const privilegio = privilegiosSelect.value;
-
-            if (privilegio) {
-                const privilegioRow = document.createElement('div');
-                privilegioRow.classList.add('privilegio-row');
-                privilegioRow.innerHTML = `
-                    <span>${privilegio}</span>
-                    <button type="button" onclick="removePrivilegio(this)">x</button>
-                    <input type="hidden" name="privilegios[]" value="${privilegio}">
-                `;
-
-                document.getElementById('selected-privilegios').appendChild(privilegioRow);
-
-                // Clear select
-                privilegiosSelect.value = '';
-            }
-        }
-
-        function removePrivilegio(button) {
-            const privilegioRow = button.parentElement;
-            privilegioRow.remove();
-        }
-    </script>
 </body>
-
 </html>

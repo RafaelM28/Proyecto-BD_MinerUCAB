@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol - MinerUCAB</title>
-    <link rel="stylesheet" href="/static/css/crear_rol_styles.css">
+    <title>Seleccion Empleados/Recursos - MinerUCAB</title>
+    <link rel="stylesheet" href="/static/css/seleccion_empleado_recursos_actividad_ejecucion_styles.css">
 </head>
 
 <body>
@@ -89,7 +89,7 @@
                     <a href="{{ url_for('lista_clientes')}}">
                         <li class="li" href="#">Clientes</li>
                     </a>
-                    <a href="{{ url_for('lista_pedidos_venta')}}">
+                    <a href="#">
                         <li class="li" href="#">Pedidos</li>
                     </a>
                     <a href="#">
@@ -121,35 +121,71 @@
             <div class="container2">
                 <form>
                     <div class="text4">
-                        <h2 class="text5">Rol</h2>
+                        <h2 class="text5">Actividad Ejecucion</h2>
                     </div>
 
                     <div class="form-group1">
                         <label class="label1">Nombre: *</label>
-                        <input class="input1" id="nombre-rol" name="nombre-rol" required>
+                        <input class="input1" id="nombre-actividad" name="nombre-actividad" readonly>
                     </div>
 
                     <div class="form-group1">
-                        <label class="label2">Privilegios: *</label>
+                        <label class="label1">Fecha inicio estimada: *</label>
+                        <input class="input1" id="fecha-ini-est" name="fecha-ini-est" readonly>
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label1">Fecha fin estimada: *</label>
+                        <input class="input1" id="fecha-fin-est" name="fecha-fin-est" readonly>
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label2">Geólogos: *</label>
                         <div class="privilegios-input-group">
-                            <select class="input1" id="privilegios" name="privilegios">
-                                <option value="Consultar lista de aliados">Consultar lista de aliados</option>
-                                <option value="Registrar aliado">Registrar aliado</option>
+                            <select class="input1" id="geologos" name="geologos">
+                                <option value="Juan Gonzalez">Juan Gonzalez</option>
+                                <option value="Maria Perez">Maria Perez</option>
                             </select>
-                            <button type="button" onclick="addPrivilegio()">Agregar Privilegio</button>
+                            <button type="button" onclick="addPrivilegio('geologos')">Agregar Geólogo</button>
                         </div>
                     </div>
 
-                    <div class="selected-privilegios" id="selected-privilegios">
+                    <div class="selected-privilegios" id="selected-geologos" name="selected-geologos">
                         <!-- Dynamically added privileges will appear here -->
                     </div>
 
                     <div class="form-group1">
-                        <label class="label2">Descripción:</label>
-                        <textarea class="input1" id="descripcion-rol" name="descripcion-rol" rows="4" required></textarea>
+                        <label class="label2">Supervisores: *</label>
+                        <div class="privilegios-input-group">
+                            <select class="input1" id="supervisores" name="supervisores">
+                                <option value="Juan Gonzalez">Juan Gonzalez</option>
+                                <option value="Maria Perez">Maria Perez</option>
+                            </select>
+                            <button type="button" onclick="addPrivilegio('supervisores')">Agregar Supervisor</button>
+                        </div>
+                    </div>
+
+                    <div class="selected-privilegios" id="selected-supervisores" name="selected-supervisores">
+                        <!-- Dynamically added privileges will appear here -->
+                    </div>
+
+                    <div class="form-group1">
+                        <label class="label2">Plataformas: *</label>
+                        <div class="privilegios-input-group">
+                            <select class="input1" id="plataformas" name="plataformas">
+                                <option value="Plataforma de perforacion">Plataforma de perforación</option>
+                                <option value="Plataforma de iluminacion">Plataforma de iluminación</option>
+                            </select>
+                            <button type="button" onclick="addPrivilegio('plataformas')">Agregar Plataforma</button>
+                        </div>
+                    </div>
+
+                    <div class="selected-privilegios" id="selected-plataformas" name="selected-plataformas">
+                        <!-- Dynamically added privileges will appear here -->
                     </div>
 
                     <div class="form-group3">
+                        <a href="#"><button class="submit">Solicitud Aliado</button></a>
                         <button class="submit" type="submit">Agregar</button>
                     </div>
                 </form>
@@ -157,8 +193,8 @@
         </div>
     </div>
     <script>
-        function addPrivilegio() {
-            const privilegiosSelect = document.getElementById('privilegios');
+        function addPrivilegio(element) {
+            const privilegiosSelect = document.getElementById(element);
             const privilegio = privilegiosSelect.value;
 
             if (privilegio) {
@@ -170,7 +206,7 @@
                     <input type="hidden" name="privilegios[]" value="${privilegio}">
                 `;
 
-                document.getElementById('selected-privilegios').appendChild(privilegioRow);
+                document.getElementById('selected-'.concat(element)).appendChild(privilegioRow);
 
                 // Clear select
                 privilegiosSelect.value = '';

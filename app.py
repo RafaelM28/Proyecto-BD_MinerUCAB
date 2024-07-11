@@ -260,11 +260,20 @@ def lista_roles():
 # Definición de la ruta '/lista_minerales'
 @app.route('/lista_minerales')
 def lista_minerales():
+    sort = request.args.get('sort', 'mineral_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_minerales()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(mineral_codigo AS TEXT) LIKE '%{search}%' OR mineral_nombre LIKE '%{search}%' OR CAST(mineral_tipo AS TEXT) LIKE '%{search}%' OR CAST(inventario_cantidad AS TEXT) LIKE '%{search}%'"
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"
+
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_minerales' que retorna una lista de minerales
-    cur.execute("SELECT * FROM lista_minerales()")
+    cur.execute(query)
     minerales = cur.fetchall()  
     
     # Cierre del cursor y de la conexión a la base de datos
@@ -294,11 +303,20 @@ def lista_recursos():
 # Definición de la ruta '/lista_inventario'
 @app.route('/lista_inventario')
 def lista_inventario():
+    sort = request.args.get('sort', 'inventario_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_inventario()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(inventario_codigo AS TEXT) LIKE '%{search}%' OR mineral_nombre LIKE '%{search}%' OR CAST(inventario_producto AS TEXT) LIKE '%{search}%' OR CAST(inventario_total AS TEXT) LIKE '%{search}%' OR inventario_tipo LIKE '%{search}%' OR CAST(inventario_fecha AS TEXT) LIKE '%{search}%' OR tipo_operacion LIKE '%{search}%'"
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"
+
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_inventario' que retorna una lista de inventario
-    cur.execute("SELECT * FROM lista_inventario()")
+    cur.execute(query)
     inventario = cur.fetchall()  
     
     # Cierre del cursor y de la conexión a la base de datos
@@ -332,8 +350,8 @@ def lista_solicitudes():
     cur.close()  
     connection().close()  
     
-    # Renderización de la plantilla HTML para 'lista_solicitudes', pasando los datos de solicitudes al template
-    return render_template('Alianzas/Solicitudes/lista_solicitudes.html', solicitudes=solicitudes)
+    # Renderización de la plantilla HTML para 'lista_solicitudes_compras', pasando los datos de solicitudes al template
+    return render_template('Alianzas/Solicitudes/lista_solicitudes_compras.html', solicitudes=solicitudes)
 
 @app.route('/register_solicitud', methods=['GET','POST'])
 def register_solicitud(): 
@@ -420,8 +438,7 @@ def chequear_estatus_pedido_compra(pedido_codigo, aliado_id):
         return redirect(url_for('ver_solicitud_compra_pagada', pedido_codigo=pedido_codigo, aliado_id=aliado_id))
     else:
         return "Estatus desconocido o pedido no encontrado", 404    
-
-
+    
 # Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>'
 @app.route('/ver_solicitud_compra/<int:pedido_codigo>', methods=['GET'])
 def ver_solicitud_compra(pedido_codigo):
@@ -486,6 +503,10 @@ def register_pago():
         cursor = conn.cursor()
         cursor.execute("CALL sp_crear_pago_compra(%s, %s, %s, %s, %s, %s)", (pedido_codigo, aliado_id, metodo_codigo, tipo_metodo, monto_pedido, fecha_pago))
         conn.commit()
+        cursor.close()
+        cursor = conn.cursor()
+        cursor.execute("CALL update_estatus_pedido_venta_fin_solicitud(%s, %s)", (pedido_codigo, aliado_id))
+        conn.commit()
     
     except psycopg2.errors.RaiseException as e:
         # Manejo de excepciones en caso de fallo en la conexión
@@ -500,10 +521,17 @@ def register_pago():
     # Si todo fue exitoso, rediriges al usuario a otra página
     return redirect(url_for('update_estatus', pedido_codigo=pedido_codigo, aliado_id=aliado_id))
 
+# Definición de la ruta '/mostrar_error/<int:pedido_codigo>'
 @app.route('/mostrar_error/<int:pedido_codigo>')
 def mostrar_error(pedido_codigo):
         return redirect(url_for('ver_solicitud_compra_confirmada', pedido_codigo=pedido_codigo))
+    
+# Definición de la ruta '/mostrar_error/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/mostrar_error_venta/<int:pedido_codigo>/<int:cliente_id>')
+def mostrar_error_venta(pedido_codigo, cliente_id):
+        return redirect(url_for('ver_pedido_venta_confirmada', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
 
+# Definición de la ruta '/ver_solicitud_compra_pagada/<int:pedido_codigo>/<int:aliado_id>'
 @app.route('/ver_solicitud_compra_pagada/<int:pedido_codigo>/<int:aliado_id>', methods=['GET'])
 def ver_solicitud_compra_pagada(pedido_codigo, aliado_id):
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
@@ -530,12 +558,13 @@ def ver_solicitud_compra_pagada(pedido_codigo, aliado_id):
     # Renderización de la plantilla HTML para 'ver_solicitud_compra', pasando los datos de la solicitud al template
     return render_template('Alianzas/Solicitudes/ver_solicitud_compra_pagada.html', solicitud=solicitud, detalles=detalles, pago=pago)
 
-# Definición de la ruta '/ver_solicitud_compra/<int:pedido_codigo>/update_estatus'
+# Definición de la ruta '/ver_solicitud_compra/update_estatus/<int:pedido_codigo>/<int:aliado_id>'
 @app.route('/ver_solicitud_compra/update_estatus/<int:pedido_codigo>/<int:aliado_id>')
 def update_estatus(pedido_codigo, aliado_id):
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    # Ejecución de la función almacenada 'ver_solicitud_compra' que retorna los datos de una solicitud de compra
+    
+    # Ejecución de la función almacenada 'update_estatus_pedido_compra' que actualiza el estatus de un pedido de compra
     cur.execute("CALL update_estatus_pedido_compra(%s,%s)", (pedido_codigo,aliado_id))
     # Commit de los cambios
     cur.connection.commit()
@@ -548,12 +577,22 @@ def update_estatus(pedido_codigo, aliado_id):
 # Definición de la ruta '/lista_proyectos_config'
 @app.route('/lista_proyectos_config')
 def lista_proyectos():
+    sort = request.args.get('sort', 'proyecto_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_proyectos_config()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(proyecto_codigo AS TEXT) LIKE '%{search}%' OR proyecto_nombre LIKE '%{search}%' OR mineral_nombre LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_proyectos' que retorna una lista de proyectos
-    cur.execute("SELECT * FROM lista_proyectos_config()")
-    proyectos = cur.fetchall()  
+    cur.execute(query)
+    proyectos = cur.fetchall()   
     
     # Cierre del cursor y de la conexión a la base de datos
     cur.close()  
@@ -565,12 +604,22 @@ def lista_proyectos():
 # Definición de la ruta '/lista_etapas_config'
 @app.route('/lista_etapas_config')
 def lista_etapas():
+    sort = request.args.get('sort', 'etapa_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_etapas_config()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(etapa_codigo AS TEXT) LIKE '%{search}%' OR etapa_nombre LIKE '%{search}%' OR CAST(etapa_numero AS TEXT) LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_etapas' que retorna una lista de etapas
-    cur.execute("SELECT * FROM lista_etapas_config()")
-    etapas = cur.fetchall()  
+    cur.execute(query)
+    etapas = cur.fetchall()   
     
     # Cierre del cursor y de la conexión a la base de datos
     cur.close()  
@@ -582,12 +631,22 @@ def lista_etapas():
 # Definición de la ruta '/lista_actividades_config'
 @app.route('/lista_actividades_config')
 def lista_actividades():
+    sort = request.args.get('sort', 'actividad_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_actividades_config()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(actividad_codigo AS TEXT) LIKE '%{search}%' OR actividad_nombre LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_actividades' que retorna una lista de actividades
-    cur.execute("SELECT * FROM lista_actividades_config()")
-    actividades = cur.fetchall()  
+    cur.execute(query)
+    actividades = cur.fetchall()   
     
     # Cierre del cursor y de la conexión a la base de datos
     cur.close()  
@@ -595,6 +654,525 @@ def lista_actividades():
     
     # Renderización de la plantilla HTML para 'lista_actividades', pasando los datos de actividades al template
     return render_template('Proyecto_Config/Actividad/lista_actividades.html', actividades=actividades)
+
+# Definición de la ruta '/lista_pedidos_venta'
+@app.route('/lista_pedidos_venta')
+def lista_pedidos_venta():
+    sort = request.args.get('sort', 'pedido_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_pedidos_venta()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(pedido_codigo AS TEXT) LIKE '%{search}%' OR CAST(pedido_fecha_emision AS TEXT) LIKE '%{search}%' OR cliente LIKE '%{search}%' OR pedido_estatus LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    cur.execute(query)
+    pedidos = cur.fetchall()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'lista_pedidos_venta', pasando los datos de pedidos al template
+    return render_template('Ventas/lista_pedidos_venta.html', pedidos=pedidos)
+
+
+# Definición de la ruta '/register_pedido'
+@app.route('/register_pedido', methods=['GET','POST'])
+def register_pedido(): 
+    if request.method == 'POST':	
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        cur = connection().cursor()
+
+        cliente = request.form['cliente']
+        # Inicializar la lista de tuplas para 'tablaMinerales'
+        tablaMinerales = []
+        # Suponiendo que los campos del formulario vienen indexados (mineral[0], cantidad[0], precio[0], ...)
+        i = 0
+        while True:
+            try:
+                # Intentar obtener el conjunto de datos para cada mineral
+                mineral = request.form[f'mineral[{i}]']
+                cantidad = request.form[f'cantidad[{i}]']
+                precio = request.form[f'precio[{i}]']
+                tablaMinerales.append((mineral, int(cantidad), float(precio)))
+                i += 1
+            except KeyError:
+                # Si no hay más minerales, romper el ciclo
+                break
+        
+        # Construir la parte de la llamada que incluye 'tablaMinerales'
+        tablaMinerales_str = ", ".join([
+            f"CAST(ROW('{mineral}', {cantidad}, {precioUnit}) AS tipo_detalle_venta)" 
+            for mineral, cantidad, precioUnit in tablaMinerales
+        ])
+        # Formatear la llamada completa al procedimiento almacenado
+        query = f"""CALL sp_crear_pedido_venta({cliente},ARRAY[{tablaMinerales_str}])"""
+                
+        # Ejecutar la consulta
+        cur.execute(query)
+        # Commit de los cambios
+        cur.connection.commit()
+        
+        tablaMinerales_arg = f"ARRAY[{tablaMinerales_str}]::tipo_detalle_venta[]"
+        cur.execute(f"SELECT chequear_inventario({tablaMinerales_arg})")
+        resultado = cur.fetchone()[0]  # Asume que la función retorna un solo valor    
+        # Cerrar el cursor 
+        cur.connection.close()
+        cur.close()
+        
+        # Redirigir basado en el resultado de la función
+        if resultado:
+            return redirect(url_for('lista_pedidos_venta'))
+        else:
+            # Ejecución de la función almacenada 'obtener_pedido_venta_cliente' que retorna el código de un pedido de venta
+            cur = connection().cursor()
+            cur.execute("SELECT * FROM obtener_pedido_venta_cliente(%s)", (cliente,))
+            pedido_codigo = cur.fetchone()[0]
+            cur.close()
+            cur = connection().cursor()
+            
+            # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de pedido de venta
+            cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+            pedido = cur.fetchone() 
+            cur.close()  
+            cur = connection().cursor()
+            
+            # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+            cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+            detalles = cur.fetchall()
+            cur.close()
+            connection().close()  
+            return render_template('Ventas/ver_pedido_error_inventario.html', pedido=pedido, detalles=detalles)
+        
+    cur = connection().cursor()
+    cur.execute("SELECT * FROM lista_clientes_venta()")
+    clientes = cur.fetchall()
+    cur.close()
+    cur = connection().cursor()
+    cur.execute("SELECT * FROM lista_minerales_venta()")
+    minerales = cur.fetchall()
+    cur.close()
+    
+    connection().close()
+    return render_template('Ventas/crear_pedido_venta.html', clientes=clientes, minerales=minerales)
+
+# Definición de la ruta '/chequear_estatus_pedido_venta/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/chequear_estatus_pedido_venta/<int:pedido_codigo>/<int:cliente_id>')
+def chequear_estatus_pedido_venta(pedido_codigo, cliente_id):
+    conn = connection()
+    cursor = conn.cursor()
+    # Ejecución de la función almacenada 'obtener_estatus_pedido_venta' que retorna el estatus de un pedido de venta
+    cursor.execute("SELECT * FROM obtener_estatus_pedido_venta(%s)", (pedido_codigo,))
+    estatus = cursor.fetchone()[0] 
+    cursor.close()
+    conn.close()
+
+    # Definir conjuntos de estatus
+    conjunto_en_espera = {'En proceso', 'En espera', 'En revisión'}
+    conjunto_por_pagar = {'Por pagar', 'Confirmado', 'Aprobado'}
+    conjunto_pagado = {'Pagado', 'Completado'}
+    
+    # Decidir a qué ruta redirigir basado en el resultado
+    if estatus in conjunto_en_espera:
+        return redirect(url_for('ver_pedido_venta', pedido_codigo=pedido_codigo))
+    elif estatus in conjunto_por_pagar:
+        return redirect(url_for('ver_pedido_venta_confirmada', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+    elif estatus in conjunto_pagado:    
+        return redirect(url_for('ver_pedido_venta_pagada', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+    elif estatus == 'Por iniciar':
+        return redirect(url_for('ver_pedido_venta_seleccion_reponer', pedido_codigo=pedido_codigo,))
+    elif estatus == 'Por reponer': 
+        return redirect(url_for('ver_pedido_venta_en_reposicion', pedido_codigo=pedido_codigo,))
+    else:
+        return "Estatus desconocido o pedido no encontrado", 404   
+    
+# Definición de la ruta '/ver_pedido_venta/<int:pedido_codigo>'
+@app.route('/ver_pedido_venta/<int:pedido_codigo>', methods=['GET'])
+def ver_pedido_venta(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta.html', pedido=pedido, detalles=detalles) 
+
+# Definición de la ruta '/ver_pedido_venta_seleccion_reponer/<int:pedido_codigo>'
+@app.route('/ver_pedido_venta_seleccion_reponer/<int:pedido_codigo>', methods=['GET'])
+def ver_pedido_venta_seleccion_reponer(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta_seleccion_reponer', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta_seleccion_reponer.html', pedido=pedido, detalles=detalles) 
+
+# Definición de la ruta '/ver_pedido_venta_en_reposicion/<int:pedido_codigo>'
+@app.route('/ver_pedido_venta_en_reposicion/<int:pedido_codigo>', methods=['GET'])
+def ver_pedido_venta_en_reposicion(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta_en_reposicion', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta_en_reposicion.html', pedido=pedido, detalles=detalles) 
+
+# Definición de la ruta '/ver_pedido_venta_confirmada/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta_confirmada/<int:pedido_codigo>/<int:cliente_id>', methods=['GET'])
+def ver_pedido_venta_confirmada(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de un pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    cur = connection().cursor()  
+    
+    # Ejecución de la función almacenada 'obtener_metodos_pago_cliente' que retorna los métodos de pago del cliente
+    cur.execute("SELECT * FROM obtener_metodos_pago_cliente(%s)", (cliente_id,))
+    metodos = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta_confirmada.html', pedido=pedido, detalles=detalles, metodos=metodos)
+
+# Definición de la ruta '/register_pago_venta'
+@app.route('/register_pago_venta', methods=['POST'])
+def register_pago_venta():
+    try:
+        # Obtener los datos del formulario
+        pedido_codigo = request.form['numero-orden']
+        cliente_id = request.form['razon-social']
+        metodo_pago = request.form['metodo-pago']
+        metodo_codigo, tipo_metodo = metodo_pago.split('|', 1)
+        monto_pedido = request.form['total']
+        fecha_pago = request.form['fecha-pago']
+        
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        conn = connection()
+        cursor = conn.cursor()
+        cursor.execute("CALL sp_crear_pago_venta(%s, %s, %s, %s, %s, %s)", (pedido_codigo, cliente_id, metodo_codigo, tipo_metodo, monto_pedido, fecha_pago))
+        conn.commit()
+    
+    except psycopg2.errors.RaiseException as e:
+        # Manejo de excepciones en caso de fallo en la conexión
+        flash('El monto del efectivo no es suficiente para realizar el pago.')
+        return redirect(url_for('mostrar_error_venta', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+    
+    finally:
+        # Asegúrate de cerrar el cursor y la conexión en el bloque finally para que se ejecuten sin importar si hubo una excepción o no
+        cursor.close()
+        conn.close()
+
+    # Si todo fue exitoso, rediriges al usuario a otra página
+    return redirect(url_for('update_estatus_venta', pedido_codigo=pedido_codigo, cliente_id=cliente_id))
+
+# Definición de la ruta '/ver_pedido_venta_pagada/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta_pagada/<int:pedido_codigo>/<int:cliente_id>', methods=['GET'])
+def ver_pedido_venta_pagada(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'ver_solicitud_venta' que retorna los datos de un pedido de venta
+    cur.execute("SELECT * FROM ver_solicitud_venta(%s)", (pedido_codigo,))
+    pedido = cur.fetchone() 
+    cur.close()  
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta' que retorna los detalles de un pedido de venta
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta(%s)", (pedido_codigo,))
+    detalles = cur.fetchall()
+    cur.close()
+    cur = connection().cursor()
+    
+    # Ejecución de la función almacenada 'obtener_metodos_pago_venta' que retorna los métodos de pago de la venta
+    cur.execute("SELECT * FROM obtener_pago_venta(%s, %s)", (pedido_codigo,cliente_id))
+    pago = cur.fetchone()
+    cur.close()
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'ver_pedido_venta', pasando los datos del pedido al template
+    return render_template('Ventas/ver_pedido_venta_pagada.html', pedido=pedido, detalles=detalles, pago=pago)
+
+# Definición de la ruta '/ver_pedido_venta/update_estatus/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta/update_estatus/<int:pedido_codigo>/<int:cliente_id>')
+def update_estatus_venta(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+
+    # Ejecución de la función almacenada 'update_estatus_pedido_venta' que actualiza el estatus de un pedido de venta
+    cur.execute("CALL update_estatus_pedido_venta(%s,%s)", (pedido_codigo,cliente_id))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+    
+    return redirect(url_for('lista_pedidos_venta'))
+
+# Definición de la ruta '/ver_pedido_venta/update_estatus_reposicion/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta/update_estatus_reposicion/<int:pedido_codigo>/<int:cliente_id>')
+def update_estatus_venta_reposicion(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+
+    # Ejecución de la función almacenada 'update_estatus_pedido_reposicion_venta' que actualiza el estatus de un pedido de venta
+    cur.execute("CALL update_estatus_pedido_reposicion_venta(%s,%s)", (pedido_codigo,cliente_id))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+    
+    return redirect(url_for('lista_pedidos_venta'))
+
+# Definición de la ruta '/ver_pedido_venta/update_estatus_confirmar_reposicion/<int:pedido_codigo>/<int:cliente_id>'
+@app.route('/ver_pedido_venta/update_estatus_confirmar_reposicion/<int:pedido_codigo>/<int:cliente_id>')
+def update_estatus_venta_confirmar_reposicion(pedido_codigo, cliente_id):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+
+    # Ejecución de la función almacenada 'update_estatus_pedido_confirmar_reposicion_venta' que actualiza el estatus de un pedido de venta
+    cur.execute("CALL update_estatus_pedido_confirmar_reposicion_venta(%s,%s)", (pedido_codigo,cliente_id))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+
+    return redirect(url_for('register_solicitud_compra_pedido', pedido_codigo=pedido_codigo))
+
+
+@app.route('/register_solicitud_compra_pedido/<int:pedido_codigo>', methods=['GET','POST'])	
+def register_solicitud_compra_pedido(pedido_codigo):
+    if request.method == 'POST':	
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        cur = connection().cursor()
+
+        aliado = request.form['aliado']
+        cur.execute("SELECT * FROM obtener_detalles_pedido_venta_solicitud(%s)", (pedido_codigo,))
+        minerales = cur.fetchall()
+        # Convertir 'minerales' a una lista de diccionarios para facilitar la manipulación (opcional)
+        minerales_como_diccionarios = [{"detalle_mineral": m[0], "detalle_cantidad": m[1], "detalle_precio": m[2]} for m in minerales]
+        # Convertir 'minerales_como_diccionarios' a una lista de tuplas
+        minerales_como_tuplas = [(m["detalle_mineral"], m["detalle_cantidad"], m["detalle_precio"]) for m in minerales_como_diccionarios]
+        
+        # Ejecución del procedimiento almacenado sp_crear_solicitud_compra
+        cur.execute("CALL sp_crear_solicitud_compra(%s,ARRAY[%s]::tipo_detalle_compra[])", (aliado,minerales_como_tuplas))
+        # Commit de los cambios
+        cur.connection.commit()
+        # Ejecución del procedimiento almacenado sp_crear_relacion_solicitud_pedido
+        cur.execute("CALL sp_crear_relacion_solicitud_pedido(%s,%s)", (pedido_codigo,aliado))
+        cur.connection.commit()
+        # Cerrar el cursor 
+        cur.connection.close()
+        cur.close()
+        
+        return redirect(url_for('lista_solicitudes'))
+    
+    cur = connection().cursor()
+    # Ejecución de la función almacenada 'obtener_detalles_pedido_venta_solicitud' que retorna los detalles de un pedido de venta para una solicitud de compra
+    cur.execute("SELECT * FROM obtener_detalles_pedido_venta_solicitud(%s)", (pedido_codigo,))
+    minerales = cur.fetchall()
+    # Convertir 'minerales' a una lista de diccionarios para facilitar la manipulación (opcional)
+    minerales_como_diccionarios = [{"detalle_mineral": m[0], "detalle_cantidad": m[1], "detalle_precio": m[2]} for m in minerales]
+    # Convertir 'minerales_como_diccionarios' a una lista de tuplas
+    minerales_como_tuplas = [(m["detalle_mineral"], m["detalle_cantidad"], m["detalle_precio"]) for m in minerales_como_diccionarios]
+    cur.close()
+    cur = connection().cursor()
+    
+    # Asumiendo que 'cur' es tu cursor de conexión a la base de datos
+    cur.execute("SELECT * FROM lista_aliados_solicitud_pedido(%s)", (minerales_como_tuplas[0][0],))
+    aliados = cur.fetchall()
+
+    cur.execute("SELECT * FROM lista_aliados_solicitud_pedido(%s)", (minerales_como_tuplas[0][0],))
+    cur.close()
+    connection().close()
+    return render_template('Alianzas/Solicitudes/crear_solicitud_compra_pedido.html', aliados=aliados, minerales=minerales, pedido_codigo=pedido_codigo)
+
+# Definición de la ruta '/delete_pedido_venta/<int:pedido_codigo>'
+@app.route('/delete_pedido_venta/<int:pedido_codigo>')
+def delete_pedido_venta(pedido_codigo):
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+
+    # Ejecución de la función almacenada 'delete_pedido_venta' que elimina un pedido de venta
+    cur.execute("CALL sp_borrar_pedido_venta(%s)", (pedido_codigo,))
+    # Commit de los cambios
+    cur.connection.commit()
+    
+    cur.close()
+    connection().close() 
+    
+    return redirect(url_for('lista_pedidos_venta'))
+
+# Definición de la ruta '/lista_proyectos_ejecucion'
+@app.route('/lista_proyectos_ejecucion')
+def lista_proyectos_ejecucion():
+    sort = request.args.get('sort', 'proyecto_codigo')
+    order = request.args.get('order', 'asc')
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_proyectos_ejecucion()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(proyecto_codigo AS TEXT) LIKE '%{search}%' OR proyecto_nombre LIKE '%{search}%' OR mineral_nombre LIKE '%{search}%' OR estatus_ejecucion LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    cur.execute(query)
+    proyectos = cur.fetchall()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'lista_proyectos_ejecucion', pasando los datos de proyectos al template
+    return render_template('Proyecto_Ejecucion/Proyecto/lista_proyectos_ejecucion.html', proyectos=proyectos)
+
+# Definición de la ruta '/lista_etapas_ejecucion'
+@app.route('/lista_etapas_ejecucion')
+def lista_etapas_ejecucion():
+    sort = request.args.get('sort', 'etapa_codigo')
+    order = request.args.get('order', 'asc')
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_etapas_ejecucion()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(etapa_codigo AS TEXT) LIKE '%{search}%' OR etapa_nombre LIKE '%{search}%' OR CAST(etapa_numero AS TEXT) LIKE '%{search}%' OR proyecto_nombre LIKE '%{search}%' OR estatus_ejecucion LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    cur.execute(query)
+    etapas = cur.fetchall()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'lista_etapas_ejecucion', pasando los datos de proyectos al template
+    return render_template('Proyecto_Ejecucion/Etapa/lista_etapas_ejecucion.html', etapas=etapas)
+
+# Definición de la ruta '/lista_actividades_ejecucion'
+@app.route('/lista_actividades_ejecucion')
+def lista_actividades_ejecucion():
+    sort = request.args.get('sort', 'actividad_codigo')
+    order = request.args.get('order', 'asc')
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_actividades_ejecucion()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(actividad_codigo AS TEXT) LIKE '%{search}%' OR actividad_nombre LIKE '%{search}%' OR etapa_nombre LIKE '%{search}%' OR proyecto_nombre LIKE '%{search}%' OR estatus_ejecucion LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    cur.execute(query)
+    actividades = cur.fetchall()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'lista_actividades_ejecucion', pasando los datos de proyectos al template
+    return render_template('Proyecto_Ejecucion/Actividad/lista_actividades_ejecucion.html', actividades=actividades)
+
+# Definición de la ruta '/get_pozos_de_mineral/<int:mineral_id>'
+@app.route('/get_pozos_de_mineral/<int:mineral_id>')
+def get_pozos_de_mineral(mineral_id: int):
+    cursor = connection().cursor()
+
+    cursor.execute("SELECT * FROM lista_pozos_de_mineral(%s)", (mineral_id,))
+    pozos = cursor.fetchall()
+    cursor.close()
+    connection().close()
+    # Retorno de los minerales en formato JSON
+    return jsonify([{"mineral_codigo": m[0], "mineral_nombre": m[1]} for m in minerales])
+
+
+@app.route('/crear_proyecto_ejecucion', methods=['GET','POST'])
+def crear_proyecto_ejecucion():
+    if request.method == 'POST':	
+        # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+        cur = connection().cursor()
+
+        proyecto_nombre = request.form['proyecto-nombre']
+        proyecto_descripcion = request.form['proyecto-descripcion']
+        proyecto_fecha_inicio = request.form['proyecto-fecha-inicio']
+        proyecto_fecha_fin = request.form['proyecto-fecha-fin']
+        cur.execute("CALL sp_crear_proyecto_ejecucion(%s,%s,%s,%s)", (proyecto_nombre, proyecto_descripcion, proyecto_fecha_inicio, proyecto_fecha_fin))
+        # Commit de los cambios
+        cur.connection.commit()
+        # Cerrar el cursor 
+        cur.connection.close()
+        cur.close()
+        
+        return redirect(url_for('lista_proyectos_ejecucion'))
+    
+    cur = connection().cursor()
+    cur.execute("SELECT * FROM lista_minerales_proyecto_ejecucion()")
+    minerales = cur.fetchall()
+    cur.close()
+    connection().close()  
+    
+    return render_template('Proyecto_Ejecucion/Proyecto/crear_proyecto_ejecucion.html', minerales=minerales)
 
 if __name__ == '__main__': 
     app.run(debug=True) 
