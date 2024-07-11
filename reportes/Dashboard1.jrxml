@@ -16,32 +16,8 @@
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
 		<queryString language="SQL">
-			<![CDATA[Select SUM(costo_total) as costo_total,codigo,nombre_etapa
-	From (Select SUM(er.ejecucion_recurso_costo_mensual) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
-		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Recurso er
-		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
-	  	    and er.fk_actividad_ejecucion = ae.actividad_ejec_codigo
-		  Group by ee.etapa_ejec_codigo
-		  UNION ALL
-		  Select SUM(er.ejecucion_recurso_costo_mantenimiento) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
-		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Recurso er
-		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
-	  	    and er.fk_actividad_ejecucion = ae.actividad_ejec_codigo
-		  Group by ee.etapa_ejec_codigo
-		  UNION ALL
-		  Select SUM(eeo.ejecucion_empleado_salario) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
-		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Empleado eeo
-		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
-	  	    and eeo.fk_actividad_ejecucion = ae.actividad_ejec_codigo
-		  Group by ee.etapa_ejec_codigo
-		  UNION ALL
-		  Select SUM(eeo.ejecucion_empleado_viaticos) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
-		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Empleado eeo
-		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
-	  	    and eeo.fk_actividad_ejecucion = ae.actividad_ejec_codigo
-		  Group by ee.etapa_ejec_codigo)
-	Group by codigo,nombre_etapa
-	Order by codigo]]>
+			<![CDATA[Select *
+From costo_total_por_etapa]]>
 		</queryString>
 		<field name="costo_total" class="java.math.BigDecimal">
 			<property name="com.jaspersoft.studio.field.name" value="costo_total"/>
