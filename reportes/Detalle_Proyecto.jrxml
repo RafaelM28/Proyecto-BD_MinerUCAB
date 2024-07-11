@@ -139,24 +139,34 @@
 		</box>
 	</style>
 	<subDataset name="Proyectos" uuid="3480e2f8-77a0-454b-9cff-8ea0af297b78">
-		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value="cHJveWVjdG9zICwxNSwxNSxmNjI1YmEyOC05YjM0LTRmZTYtYWNlMS1lOTc3NGFkYWM4ODU7"/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<parameter name="codigo_proyecto" class="java.lang.Integer"/>
 		<queryString language="SQL">
-			<![CDATA[Select *
-From Proyectos]]>
+			<![CDATA[SELECT *
+FROM proyectos
+WHERE 
+	 proyectos.proyecto_codigo = $P{codigo_proyecto}]]>
 		</queryString>
 		<field name="proyecto_nombre" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.name" value="proyecto_nombre"/>
 			<property name="com.jaspersoft.studio.field.label" value="proyecto_nombre"/>
 			<property name="com.jaspersoft.studio.field.tree.path" value="proyectos"/>
 		</field>
+		<field name="proyecto_codigo" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.label" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="proyectos"/>
+		</field>
 	</subDataset>
 	<subDataset name="Etapas" uuid="22e1dfb2-4a7a-40c1-b535-a13f0f97bbc2">
-		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value="ZXRhcGFzICwxNSwxNSw4MWZlMjMzYi01NjFkLTQ1MDktOTdiZS0xY2U5MDc5ODExNjQ7"/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<parameter name="proyecto_codigo" class="java.lang.Integer"/>
 		<queryString language="SQL">
-			<![CDATA[Select *
-From Etapas]]>
+			<![CDATA[SELECT *
+FROM etapas
+where proyecto_codigo =  $P{proyecto_codigo}]]>
 		</queryString>
 		<field name="etapa_nombre" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.name" value="etapa_nombre"/>
@@ -168,26 +178,41 @@ From Etapas]]>
 			<property name="com.jaspersoft.studio.field.label" value="etepa_numero"/>
 			<property name="com.jaspersoft.studio.field.tree.path" value="etapas"/>
 		</field>
+		<field name="proyecto_codigo" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.label" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="etapas"/>
+		</field>
+		<variable name="Variable_1" class="java.lang.Integer"/>
 	</subDataset>
 	<subDataset name="Actividades" uuid="04426059-1d09-4d56-a1ae-db60d51248e1">
-		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value="YWN0aXZpZGFkZXMgLDE1LDE1LDgxZTNiMDQ2LTM2NjctNDA5YS1iNDBmLWE5OGRlYjEwODEwMDs="/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<parameter name="proyecto_codigo" class="java.lang.Integer"/>
 		<queryString language="SQL">
-			<![CDATA[Select *
-From Actividades]]>
+			<![CDATA[SELECT *
+FROM actividades
+where proyecto_codigo =  $P{proyecto_codigo}]]>
 		</queryString>
 		<field name="actividad_nombre" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.name" value="actividad_nombre"/>
 			<property name="com.jaspersoft.studio.field.label" value="actividad_nombre"/>
 			<property name="com.jaspersoft.studio.field.tree.path" value="actividades"/>
 		</field>
+		<field name="proyecto_codigo" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.label" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="actividades"/>
+		</field>
 	</subDataset>
 	<subDataset name="Empleados" uuid="c8fca79a-907a-46e7-b4fb-86e6edf7be66">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<parameter name="codigo_proyecto" class="java.lang.Integer"/>
 		<queryString language="SQL">
 			<![CDATA[Select *
-From empleados_asignados]]>
+From empleados_asignados
+where proyecto_codigo =  $P{codigo_proyecto}]]>
 		</queryString>
 		<field name="nombre_cargo" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.name" value="nombre_cargo"/>
@@ -204,6 +229,11 @@ From empleados_asignados]]>
 			<property name="com.jaspersoft.studio.field.label" value="empleado_viatico"/>
 			<property name="com.jaspersoft.studio.field.tree.path" value="empleados_asignados"/>
 		</field>
+		<field name="proyecto_codigo" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.label" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="empleados_asignados"/>
+		</field>
 		<variable name="empleado_salario1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
 			<variableExpression><![CDATA[$F{empleado_salario}]]></variableExpression>
 		</variable>
@@ -214,9 +244,11 @@ From empleados_asignados]]>
 	<subDataset name="Recursos" uuid="d252d30c-d8ed-4544-926d-be8861d4794b">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<parameter name="codigo_proyecto" class="java.lang.Integer"/>
 		<queryString language="SQL">
 			<![CDATA[Select *
-From recursos_asignados]]>
+From recursos_asignados
+where proyecto_codigo =  $P{codigo_proyecto}]]>
 		</queryString>
 		<field name="nombre_tipo_recurso" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.name" value="nombre_tipo_recurso"/>
@@ -238,48 +270,27 @@ From recursos_asignados]]>
 			<property name="com.jaspersoft.studio.field.label" value="recurso_mantenimiento"/>
 			<property name="com.jaspersoft.studio.field.tree.path" value="recursos_asignados"/>
 		</field>
-	</subDataset>
-	<subDataset name="costo_actividad" uuid="e518dd2d-b6d1-4a07-8350-fac477391e5c">
-		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
-		<queryString language="SQL">
-			<![CDATA[Select *
-From costo_actividad]]>
-		</queryString>
-		<field name="costo_total" class="java.math.BigDecimal">
-			<property name="com.jaspersoft.studio.field.name" value="costo_total"/>
-			<property name="com.jaspersoft.studio.field.label" value="costo_total"/>
-			<property name="com.jaspersoft.studio.field.tree.path" value="costo_actividad"/>
-		</field>
-		<field name="codigo" class="java.lang.Integer">
-			<property name="com.jaspersoft.studio.field.name" value="codigo"/>
-			<property name="com.jaspersoft.studio.field.label" value="codigo"/>
-			<property name="com.jaspersoft.studio.field.tree.path" value="costo_actividad"/>
-		</field>
-		<field name="nombre_actividad" class="java.lang.String">
-			<property name="com.jaspersoft.studio.field.name" value="nombre_actividad"/>
-			<property name="com.jaspersoft.studio.field.label" value="nombre_actividad"/>
-			<property name="com.jaspersoft.studio.field.tree.path" value="costo_actividad"/>
+		<field name="proyecto_codigo" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.label" value="proyecto_codigo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="recursos_asignados"/>
 		</field>
 	</subDataset>
+	<parameter name="proyecto_codigo" class="java.lang.Integer"/>
 	<queryString language="SQL">
 		<![CDATA[Select *
-From  proyectos,etapas,actividades]]>
+From Proyectos
+Where proyecto_codigo = $P{proyecto_codigo}]]>
 	</queryString>
-	<field name="etapa_nombre" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="etapa_nombre"/>
-		<property name="com.jaspersoft.studio.field.label" value="etapa_nombre"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="etapas"/>
+	<field name="proyecto_nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="proyecto_nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="proyecto_nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="proyectos"/>
 	</field>
-	<field name="etepa_numero" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="etepa_numero"/>
-		<property name="com.jaspersoft.studio.field.label" value="etepa_numero"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="etapas"/>
-	</field>
-	<field name="actividad_nombre" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="actividad_nombre"/>
-		<property name="com.jaspersoft.studio.field.label" value="actividad_nombre"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="actividades"/>
+	<field name="proyecto_codigo" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="proyecto_codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="proyecto_codigo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="proyectos"/>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -300,7 +311,7 @@ From  proyectos,etapas,actividades]]>
 					<textElement textAlignment="Right">
 						<font size="14" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Proyectos Ganancias Estimadas con Ganancias/Perdida]]></text>
+					<text><![CDATA[Detalle Proyecto]]></text>
 				</staticText>
 			</frame>
 		</band>
@@ -312,7 +323,7 @@ From  proyectos,etapas,actividades]]>
 		<band height="61" splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="152" splitType="Stretch">
+		<band height="252" splitType="Stretch">
 			<printWhenExpression><![CDATA[$V{REPORT_COUNT}<=1]]></printWhenExpression>
 			<componentElement>
 				<reportElement x="0" y="0" width="200" height="60" uuid="73f3c27d-7964-4485-a748-4b852877d354">
@@ -322,7 +333,10 @@ From  proyectos,etapas,actividades]]>
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="Proyectos" uuid="c99d6db7-7101-4e50-aab5-992ed25b5985">
+					<datasetRun subDataset="Proyectos" uuid="9641c8d9-0ea1-4f5d-9ee1-a85a41983a98">
+						<datasetParameter name="codigo_proyecto">
+							<datasetParameterExpression><![CDATA[$P{proyecto_codigo}]]></datasetParameterExpression>
+						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
 					<jr:column width="200" uuid="6496e363-8ec1-4705-b82a-936845bec9ef">
@@ -350,7 +364,10 @@ From  proyectos,etapas,actividades]]>
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="Etapas" uuid="26c00ff1-477d-437c-bc71-5289ef6211de">
+					<datasetRun subDataset="Etapas" uuid="c7173205-a95a-4d94-8e6f-1fc4b79f8c0b">
+						<datasetParameter name="proyecto_codigo">
+							<datasetParameterExpression><![CDATA[$P{proyecto_codigo}]]></datasetParameterExpression>
+						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
 					<jr:column width="140" uuid="99234537-840f-46e3-9888-669f945ada4d">
@@ -386,47 +403,33 @@ From  proyectos,etapas,actividades]]>
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement x="440" y="0" width="360" height="150" uuid="4988d5e6-e1af-4230-9571-dbed1502458c">
+				<reportElement x="440" y="0" width="200" height="150" uuid="82a9f229-a1dc-410c-9ed5-b76353816d83">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 2_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 2_CH"/>
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table 2_TD"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="costo_actividad" uuid="8aa207a4-7baf-457f-90bb-85c867ad6f1f">
+					<datasetRun subDataset="Actividades" uuid="14303761-ae23-4305-8f75-d75c7cc3e783">
+						<datasetParameter name="proyecto_codigo">
+							<datasetParameterExpression><![CDATA[$P{proyecto_codigo}]]></datasetParameterExpression>
+						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="180" uuid="8294ede1-ed6c-4967-b667-59cdd9510419">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+					<jr:column width="200" uuid="fe1715a4-d7ad-41fb-9d56-838cc0586136">
+						<jr:tableHeader style="Table 2_TH" height="30"/>
 						<jr:tableFooter style="Table 2_TH" height="30"/>
 						<jr:columnHeader style="Table 2_CH" height="30">
 							<staticText>
-								<reportElement x="0" y="0" width="180" height="30" uuid="e01bfc10-b42e-431f-9b7c-d60f34e805b5"/>
-								<text><![CDATA[nombre_actividad]]></text>
+								<reportElement x="0" y="0" width="200" height="30" uuid="3cdd9a58-152a-4408-9c30-d3ec97fe6160"/>
+								<text><![CDATA[actividad_nombre]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter style="Table 2_CH" height="30"/>
 						<jr:detailCell style="Table 2_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="180" height="30" uuid="305ac6b5-e264-4ab7-9615-8a96390aded6"/>
-								<textFieldExpression><![CDATA[$F{nombre_actividad}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="180" uuid="76dd4c11-903d-4991-8a05-b600b15c8815">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-						<jr:tableFooter style="Table 2_TH" height="30"/>
-						<jr:columnHeader style="Table 2_CH" height="30">
-							<staticText>
-								<reportElement x="0" y="0" width="180" height="30" uuid="98280db5-c629-459d-87ab-14d53bee5329"/>
-								<text><![CDATA[costo_total]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table 2_CH" height="30"/>
-						<jr:detailCell style="Table 2_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="180" height="30" uuid="193897da-9a07-4597-abe1-900432db5801"/>
-								<textFieldExpression><![CDATA[$F{costo_total}]]></textFieldExpression>
+								<reportElement x="0" y="0" width="200" height="30" uuid="b2d0fcdc-6206-4004-8952-30e070023c94"/>
+								<textFieldExpression><![CDATA[$F{actividad_nombre}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -436,14 +439,17 @@ From  proyectos,etapas,actividades]]>
 		<band height="123">
 			<printWhenExpression><![CDATA[$V{REPORT_COUNT}<=1]]></printWhenExpression>
 			<componentElement>
-				<reportElement x="0" y="0" width="240" height="120" uuid="258bd721-c6e2-40ae-bace-0b86ac8c973b">
+				<reportElement x="0" y="0" width="300" height="120" uuid="258bd721-c6e2-40ae-bace-0b86ac8c973b">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 3_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 3_CH"/>
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table 3_TD"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="Empleados" uuid="fd2d5c5c-64c5-497e-9a8a-bb38e2c6f3f1">
+					<datasetRun subDataset="Empleados" uuid="fe5ff0eb-e9ac-4ee5-ad05-ee407f74fe3a">
+						<datasetParameter name="codigo_proyecto">
+							<datasetParameterExpression><![CDATA[$P{proyecto_codigo}]]></datasetParameterExpression>
+						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
 					<jr:column width="90" uuid="86b68087-60d2-447b-927b-6700ecdf5f9e">
@@ -500,14 +506,17 @@ From  proyectos,etapas,actividades]]>
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement x="350" y="0" width="269" height="120" uuid="62a970a0-c6ac-4376-9afa-28deba0e524a">
+				<reportElement x="350" y="0" width="430" height="120" uuid="62a970a0-c6ac-4376-9afa-28deba0e524a">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 4_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 4_CH"/>
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table 4_TD"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="Recursos" uuid="98d8b02a-9dca-46ae-8eb5-5b57e1eb9a22">
+					<datasetRun subDataset="Recursos" uuid="bfe39eb0-1a7a-4783-9816-fba24269c46a">
+						<datasetParameter name="codigo_proyecto">
+							<datasetParameterExpression><![CDATA[$P{proyecto_codigo}]]></datasetParameterExpression>
+						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
 					<jr:column width="120" uuid="dd099712-34bb-49ab-ae60-06effc96e16e">
