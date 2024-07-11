@@ -43,13 +43,13 @@ def ejecutar_script(proyecto_codigo):
     reporte_pdf = request.args.get('reporte_pdf')
     reporte_extension_pdf = request.args.get('reporte_extension_pdf')
     try:
-        mostrar_reporte(reporte_jrxml,reporte_pdf,reporte_extension_pdf)
+        mostrar_reporte(reporte_jrxml,reporte_pdf,reporte_extension_pdf,proyecto_codigo)
     except Exception as e:
         print(f"Error al ejecutar el script: {e}")
     
     return redirect(url_for('lista_reportes', proyecto_codigo=proyecto_codigo))
 
-# Definicio de la ruta '/lista_reportes/<int:proyecto_codigo>' que muestra los reportes de un proyecto
+
 @app.route('/lista_reportes/<int:proyecto_codigo>')
 def lista_reportes(proyecto_codigo):
 
