@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="GanttTrial" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ff158708-82d7-4fa9-bfc0-82ddbb736f57">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+	<queryString language="SQL">
+		<![CDATA[Select pe.proyecto_ejec_nombre, ee.etapa_ejec_nombre, ae.actividad_ejec_nombre, ae.actividad_ejec_fecha_inicio_real, ae.actividad_ejec_fecha_fin_real
+From Proyecto_Ejecucion pe, Etapa_Ejecucion ee, Actividad_Ejecucion ae
+Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
+	And ee.fk_proyecto_ejecucion = pe.proyecto_ejec_codigo]]>
+	</queryString>
+	<field name="proyecto_ejec_nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="proyecto_ejec_nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="proyecto_ejec_nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="proyecto_ejecucion"/>
+	</field>
+	<field name="etapa_ejec_nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="etapa_ejec_nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="etapa_ejec_nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="etapa_ejecucion"/>
+	</field>
+	<field name="actividad_ejec_nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="actividad_ejec_nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="actividad_ejec_nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="actividad_ejecucion"/>
+	</field>
+	<field name="actividad_ejec_fecha_inicio_real" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="actividad_ejec_fecha_inicio_real"/>
+		<property name="com.jaspersoft.studio.field.label" value="actividad_ejec_fecha_inicio_real"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="actividad_ejecucion"/>
+	</field>
+	<field name="actividad_ejec_fecha_fin_real" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="actividad_ejec_fecha_fin_real"/>
+		<property name="com.jaspersoft.studio.field.label" value="actividad_ejec_fecha_fin_real"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="actividad_ejecucion"/>
+	</field>
+	<group name="ProjectGroup">
+		<groupExpression><![CDATA[$F{proyecto_ejec_nombre}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<textField>
+					<reportElement x="130" y="5" width="320" height="40" uuid="a98cbc0f-0b15-42cb-98a9-f47e887430e4"/>
+					<textElement textAlignment="Center">
+						<font fontName="Georgia" size="26"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{proyecto_ejec_nombre}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="279">
+				<ganttChart>
+					<chart evaluationTime="Report">
+						<reportElement x="-10" y="0" width="584" height="278" uuid="a3916a60-a0f3-4b25-acf8-e9ea7c6182f1"/>
+						<chartTitle/>
+						<chartSubtitle/>
+						<chartLegend/>
+					</chart>
+					<ganttDataset>
+						<dataset resetType="Group" resetGroup="ProjectGroup"/>
+						<ganttSeries>
+							<seriesExpression><![CDATA["Fechas reales"]]></seriesExpression>
+							<taskExpression><![CDATA[$F{actividad_ejec_nombre}]]></taskExpression>
+							<subtaskExpression><![CDATA[$F{etapa_ejec_nombre}]]></subtaskExpression>
+							<startDateExpression><![CDATA[$F{actividad_ejec_fecha_inicio_real}]]></startDateExpression>
+							<endDateExpression><![CDATA[$F{actividad_ejec_fecha_fin_real}]]></endDateExpression>
+							<percentExpression><![CDATA[0]]></percentExpression>
+						</ganttSeries>
+					</ganttDataset>
+					<barPlot>
+						<plot/>
+						<itemLabel>
+							<font fontName="Georgia"/>
+						</itemLabel>
+						<categoryAxisFormat>
+							<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000">
+								<labelFont>
+									<font fontName="Georgia"/>
+								</labelFont>
+								<tickLabelFont>
+									<font fontName="Georgia"/>
+								</tickLabelFont>
+							</axisFormat>
+						</categoryAxisFormat>
+						<valueAxisFormat>
+							<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000">
+								<labelFont>
+									<font fontName="Georgia"/>
+								</labelFont>
+								<tickLabelFont>
+									<font fontName="Georgia"/>
+								</tickLabelFont>
+							</axisFormat>
+						</valueAxisFormat>
+					</barPlot>
+				</ganttChart>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="EtapaGroup">
+		<groupExpression><![CDATA[$F{etapa_ejec_nombre}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+</jasperReport>

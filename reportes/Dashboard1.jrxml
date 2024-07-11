@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Dashboard1" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3179aaac-5ac7-4d93-94d5-73bf15bfc151">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<subDataset name="costo_total_etapas" whenResourceMissingType="Error" uuid="6df73ad9-5fd4-49a9-b17f-b8e605ef203e">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<queryString language="SQL">
+			<![CDATA[Select SUM(costo_total) as costo_total,codigo,nombre_etapa
+	From (Select SUM(er.ejecucion_recurso_costo_mensual) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
+		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Recurso er
+		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
+	  	    and er.fk_actividad_ejecucion = ae.actividad_ejec_codigo
+		  Group by ee.etapa_ejec_codigo
+		  UNION ALL
+		  Select SUM(er.ejecucion_recurso_costo_mantenimiento) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
+		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Recurso er
+		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
+	  	    and er.fk_actividad_ejecucion = ae.actividad_ejec_codigo
+		  Group by ee.etapa_ejec_codigo
+		  UNION ALL
+		  Select SUM(eeo.ejecucion_empleado_salario) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
+		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Empleado eeo
+		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
+	  	    and eeo.fk_actividad_ejecucion = ae.actividad_ejec_codigo
+		  Group by ee.etapa_ejec_codigo
+		  UNION ALL
+		  Select SUM(eeo.ejecucion_empleado_viaticos) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
+		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Empleado eeo
+		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
+	  	    and eeo.fk_actividad_ejecucion = ae.actividad_ejec_codigo
+		  Group by ee.etapa_ejec_codigo)
+	Group by codigo,nombre_etapa
+	Order by codigo]]>
+		</queryString>
+		<field name="costo_total" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="costo_total"/>
+			<property name="com.jaspersoft.studio.field.label" value="costo_total"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="costo_total_por_etapa"/>
+		</field>
+		<field name="codigo" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+			<property name="com.jaspersoft.studio.field.label" value="codigo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="costo_total_por_etapa"/>
+		</field>
+		<field name="nombre_etapa" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="nombre_etapa"/>
+			<property name="com.jaspersoft.studio.field.label" value="nombre_etapa"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="costo_total_por_etapa"/>
+		</field>
+	</subDataset>
+	<subDataset name="costo_total_proyectos" uuid="2412a4c6-bcd8-4dfd-a24a-c359e3b0eab3">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<queryString language="SQL">
+			<![CDATA[Select *
+From costo_total_por_proyecto]]>
+		</queryString>
+		<field name="proyecto_nombre" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="proyecto_nombre"/>
+			<property name="com.jaspersoft.studio.field.label" value="proyecto_nombre"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="costo_total_por_proyecto"/>
+		</field>
+		<field name="costo_total" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="costo_total"/>
+			<property name="com.jaspersoft.studio.field.label" value="costo_total"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="costo_total_por_proyecto"/>
+		</field>
+	</subDataset>
+	<subDataset name="perdidas_proyecto" uuid="1de7f3a0-fae7-4df7-8340-ffa06ff2cc8b">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<queryString language="SQL">
+			<![CDATA[Select *
+From perdidas_por_proyecto]]>
+		</queryString>
+		<field name="proyecto_nombre" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="proyecto_nombre"/>
+			<property name="com.jaspersoft.studio.field.label" value="proyecto_nombre"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="perdidas_por_proyecto"/>
+		</field>
+		<field name="ganancia_perdida" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="ganancia_perdida"/>
+			<property name="com.jaspersoft.studio.field.label" value="ganancia_perdida"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="perdidas_por_proyecto"/>
+		</field>
+	</subDataset>
+	<subDataset name="total_empleados_recusos_proyecto" uuid="eaa766f2-bd1b-464b-ad7c-c8b0c0e9dabf">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<queryString language="SQL">
+			<![CDATA[Select *
+From total_empleados_recursos_por_proyecto]]>
+		</queryString>
+		<field name="proyecto_ejec_nombre" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="proyecto_ejec_nombre"/>
+			<property name="com.jaspersoft.studio.field.label" value="proyecto_ejec_nombre"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_empleados_recursos_por_proyecto"/>
+		</field>
+		<field name="recursos_asignados" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="recursos_asignados"/>
+			<property name="com.jaspersoft.studio.field.label" value="recursos_asignados"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_empleados_recursos_por_proyecto"/>
+		</field>
+		<field name="empleados_asignados" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="empleados_asignados"/>
+			<property name="com.jaspersoft.studio.field.label" value="empleados_asignados"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_empleados_recursos_por_proyecto"/>
+		</field>
+	</subDataset>
+	<subDataset name="ganancia_perdida_proyectos_ano" uuid="15a56e2b-39c3-4832-af63-7a5e5622d498">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<queryString language="SQL">
+			<![CDATA[Select *
+From total_ganado_perdido_en_proyectos_por_ano]]>
+		</queryString>
+		<field name="proyecto_ano" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="proyecto_ano"/>
+			<property name="com.jaspersoft.studio.field.label" value="proyecto_ano"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_ganado_perdido_en_proyectos_por_ano"/>
+		</field>
+		<field name="ganancia_perdida" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="ganancia_perdida"/>
+			<property name="com.jaspersoft.studio.field.label" value="ganancia_perdida"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_ganado_perdido_en_proyectos_por_ano"/>
+		</field>
+	</subDataset>
+	<subDataset name="total_proyectos_estatus" uuid="c96415d6-c5c2-40be-8e87-c5edce7f20d4">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<queryString language="SQL">
+			<![CDATA[Select *
+From total_proyectos_por_estatus]]>
+		</queryString>
+		<field name="count" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="count"/>
+			<property name="com.jaspersoft.studio.field.label" value="count"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_proyectos_por_estatus"/>
+		</field>
+		<field name="estatus_ejecucion_nombre" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="estatus_ejecucion_nombre"/>
+			<property name="com.jaspersoft.studio.field.label" value="estatus_ejecucion_nombre"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_proyectos_por_estatus"/>
+		</field>
+	</subDataset>
+	<subDataset name="total_proyectos_mineral_ganancia_perdida" uuid="a75dbf6c-f4c4-4be3-bd59-41e0627bc7f8">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="minerucab"/>
+		<queryString language="SQL">
+			<![CDATA[Select *
+From total_proyectos_por_mineral_con_ganancia_perdida]]>
+		</queryString>
+		<field name="total_proyectos" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="total_proyectos"/>
+			<property name="com.jaspersoft.studio.field.label" value="total_proyectos"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_proyectos_por_mineral_con_ganancia_perdida"/>
+		</field>
+		<field name="nombre_mineral" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="nombre_mineral"/>
+			<property name="com.jaspersoft.studio.field.label" value="nombre_mineral"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_proyectos_por_mineral_con_ganancia_perdida"/>
+		</field>
+		<field name="ganancia_perdida" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="ganancia_perdida"/>
+			<property name="com.jaspersoft.studio.field.label" value="ganancia_perdida"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="total_proyectos_por_mineral_con_ganancia_perdida"/>
+		</field>
+	</subDataset>
+	<queryString language="SQL">
+		<![CDATA[Select SUM(costo_total) as costo_total,codigo,nombre_etapa
+	From (Select SUM(er.ejecucion_recurso_costo_mensual) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
+		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Recurso er
+		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
+	  	    and er.fk_actividad_ejecucion = ae.actividad_ejec_codigo
+		  Group by ee.etapa_ejec_codigo
+		  UNION ALL
+		  Select SUM(er.ejecucion_recurso_costo_mantenimiento) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
+		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Recurso er
+		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
+	  	    and er.fk_actividad_ejecucion = ae.actividad_ejec_codigo
+		  Group by ee.etapa_ejec_codigo
+		  UNION ALL
+		  Select SUM(eeo.ejecucion_empleado_salario) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
+		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Empleado eeo
+		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
+	  	    and eeo.fk_actividad_ejecucion = ae.actividad_ejec_codigo
+		  Group by ee.etapa_ejec_codigo
+		  UNION ALL
+		  Select SUM(eeo.ejecucion_empleado_viaticos) as costo_total,ee.etapa_ejec_codigo as codigo,ee.etapa_ejec_nombre as nombre_etapa
+		  From Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Empleado eeo
+		  Where ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
+	  	    and eeo.fk_actividad_ejecucion = ae.actividad_ejec_codigo
+		  Group by ee.etapa_ejec_codigo)
+	Group by codigo,nombre_etapa
+	Order by codigo]]>
+	</queryString>
+	<field name="costo_total" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="costo_total"/>
+		<property name="com.jaspersoft.studio.field.label" value="costo_total"/>
+	</field>
+	<field name="codigo" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
+	</field>
+	<field name="nombre_etapa" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre_etapa"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre_etapa"/>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="842" height="92" backcolor="#99031F" uuid="fa283e4e-6080-4dda-a14d-aa8279c45b54"/>
+				<staticText>
+					<reportElement x="20" y="20" width="234" height="43" forecolor="#FFFFFF" uuid="b1155d7a-5b6f-4f45-a926-2ffa5d57a13e"/>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Minerucab]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="470" y="43" width="340" height="20" forecolor="#FFFFFF" uuid="83e1b4ef-0b9a-4b6a-a35b-f071a81bd19e"/>
+					<textElement textAlignment="Right">
+						<font size="14" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Dashboard en base a Proyectos Ejecucion]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="8"/>
+	</columnHeader>
+	<detail>
+		<band height="225">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT}<=1]]></printWhenExpression>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="0" y="0" width="260" height="220" uuid="3d1a2856-a7b3-44ec-864d-a0df634013a7"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Costo Total por Etapa"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="costo_total_etapas" uuid="3756717c-3b42-474f-a82a-e413dd3b553d">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Costo Total Etapa"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{nombre_etapa}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{costo_total}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot isShowTickMarks="false">
+					<plot labelRotation="90.0"/>
+					<itemLabel/>
+					<categoryAxisFormat labelRotation="90.0">
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" verticalTickLabels="true" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="260" y="0" width="280" height="220" uuid="278d047f-783e-4b07-b9e4-0fa4f662fd17"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Costo Total por Proyecto"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="costo_total_proyectos" uuid="f71eda9a-bbad-4c8c-9bbb-01d080e173aa">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Costo Total Proyecto"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{proyecto_nombre}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{costo_total}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot labelRotation="90.0"/>
+					<itemLabel/>
+					<categoryAxisFormat labelRotation="90.0">
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="540" y="0" width="260" height="220" uuid="f35b1f89-1afb-4c5e-bbfc-1c289d19857c"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Numero de Proyectos por Estado"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="total_proyectos_estatus" uuid="a87a4c16-15eb-4fd2-af07-14f5a04a35b1">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Numero de Proyectos"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{estatus_ejecucion_nombre}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{count}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot labelRotation="90.0"/>
+					<itemLabel/>
+					<categoryAxisFormat labelRotation="90.0">
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+		</band>
+		<band height="236">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT}<=1]]></printWhenExpression>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="260" y="0" width="280" height="230" uuid="de391a90-a77a-4729-bfe5-d347805b661f"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Ganancia/Perdida de proyectos por Mineral"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="total_proyectos_mineral_ganancia_perdida" uuid="ac28cc8c-a1d7-4967-815c-a8783947b479">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Ganancia/Perdida"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{nombre_mineral}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{ganancia_perdida}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<pieChart>
+				<chart evaluationTime="Report">
+					<reportElement x="0" y="0" width="260" height="230" uuid="42a17c15-3f46-45f3-badc-6ca5817236b6"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Numero de proyectos por mineral"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset maxCount="60">
+					<dataset>
+						<datasetRun subDataset="total_proyectos_mineral_ganancia_perdida" uuid="ba7a4c30-a1a3-4982-a602-cb3da6aa8755">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<keyExpression><![CDATA[$F{nombre_mineral}]]></keyExpression>
+					<valueExpression><![CDATA[$F{total_proyectos}]]></valueExpression>
+					<labelExpression><![CDATA[$F{nombre_mineral}]]></labelExpression>
+				</pieDataset>
+				<piePlot>
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="540" y="0" width="260" height="230" uuid="6ea08df8-c658-4343-8bf0-c2054f60f620"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Ganancia/Perdida por Proyecto"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="perdidas_proyecto" uuid="2f6b6e6a-46cc-4603-a5ba-7780c5194673">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Ganancia/Perdida"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{proyecto_nombre}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{ganancia_perdida}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+		</band>
+		<band height="244">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT}<=1]]></printWhenExpression>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="0" y="10" width="280" height="230" uuid="e7aec823-0d9f-477e-9ef9-d9ab1ee8498a"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Total de Empleados y Recursos asignados por Proyecto"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="total_empleados_recusos_proyecto" uuid="20b13830-5aff-4975-b05c-606d192b6cf3">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Numero de empleados"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{proyecto_ejec_nombre}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{empleados_asignados}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Numero de recursos"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{proyecto_ejec_nombre}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{recursos_asignados}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="540" y="10" width="260" height="230" uuid="474e5164-5d64-4bc4-b231-21059e76315c"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Ganancia/Perdida de proyectos por año"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="ganancia_perdida_proyectos_ano" uuid="c3d6073b-bac3-404a-85fc-be357639f79e">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Ganancia/Perdida"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{proyecto_ano}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{ganancia_perdida}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>
