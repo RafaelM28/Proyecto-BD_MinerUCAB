@@ -13,9 +13,9 @@ app.secret_key = os.urandom(16)
 # Función para establecer conexión con la base de datos PostgreSQL
 def connection():
     # Creación de variables con los datos de conexión a la base de datos
-    db_name = "minerucab"
+    db_name = "db_minerucab"
     db_user = "postgres"
-    db_pass = "admin1234*"
+    db_pass = "0000"
     db_host = "localhost"
     db_port = "5432"
 
@@ -35,8 +35,9 @@ def connection():
         return None  
 
 
-@app.route('/ejecutar_script', methods=['GET'])
-def ejecutar_script():
+# Definición de la ruta '/lista_reportes/<int:proyecto_codigo>' que muestra los reportes de un proyecto
+@app.route('/ejecutar_script/<int:proyecto_codigo>', methods=['GET'])
+def ejecutar_script(proyecto_codigo):
     # Aquí puedes ejecutar tu script de Python
     reporte_jrxml = request.args.get('reporte_jrxml')
     reporte_pdf = request.args.get('reporte_pdf')
@@ -46,14 +47,13 @@ def ejecutar_script():
     except Exception as e:
         print(f"Error al ejecutar el script: {e}")
     
-    return redirect(url_for('lista_reportes'))
+    return redirect(url_for('lista_reportes', proyecto_codigo=proyecto_codigo))
 
+# Definicio de la ruta '/lista_reportes/<int:proyecto_codigo>' que muestra los reportes de un proyecto
+@app.route('/lista_reportes/<int:proyecto_codigo>')
+def lista_reportes(proyecto_codigo):
 
-
-@app.route('/lista_reportes')
-def lista_reportes():
-
-    return render_template('Proyecto_Ejecucion/reportes_proyecto_ejecucion.html')
+    return render_template('Proyecto_Ejecucion/reportes_proyecto_ejecucion.html', proyecto_codigo=proyecto_codigo)
 
 @app.route('/')
 def inicio():
@@ -1135,9 +1135,9 @@ def lista_actividades_ejecucion():
     return render_template('Proyecto_Ejecucion/Actividad/lista_actividades_ejecucion.html', actividades=actividades)
 
 # Definición de la ruta '/get_pozos_de_mineral/<int:mineral_id>'
-@app.route('/get_pozos_de_mineral/<int:mineral_id>')
-def get_pozos_de_mineral(mineral_id: int):
-    cursor = connection().cursor()
+#@app.route('/get_pozos_de_mineral/<int:mineral_id>')
+#def get_pozos_de_mineral(mineral_id: int):
+   #cursor = connection().cursor()
 
     cursor.execute("SELECT * FROM lista_pozos_de_mineral(%s)", (mineral_id,))
     pozos = cursor.fetchall()
@@ -1147,8 +1147,8 @@ def get_pozos_de_mineral(mineral_id: int):
     return jsonify([{"mineral_codigo": m[0], "mineral_nombre": m[1]} for m in minerales])
 
 
-@app.route('/crear_proyecto_ejecucion', methods=['GET','POST'])
-def crear_proyecto_ejecucion():
+#@app.route('/crear_proyecto_ejecucion', methods=['GET','POST'])
+#def crear_proyecto_ejecucion():
     if request.method == 'POST':	
         # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
         cur = connection().cursor()

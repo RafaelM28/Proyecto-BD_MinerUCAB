@@ -187,7 +187,7 @@
                         <td>{{ proyecto[1] }}</td>
                         <td>{{ proyecto[2] }}</td>
                         <td>{{ proyecto[3] }}</td>
-                        <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
+                        <td><a href="{{ url_for('lista_reportes', proyecto_codigo=proyecto[0]) }}"><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
