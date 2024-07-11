@@ -2,6 +2,9 @@ from flask import flash, Flask, render_template, request, redirect, url_for, jso
 import psycopg2 # Importación de psycopg2 para la conexión a PostgreSQL
 import json # Importación de json para manejar datos JSON
 import os
+import subprocess
+from ejecutar_reporte import mostrar_reporte
+
 
 # Inicialización de la aplicación Flask, especificando la carpeta que contiene las plantillas HTML
 app = Flask(__name__, template_folder='frontend') 
@@ -10,9 +13,9 @@ app.secret_key = os.urandom(16)
 # Función para establecer conexión con la base de datos PostgreSQL
 def connection():
     # Creación de variables con los datos de conexión a la base de datos
-    db_name = "db_minerucab"
+    db_name = "minerucab"
     db_user = "postgres"
-    db_pass = "0000"
+    db_pass = "admin1234*"
     db_host = "localhost"
     db_port = "5432"
 
@@ -30,13 +33,28 @@ def connection():
         # Manejo de excepciones en caso de fallo en la conexión
         print("Ocurrió un error al conectar a la base de datos:", e)
         return None  
+
+
+@app.route('/ejecutar_script', methods=['GET'])
+def ejecutar_script():
+    # Aquí puedes ejecutar tu script de Python
+    reporte_jrxml = request.args.get('reporte_jrxml')
+    reporte_pdf = request.args.get('reporte_pdf')
+    reporte_extension_pdf = request.args.get('reporte_extension_pdf')
+    try:
+        mostrar_reporte(reporte_jrxml,reporte_pdf,reporte_extension_pdf)
+    except Exception as e:
+        print(f"Error al ejecutar el script: {e}")
     
+    return redirect(url_for('lista_reportes'))
+
+
+
 @app.route('/lista_reportes')
 def lista_reportes():
 
     return render_template('Proyecto_Ejecucion/reportes_proyecto_ejecucion.html')
-    
-    
+
 @app.route('/')
 def inicio():
     return redirect(url_for('home'))
