@@ -1,0 +1,7 @@
+CREATE UNIQUE INDEX proyecto_ejec_codigo_index ON Proyecto_Ejecucion (proyecto_ejec_codigo);
+CREATE UNIQUE INDEX etapa_ejec_codigo_index ON Etapa_Ejecucion (etapa_ejec_codigo);
+CREATE INDEX etapa_fk_proyecto_ejecucion_index ON Etapa_Ejecucion (fk_proyecto_ejecucion);
+CREATE UNIQUE INDEX actividad_ejec_codigo_index ON Actividad_Ejecucion (actividad_ejec_codigo);
+CREATE INDEX actividad_fk_etapa_ejecucion_index ON Actividad_Ejecucion (fk_etapa_ejecucion);
+CREATE INDEX ejecucion_recurso_fk_actividad_ejecucion_index ON Ejecucion_Recurso (fk_actividad_ejecucion);
+CREATE INDEX ejecucion_empleado_fk_etapa_ejecucion_index ON Ejecucion_Empleado (fk_actividad_ejecucion);
