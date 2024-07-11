@@ -13,9 +13,11 @@ GRANT UPDATE ON TABLE Usuario,Telefono,Correo TO Gerente_de_Ventas WITH GRANT OP
 /*Tablas que usan trigger*/
 GRANT TRIGGER ON TABLE Usuario,Telefono,Correo TO Gerente_de_Ventas WITH GRANT OPTION;
 
-/*Falta lista de pedidos venta,crear pedido venta,detalle venta,pago venta*/
 /*Estas son las funciones que puede usar*/
-GRANT EXECUTE ON FUNCTION lista_clientes,lista_minerales,lista_inventario,obtener_tipo_operacion_inventario TO Gerente_de_Ventas WITH GRANT OPTION;
+GRANT EXECUTE ON FUNCTION lista_clientes,lista_minerales,lista_inventario,obtener_tipo_operacion_inventario, lista_pedidos_venta, sp_crear_pedido_venta,
+                                                    sp_crear_pago_venta, sp_crear_relacion_solicitud_pedido, update_estatus_pedido_venta, update_estatus_pedido_reposicion_venta,
+                                                    update_estatus_pedido_venta_fin_solicitud, lista_clientes_venta, lista_minerales_venta, obtener_detalles_pedido_venta,
+                                                    obtener_detalles_pedido_venta_solicitud, obtener_metodos_pago_cliente, obtener_pago_venta, obtener_pedido_venta_cliente TO Gerente_de_Ventas WITH GRANT OPTION;
 
 /*Creamos el rol de Lider_de_Proyecto*/
 CREATE ROLE Lider_de_Proyecto;
@@ -46,7 +48,8 @@ GRANT TRIGGER ON TABLE Usuario,Telefono,Correo,Ejecucion_Empleado,Ejecucion_Recu
 /*Crear proyecto ejecucion,lista de proyectos ejecucion,Crear actividad ejecucion,lista de etapas y actividades en ejecucion,linea del tiempo*/
 /*Estas son las funciones que puede usar*/
 GRANT EXECUTE ON FUNCTION lista_clientes,lista_aliados,lista_empleados,lista_minerales,lista_recursos,lista_proyectos_config,
-						  lista_etapas_config,lista_actividades_config TO Lider_de_Proyecto WITH GRANT OPTION;
+						  lista_etapas_config,lista_actividades_config, lista_proyectos_ejecucion, lista_etapas_ejecucion, lista_actividades_ejecucion,
+                           lista_pozos_de_mineral TO Lider_de_Proyecto WITH GRANT OPTION;
 
 /*Creamos el rol de Operario_Minero*/
 CREATE ROLE Operario_Minero;
@@ -59,7 +62,8 @@ GRANT SELECT ON TABLE Mineral,Inventario_Producto,Recurso,Tipo_Recurso,Marca,Mod
 
 /*linea del tiempo,lista proyectos ejecucion,lista actividades ejecucion,lista etapas ejecucion*/
 /*Estos son las funciones que puede usar*/
-GRANT EXECUTE ON FUNCTION lista_minerales,lista_proyectos_config,lista_etapas_config,lista_actividades_config,lista_recursos TO Operario_Minero WITH GRANT OPTION;
+GRANT EXECUTE ON FUNCTION lista_minerales,lista_proyectos_config,lista_etapas_config,lista_actividades_config,lista_recursos,
+                                                    lista_proyectos_ejecucion, lista_etapas_ejecucion, lista_actividades_ejecucion TO Operario_Minero WITH GRANT OPTION;
 
 /*Usuario Gerente de Ventas*/
 CREATE USER MarcelaJuliaMP48 WITH PASSWORD '12345678' IN ROLE Gerente_de_Ventas;
