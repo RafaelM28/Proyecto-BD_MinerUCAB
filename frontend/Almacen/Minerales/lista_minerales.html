@@ -6,6 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinerUCAB - Minerales</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_minerales_styles.css') }}">
+    <script>
+        function sortTable(column) {
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            let currentSort = searchParams.get('sort');
+            let currentOrder = searchParams.get('order');
+            let newOrder = 'asc';
+
+            if (currentSort === column && currentOrder === 'asc') {
+                newOrder = 'desc';
+            }
+
+            searchParams.set('sort', column);
+            searchParams.set('order', newOrder);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+
+        function searchMinerales() {
+            const searchValue = document.getElementById('searchInput').value;
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            searchParams.set('search', searchValue);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+    </script>
 </head>
 
 <body>
@@ -123,18 +156,18 @@
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Mineral">
-                    <button class="search-button">🔍</button>
+                    <input type="text" id="searchInput" placeholder="Buscar Mineral">
+                    <button class="search-button" onclick="searchMinerales()">🔍</button>
                 </div>
                 <button class="add-button-container" onclick="location.href='#'";>Agregar Mineral</button>
             </div>
             <table class="activity-table">
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Tipo</th>
-                        <th>Cantidad</th>
+                        <th><a href="#" onclick="sortTable('mineral_codigo')">Código</a></th>
+                        <th><a href="#" onclick="sortTable('mineral_nombre')">Nombre</a></th>
+                        <th><a href="#" onclick="sortTable('mineral_tipo')">Tipo</a></th>
+                        <th><a href="#" onclick="sortTable('inventario_cantidad')">Cantidad</a></th>
                         <th>Opción</th>
                     </tr>
                 </thead>

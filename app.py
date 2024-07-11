@@ -237,11 +237,20 @@ def lista_roles():
 # Definición de la ruta '/lista_minerales'
 @app.route('/lista_minerales')
 def lista_minerales():
+    sort = request.args.get('sort', 'mineral_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_minerales()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(mineral_codigo AS TEXT) LIKE '%{search}%' OR mineral_nombre LIKE '%{search}%' OR CAST(mineral_tipo AS TEXT) LIKE '%{search}%' OR CAST(inventario_cantidad AS TEXT) LIKE '%{search}%'"
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"
+
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_minerales' que retorna una lista de minerales
-    cur.execute("SELECT * FROM lista_minerales()")
+    cur.execute(query)
     minerales = cur.fetchall()  
     
     # Cierre del cursor y de la conexión a la base de datos
@@ -271,11 +280,20 @@ def lista_recursos():
 # Definición de la ruta '/lista_inventario'
 @app.route('/lista_inventario')
 def lista_inventario():
+    sort = request.args.get('sort', 'inventario_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_inventario()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(inventario_codigo AS TEXT) LIKE '%{search}%' OR mineral_nombre LIKE '%{search}%' OR CAST(inventario_producto AS TEXT) LIKE '%{search}%' OR CAST(inventario_total AS TEXT) LIKE '%{search}%' OR inventario_tipo LIKE '%{search}%' OR CAST(inventario_fecha AS TEXT) LIKE '%{search}%' OR tipo_operacion LIKE '%{search}%'"
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"
+
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_inventario' que retorna una lista de inventario
-    cur.execute("SELECT * FROM lista_inventario()")
+    cur.execute(query)
     inventario = cur.fetchall()  
     
     # Cierre del cursor y de la conexión a la base de datos
@@ -536,12 +554,22 @@ def update_estatus(pedido_codigo, aliado_id):
 # Definición de la ruta '/lista_proyectos_config'
 @app.route('/lista_proyectos_config')
 def lista_proyectos():
+    sort = request.args.get('sort', 'proyecto_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_proyectos_config()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(proyecto_codigo AS TEXT) LIKE '%{search}%' OR proyecto_nombre LIKE '%{search}%' OR mineral_nombre LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_proyectos' que retorna una lista de proyectos
-    cur.execute("SELECT * FROM lista_proyectos_config()")
-    proyectos = cur.fetchall()  
+    cur.execute(query)
+    proyectos = cur.fetchall()   
     
     # Cierre del cursor y de la conexión a la base de datos
     cur.close()  
@@ -553,12 +581,22 @@ def lista_proyectos():
 # Definición de la ruta '/lista_etapas_config'
 @app.route('/lista_etapas_config')
 def lista_etapas():
+    sort = request.args.get('sort', 'etapa_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_etapas_config()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(etapa_codigo AS TEXT) LIKE '%{search}%' OR etapa_nombre LIKE '%{search}%' OR CAST(etapa_numero AS TEXT) LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_etapas' que retorna una lista de etapas
-    cur.execute("SELECT * FROM lista_etapas_config()")
-    etapas = cur.fetchall()  
+    cur.execute(query)
+    etapas = cur.fetchall()   
     
     # Cierre del cursor y de la conexión a la base de datos
     cur.close()  
@@ -570,12 +608,22 @@ def lista_etapas():
 # Definición de la ruta '/lista_actividades_config'
 @app.route('/lista_actividades_config')
 def lista_actividades():
+    sort = request.args.get('sort', 'actividad_codigo')  # Orden por defecto: número
+    order = request.args.get('order', 'asc')  # Orden ascendente por defecto
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_actividades_config()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(actividad_codigo AS TEXT) LIKE '%{search}%' OR actividad_nombre LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
     # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
     cur = connection().cursor()
-    
-    # Ejecución de la función almacenada 'lista_actividades' que retorna una lista de actividades
-    cur.execute("SELECT * FROM lista_actividades_config()")
-    actividades = cur.fetchall()  
+    cur.execute(query)
+    actividades = cur.fetchall()   
     
     # Cierre del cursor y de la conexión a la base de datos
     cur.close()  
@@ -981,6 +1029,88 @@ def delete_pedido_venta(pedido_codigo):
     connection().close() 
     
     return redirect(url_for('lista_pedidos_venta'))
+
+# Definición de la ruta '/lista_proyectos_ejecucion'
+@app.route('/lista_proyectos_ejecucion')
+def lista_proyectos_ejecucion():
+    sort = request.args.get('sort', 'proyecto_codigo')
+    order = request.args.get('order', 'asc')
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_proyectos_ejecucion()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(proyecto_codigo AS TEXT) LIKE '%{search}%' OR proyecto_nombre LIKE '%{search}%' OR mineral_nombre LIKE '%{search}%' OR estatus_ejecucion LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    cur.execute(query)
+    proyectos = cur.fetchall()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'lista_proyectos_ejecucion', pasando los datos de proyectos al template
+    return render_template('Proyecto_Ejecucion/Proyecto/lista_proyectos_ejecucion.html', proyectos=proyectos)
+
+# Definición de la ruta '/lista_etapas_ejecucion'
+@app.route('/lista_etapas_ejecucion')
+def lista_etapas_ejecucion():
+    sort = request.args.get('sort', 'etapa_codigo')
+    order = request.args.get('order', 'asc')
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_etapas_ejecucion()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(etapa_codigo AS TEXT) LIKE '%{search}%' OR etapa_nombre LIKE '%{search}%' OR CAST(etapa_numero AS TEXT) LIKE '%{search}%' OR proyecto_nombre LIKE '%{search}%' OR estatus_ejecucion LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    cur.execute(query)
+    etapas = cur.fetchall()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'lista_etapas_ejecucion', pasando los datos de proyectos al template
+    return render_template('Proyecto_Ejecucion/Etapa/lista_etapas_ejecucion.html', etapas=etapas)
+
+# Definición de la ruta '/lista_actividades_ejecucion'
+@app.route('/lista_actividades_ejecucion')
+def lista_actividades_ejecucion():
+    sort = request.args.get('sort', 'actividad_codigo')
+    order = request.args.get('order', 'asc')
+    search = request.args.get('search', '')
+    query = "SELECT * FROM lista_actividades_ejecucion()"
+    
+    # Añadir condición de búsqueda si hay un término de búsqueda
+    if search:
+        query += f" WHERE CAST(actividad_codigo AS TEXT) LIKE '%{search}%' OR actividad_nombre LIKE '%{search}%' OR etapa_nombre LIKE '%{search}%' OR proyecto_nombre LIKE '%{search}%' OR estatus_ejecucion LIKE '%{search}%'"
+
+    # Añadir ordenamiento
+    query += f" ORDER BY {sort} {order}"    
+    
+    # Establecimiento de la conexión y creación de un cursor para ejecutar consultas
+    cur = connection().cursor()
+    cur.execute(query)
+    actividades = cur.fetchall()  
+    
+    # Cierre del cursor y de la conexión a la base de datos
+    cur.close()  
+    connection().close()  
+    
+    # Renderización de la plantilla HTML para 'lista_actividades_ejecucion', pasando los datos de proyectos al template
+    return render_template('Proyecto_Ejecucion/Actividad/lista_actividades_ejecucion.html', actividades=actividades)
+    
 
 if __name__ == '__main__': 
     app.run(debug=True) 

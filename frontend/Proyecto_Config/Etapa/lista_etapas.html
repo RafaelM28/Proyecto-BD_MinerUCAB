@@ -6,6 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinerUCAB - Etapas</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_etapas_styles.css') }}">
+    <script>
+        function sortTable(column) {
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            let currentSort = searchParams.get('sort');
+            let currentOrder = searchParams.get('order');
+            let newOrder = 'asc';
+
+            if (currentSort === column && currentOrder === 'asc') {
+                newOrder = 'desc';
+            }
+
+            searchParams.set('sort', column);
+            searchParams.set('order', newOrder);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+
+        function searchEtapas() {
+            const searchValue = document.getElementById('searchInput').value;
+            let currentUrl = window.location.href;
+            let url = new URL(currentUrl);
+            let searchParams = url.searchParams;
+
+            searchParams.set('search', searchValue);
+            url.search = searchParams.toString();
+
+            window.location.href = url.toString();
+        }
+    </script>
 </head>
 
 <body>
@@ -122,23 +155,27 @@
                 <h1>Etapas</h1>
             </div>
             <div class="tabs">
+                <a href="{{ url_for('lista_proyectos')}}"><div class="tab active">Configuración</div></a>
+                <a href="{{ url_for('lista_proyectos_ejecucion')}}"><div class="tab">Ejecución</div></a>
+            </div>
+            <div class="tabs">
                 <a href="{{ url_for('lista_proyectos')}}"><div class="tab">Proyectos</div></a>
                 <a href="{{ url_for('lista_etapas')}}"><div class="tab active">Etapas</div></a>
                 <a href="{{ url_for('lista_actividades')}}"><div class="tab">Actividades</div></a>
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar Etapa">
-                    <button class="search-button">🔍</button>
+                    <input type="text" id="searchInput" placeholder="Buscar Etapa">
+                    <button class="search-button" onclick="searchEtapas()">🔍</button>
                 </div>
                 <button class="add-button-container" onclick="location.href='#'";>Agregar Etapa</button>
             </div>
             <table class="activity-table">
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Número</th>
+                        <th><a href="#" onclick="sortTable('etapa_codigo')">Código</a></th>
+                        <th><a href="#" onclick="sortTable('etapa_nombre')">Nombre</a></th>
+                        <th><a href="#" onclick="sortTable('etapa_numero')">Número</a></th> 
                         <th>Opción</th>
                     </tr>
                 </thead>

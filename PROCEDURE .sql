@@ -837,8 +837,6 @@ BEGIN
 END;
 $$;
 
-CALL update_estatus_pedido_venta_fin_solicitud(55, 1);
-
 -- Creación de una función update_estatus_pedido_reposicion_venta()
 CREATE OR REPLACE PROCEDURE update_estatus_pedido_reposicion_venta (IN pedido_venta_id INTEGER, IN cliente_id INTEGER)
 LANGUAGE plpgsql
@@ -1234,3 +1232,45 @@ BEGIN
     DELETE FROM pedido_venta WHERE pedido_venta_numero = pedido_venta_id;
 END;
 $$;
+
+-- Creación de una función lista_proyectos_ejecucion()
+CREATE OR REPLACE FUNCTION lista_proyectos_ejecucion()
+RETURNS TABLE (proyecto_codigo SMALLINT, proyecto_nombre VARCHAR(30), mineral_nombre VARCHAR(30), estatus_ejecucion VARCHAR(30))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla proyecto_ejecucion y tablas asociadas a ella
+    RETURN QUERY SELECT PE.proyecto_ejec_codigo, PE.proyecto_ejec_nombre, M.mineral_nombre, EJ.estatus_ejecucion_nombre
+    FROM proyecto_ejecucion PE, pozo P, mineral M, historico_estatus_proyecto HEP, estatus_ejecucion EJ,
+         (SELECT  HEP.fk_proyecto_ejecucion, MAX(HEP.hist_est_proyecto_codigo) FROM historico_estatus_proyecto HEP GROUP BY HEP.fk_proyecto_ejecucion) AS Ultimo_Estatus
+    WHERE PE.fk_pozo_1 = P.pozo_id AND P.fk_mineral = M.mineral_codigo AND PE.proyecto_ejec_codigo = Ultimo_Estatus.fk_proyecto_ejecucion
+                AND HEP.hist_est_proyecto_codigo = Ultimo_Estatus.max AND HEP.fk_estatus_ejecucion = EJ.estatus_ejecucion_codigo;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_etapas_ejecucion()
+CREATE OR REPLACE FUNCTION lista_etapas_ejecucion()
+RETURNS TABLE (etapa_codigo SMALLINT, etapa_nombre VARCHAR(30), etapa_numero SMALLINT, proyecto_nombre VARCHAR(30), estatus_ejecucion VARCHAR(30))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla etapa_ejecucion y tablas asociadas a ella
+    RETURN QUERY SELECT EE.etapa_ejec_codigo, EE.etapa_ejec_nombre, EE.etapa_ejec_numero, PE.proyecto_ejec_nombre, EJ.estatus_ejecucion_nombre
+    FROM etapa_ejecucion EE, proyecto_ejecucion PE, historico_estatus_etapa HEE, estatus_ejecucion EJ,
+         (SELECT  HEE.fk_etapa_ejecucion, MAX(HEE.hist_est_etapa_codigo) FROM historico_estatus_etapa HEE GROUP BY HEE.fk_etapa_ejecucion) AS Ultimo_Estatus
+    WHERE PE.proyecto_ejec_codigo = EE.fk_proyecto_ejecucion AND EE.etapa_ejec_codigo = Ultimo_Estatus.fk_etapa_ejecucion
+                AND HEE.hist_est_etapa_codigo = Ultimo_Estatus.max AND HEE.fk_estatus_ejecucion = EJ.estatus_ejecucion_codigo;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creación de una función lista_actividades_ejecución()
+CREATE OR REPLACE FUNCTION lista_actividades_ejecucion()
+RETURNS TABLE (actividad_codigo SMALLINT, actividad_nombre VARCHAR(70), etapa_nombre VARCHAR(30), proyecto_nombre VARCHAR(30), estatus_ejecucion VARCHAR(30))
+AS $$
+BEGIN
+    -- La consulta selecciona los campos de la tabla actividad_ejecucion y tablas asociadas a ella
+    RETURN QUERY SELECT AE.actividad_ejec_codigo, AE.actividad_ejec_nombre, EE.etapa_ejec_nombre, PE.proyecto_ejec_nombre, EJ.estatus_ejecucion_nombre
+    FROM actividad_ejecucion AE, etapa_ejecucion EE, proyecto_ejecucion PE, historico_estatus_actividad HEA, estatus_ejecucion EJ,
+         (SELECT  HEA.fk_actividad_ejecucion, MAX(HEA.hist_est_actividad_codigo) FROM historico_estatus_actividad HEA GROUP BY HEA.fk_actividad_ejecucion) AS Ultimo_Estatus
+    WHERE EE.etapa_ejec_codigo = AE.fk_etapa_ejecucion AND PE.proyecto_ejec_codigo = EE.fk_proyecto_ejecucion AND AE.actividad_ejec_codigo = Ultimo_Estatus.fk_actividad_ejecucion
+                AND HEA.hist_est_actividad_codigo = Ultimo_Estatus.max AND HEA.fk_estatus_ejecucion = EJ.estatus_ejecucion_codigo;
+END;
+$$ LANGUAGE plpgsql;

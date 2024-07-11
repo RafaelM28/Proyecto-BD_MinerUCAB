@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinerUCAB - Inventario</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_operaciones_styles.css') }}">
+    <title>MinerUCAB - Proyectos Ejecución</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lista_proyectos_ejecucion_styles.css') }}">
     <script>
         function sortTable(column) {
             let currentUrl = window.location.href;
@@ -27,7 +27,7 @@
             window.location.href = url.toString();
         }
 
-        function searchOperaciones() {
+        function searchEtapas() {
             const searchValue = document.getElementById('searchInput').value;
             let currentUrl = window.location.href;
             let url = new URL(currentUrl);
@@ -63,7 +63,7 @@
 
                 <div class="list-item">
                     <a href="{{ url_for('home')}}">
-                    <img width="45px" class="icon1" src="/static/images/image 5.svg" alt="" />
+                        <img width="45px" class="icon1" src="/static/images/image 5.svg" alt="" />
                     </a>
                     <span class="text">Inicio</span>
                 </div>
@@ -152,38 +152,43 @@
 
         <main class="main-content">
             <div class="content-header">
-                <h1>Inventario</h1>
+                <h1>Proyectos</h1>
+            </div>
+            <div class="tabs">
+                <a href="{{ url_for('lista_proyectos')}}"><div class="tab">Configuración</div></a>
+                <a href="{{ url_for('lista_proyectos_ejecucion')}}"><div class="tab active">Ejecución</div></a>
+            </div>
+            <div class="tabs">
+                <a href="{{ url_for('lista_proyectos_ejecucion')}}"><div class="tab">Proyectos</div></a>
+                <a href="{{ url_for('lista_etapas_ejecucion')}}"><div class="tab active">Etapas</div></a>
+                <a href="{{ url_for('lista_actividades_ejecucion')}}"><div class="tab">Actividades</div></a>
             </div>
             <div class="content-header">
                 <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="Buscar Operacion">
-                    <button class="search-button" onclick="searchOperaciones()">🔍</button>
+                    <input type="text" id="searchInput" placeholder="Buscar Etapa">
+                    <button class="search-button" onclick="searchEtapas()">🔍</button>
                 </div>
             </div>
             <table class="activity-table">
                 <thead>
-RETURNS TABLE (inventario_codigo SMALLINT, mineral_nombre VARCHAR(30), inventario_product INTEGER, inventario_total INTEGER, inventario_tipo VARCHAR(15), inventario_fecha DATE, tipo_operacion text)
                     <tr>
-                        <th><a href="#" onclick="sortTable('inventario_codigo')">Código</a></th>
-                        <th><a href="#" onclick="sortTable('mineral_nombre')">Mineral</a></th>
-                        <th><a href="#" onclick="sortTable('inventario_product')">Cantidad</a></th>
-                        <th><a href="#" onclick="sortTable('inventario_total')">Total</a></th>
-                        <th><a href="#" onclick="sortTable('inventario_tipo')">Tipo</a></th>
-                        <th><a href="#" onclick="sortTable('inventario_fecha')">Fecha</a></th>
-                        <th><a href="#" onclick="sortTable('tipo_operacion')">Operacion</a></th>
+                        <th><a href="#" onclick="sortTable('etapa_codigo')">Código</a></th>
+                        <th><a href="#" onclick="sortTable('etapa_nombre')">Nombre</a></th>
+                        <th><a href="#" onclick="sortTable('etapa_numero')">Número</a></th>
+                        <th><a href="#" onclick="sortTable('proyecto_nombre')">Proyecto</a></th>
+                        <th><a href="#" onclick="sortTable('estatus_ejecucion')">Estatus</a></th>
                         <th>Opción</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for operacion in inventario %}
+                    {% for etapa in etapas %}
                     <tr>
-                        <td>{{ operacion[0] }}</td>
-                        <td>{{ operacion[1] }}</td>
-                        <td>{{ operacion[2] }}</td>
-                        <td>{{ operacion[3] }}</td>
-                        <td>{{ operacion[4] }}</td>
-                        <td>{{ operacion[5] }}</td>
-                        <td>{{ operacion[6] }}</td>
+                        <td>{{ etapa[0] }}</td>
+                        <td>{{ etapa[1] }}</td>
+                        <td>{{ etapa[2] }}</td>
+                        <td>{{ etapa[3] }}</td>
+                        <td>{{ etapa[4] }}</td>
+                        <td><button class="action-button"><img src="/static/images/image 19.svg" alt="Settings"></button></td>
                     </tr>
                     {% endfor %}
                 </tbody>
