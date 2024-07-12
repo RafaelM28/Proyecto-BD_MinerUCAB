@@ -1,11 +1,11 @@
 create or replace view total_proyectos_por_estatus
 as
 	Select count(*), e.estatus_ejecucion_nombre
-	From Estatus_Ejecucion e right join Historico_Estatus_Proyecto h 
+	From Estatus_Ejecucion e right join Historico_Estatus_Proyecto h
 		 on h.fk_estatus_ejecucion = e.estatus_ejecucion_codigo left join Proyecto_Ejecucion pe
 		 on h.fk_proyecto_ejecucion = pe.proyecto_ejec_codigo
 	Group by e.estatus_ejecucion_nombre;
-	
+
 create or replace view total_empleados_recursos_por_proyecto
 as
 	Select pe.proyecto_ejec_nombre, SUM(er.ejecucion_recurso_cantidad) as Recursos_Asignados, count(*) as Empleados_Asignados
@@ -15,8 +15,8 @@ as
 	  and er.fk_actividad_ejecucion = ae.actividad_ejec_codigo
 	  and ee.fk_actividad_ejecucion = ae.actividad_ejec_codigo
 	Group by pe.proyecto_ejec_nombre;
-	
-	
+
+
 create or replace view costo_total_por_proyecto
 as
 	Select Distinct pe.proyecto_ejec_nombre as proyecto_nombre,pr.presupuesto_costo_total as costo_total
@@ -27,10 +27,11 @@ as
 	  and  eeo.fk_actividad_ejecucion = ae.actividad_ejec_codigo
 	  and er.fk_presupuesto = pr.presupuesto_numero
 	  and  eeo.fk_presupuesto = pr.presupuesto_numero;
-	
+
 create or replace view perdidas_por_proyecto
 as
-	Select Distinct pe.proyecto_ejec_nombre as proyecto_nombre, (pr.presupuesto_costo_total * (pe.proyecto_ejec_fecha_fin_real - pe.proyecto_ejec_fecha_inicio_real)) - (pr.presupuesto_costo_total *(pe.proyecto_ejec_fecha_fin_estimada - pe.proyecto_ejec_fecha_inicio_estimada)) as Ganancia_Perdida
+	Select Distinct pe.proyecto_ejec_nombre as proyecto_nombre,
+	                (pr.presupuesto_costo_total * (pe.proyecto_ejec_fecha_fin_real - pe.proyecto_ejec_fecha_inicio_real)) - (pr.presupuesto_costo_total *(pe.proyecto_ejec_fecha_fin_estimada - pe.proyecto_ejec_fecha_inicio_estimada)) as Ganancia_Perdida
 	From Proyecto_Ejecucion pe,Etapa_Ejecucion ee,Actividad_Ejecucion ae,Ejecucion_Recurso er,Ejecucion_Empleado eeo,Presupuesto pr
 	Where ee.fk_proyecto_ejecucion = pe.proyecto_ejec_codigo
 	  and ae.fk_etapa_ejecucion = ee.etapa_ejec_codigo
@@ -38,7 +39,7 @@ as
 	  and  eeo.fk_actividad_ejecucion = ae.actividad_ejec_codigo
 	  and er.fk_presupuesto = pr.presupuesto_numero
 	  and  eeo.fk_presupuesto = pr.presupuesto_numero;
-	
+
 create or replace view costo_total_por_etapa
 as
 	Select SUM(costo_total) as costo_total,codigo,nombre_etapa
@@ -67,7 +68,7 @@ as
 		  Group by ee.etapa_ejec_codigo)
 	Group by codigo,nombre_etapa
 	Order by codigo;
-	
+
 create or replace view total_ganado_perdido_en_proyectos_por_ano
 as
 	Select EXTRACT(year FROM pe.proyecto_ejec_fecha_fin_real) as proyecto_ano, SUM((pr.presupuesto_costo_total * (pe.proyecto_ejec_fecha_fin_real - pe.proyecto_ejec_fecha_inicio_real)) - (pr.presupuesto_costo_total *(pe.proyecto_ejec_fecha_fin_estimada - pe.proyecto_ejec_fecha_inicio_estimada))) as Ganancia_Perdida
@@ -79,7 +80,7 @@ as
 	  and er.fk_presupuesto = pr.presupuesto_numero
 	  and  eeo.fk_presupuesto = pr.presupuesto_numero
 	Group by EXTRACT(year FROM pe.proyecto_ejec_fecha_fin_real);
-	
+
 create or replace view total_proyectos_por_mineral_con_ganancia_perdida
 as
 	Select E.total_proyectos,E.nombre_mineral,Ganancia_Perdida

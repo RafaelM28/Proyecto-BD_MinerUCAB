@@ -14,10 +14,11 @@ GRANT UPDATE ON TABLE Usuario,Telefono,Correo TO Gerente_de_Ventas WITH GRANT OP
 GRANT TRIGGER ON TABLE Usuario,Telefono,Correo TO Gerente_de_Ventas WITH GRANT OPTION;
 
 /*Estas son las funciones que puede usar*/
-GRANT EXECUTE ON FUNCTION lista_clientes,lista_minerales,lista_inventario,obtener_tipo_operacion_inventario, lista_pedidos_venta, sp_crear_pedido_venta,
-                                                    sp_crear_pago_venta, sp_crear_relacion_solicitud_pedido, update_estatus_pedido_venta, update_estatus_pedido_reposicion_venta,
-                                                    update_estatus_pedido_venta_fin_solicitud, lista_clientes_venta, lista_minerales_venta, obtener_detalles_pedido_venta,
+GRANT EXECUTE ON FUNCTION lista_clientes,lista_minerales,lista_inventario,obtener_tipo_operacion_inventario, lista_pedidos_venta, lista_clientes_venta, lista_minerales_venta, obtener_detalles_pedido_venta,
                                                     obtener_detalles_pedido_venta_solicitud, obtener_metodos_pago_cliente, obtener_pago_venta, obtener_pedido_venta_cliente TO Gerente_de_Ventas WITH GRANT OPTION;
+
+GRANT EXECUTE ON PROCEDURE sp_crear_pedido_venta, sp_crear_pago_venta, sp_crear_relacion_solicitud_pedido, update_estatus_pedido_venta, update_estatus_pedido_reposicion_venta,
+                                                    update_estatus_pedido_venta_fin_solicitud TO Gerente_de_Ventas WITH GRANT OPTION;
 
 /*Creamos el rol de Lider_de_Proyecto*/
 CREATE ROLE Lider_de_Proyecto;
@@ -73,3 +74,5 @@ CREATE USER FernandoLuisLG47 WITH PASSWORD '12345678' IN ROLE Lider_de_Proyecto;
 
 /*Usuario Operario Minero*/
 CREATE USER JuanPabloGR1 WITH PASSWORD '12345678' IN ROLE Operario_Minero;
+
+

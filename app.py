@@ -13,9 +13,9 @@ app.secret_key = os.urandom(16)
 # Función para establecer conexión con la base de datos PostgreSQL
 def connection():
     # Creación de variables con los datos de conexión a la base de datos
-    db_name = "minerucab"
+    db_name = "db_minerucab"
     db_user = "postgres"
-    db_pass = "admin1234*"
+    db_pass = "0000"
     db_host = "localhost"
     db_port = "5432"
 
